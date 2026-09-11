@@ -43,6 +43,25 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
+  // Multer Error
+if (err.name === "MulterError") {
+  if (err.code === "LIMIT_FILE_SIZE") {
+    return res.status(400).json({
+      message: "Each image must be smaller than 5MB",
+    });
+  }
+
+  if (err.code === "LIMIT_FILE_COUNT") {
+    return res.status(400).json({
+      message: "You can upload a maximum of 5 images",
+    });
+  }
+
+  return res.status(400).json({
+    message: err.message,
+  });
+}
+
   // Default Error
   res.status(err.statusCode || 500).json({
     message:
