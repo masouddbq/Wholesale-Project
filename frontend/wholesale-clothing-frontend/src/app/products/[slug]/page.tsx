@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { getProductBySlug } from "@/services/productService";
+import ProductVariantSelector from "@/components/productDetail/productVariantSelector";
 
 type Variant = {
   _id: string;
@@ -68,9 +69,7 @@ export default async function ProductDetailPage({
         {/* Product Information */}
         <div>
           {product.category && (
-            <p className="text-sm text-neutral-500">
-              {product.category.name}
-            </p>
+            <p className="text-sm text-neutral-500">{product.category.name}</p>
           )}
 
           <h1 className="mt-2 text-3xl font-bold md:text-4xl">
@@ -83,9 +82,7 @@ export default async function ProductDetailPage({
 
           {product.description && (
             <div className="mt-8">
-              <h2 className="text-lg font-semibold">
-                توضیحات محصول
-              </h2>
+              <h2 className="text-lg font-semibold">توضیحات محصول</h2>
 
               <p className="mt-3 leading-8 text-neutral-600">
                 {product.description}
@@ -94,9 +91,7 @@ export default async function ProductDetailPage({
           )}
 
           <div className="mt-8 rounded-xl border border-neutral-200 bg-neutral-50 p-5">
-            <p className="text-sm text-neutral-500">
-              حداقل تعداد سفارش
-            </p>
+            <p className="text-sm text-neutral-500">حداقل تعداد سفارش</p>
 
             <p className="mt-2 text-lg font-semibold">
               {product.minimumOrderQuantity} عدد
@@ -106,9 +101,7 @@ export default async function ProductDetailPage({
           {/* Variants */}
           {product.variants?.length > 0 && (
             <div className="mt-8">
-              <h2 className="text-lg font-semibold">
-                موجودی و مشخصات
-              </h2>
+              <h2 className="text-lg font-semibold">موجودی و مشخصات</h2>
 
               <div className="mt-4 overflow-hidden rounded-xl border border-neutral-200">
                 <div className="grid grid-cols-4 bg-neutral-100 px-4 py-3 text-sm font-medium">
@@ -128,27 +121,25 @@ export default async function ProductDetailPage({
                     <span>{variant.color}</span>
 
                     <span>
-                      {variant.stock > 0
-                        ? `${variant.stock} عدد`
-                        : "ناموجود"}
+                      {variant.stock > 0 ? `${variant.stock} عدد` : "ناموجود"}
                     </span>
 
-                    <span className="text-neutral-500">
-                      {variant.sku}
-                    </span>
+                    <span className="text-neutral-500">{variant.sku}</span>
                   </div>
                 ))}
               </div>
             </div>
           )}
 
-          <button
-            type="button"
-            disabled
-            className="mt-8 w-full rounded-xl bg-black px-6 py-4 font-semibold text-white opacity-50"
-          >
-            افزودن به سبد خرید
-          </button>
+          <ProductVariantSelector
+            productId={product._id}
+            productName={product.name}
+            productSlug={product.slug}
+            productImage={product.images?.[0]}
+            price={product.price}
+            variants={product.variants}
+            minimumOrderQuantity={product.minimumOrderQuantity}
+          />
         </div>
       </div>
     </div>
