@@ -25,6 +25,28 @@ const variantSchema = z.object({
     .max(100, "SKU must be at most 100 characters"),
 });
 
+const variantsSchema = z
+  .array(variantSchema)
+  .optional()
+  .superRefine((variants, ctx) => {
+    const skuIndexes = new Map();
+
+    variants.forEach((variant, index) => {
+      const sku = variant.sku;
+
+      if (!skuIndexes.has(sku)) {
+        skuIndexes.set(sku, index);
+        return;
+      }
+
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "SKU must be unique within the product",
+        path: [index, "sku"],
+      });
+    });
+  });
+
 const createProductSchema = z.object({
   name: z
     .string()
@@ -55,23 +77,26 @@ const createProductSchema = z.object({
     .string()
     .min(1, "Category is required"),
 
-  variants: z
-    .array(variantSchema)
-    .optional(),
+  variants: variantsSchema,
 
   minimumOrderQuantity: z
     .number()
     .int("Minimum order quantity must be an integer")
-    .min(1, "Minimum order quantity must be at least 1"),
+    .min(
+      1,
+      "Minimum order quantity must be at least 1"
+    ),
 
   isActive: z
     .boolean()
     .optional(),
 });
 
-const updateProductSchema = createProductSchema.partial();
+const updateProductSchema =
+  createProductSchema.partial();
 
 module.exports = {
   createProductSchema,
   updateProductSchema,
 };
+

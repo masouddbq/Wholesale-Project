@@ -1,10 +1,8 @@
 const express = require("express");
 
-const {
-  register,
-  login,
-  getMe,
-} = require("../controllers/authController");
+const { register, login, getMe } = require("../controllers/authController");
+
+const { authLimiter } = require("../middlewares/rateLimitMiddleware");
 
 const protect = require("../middlewares/authMiddleware");
 const validate = require("../middlewares/validateMiddleware");
@@ -19,20 +17,13 @@ const router = express.Router();
 
 router.post(
   "/register",
+  authLimiter,
   validate(registerSchema),
-  asyncHandler(register)
+  asyncHandler(register),
 );
 
-router.post(
-  "/login",
-  validate(loginSchema),
-  asyncHandler(login)
-);
+router.post("/login", authLimiter, validate(loginSchema), asyncHandler(login));
 
-router.get(
-  "/me",
-  protect,
-  asyncHandler(getMe)
-);
+router.get("/me", protect, asyncHandler(getMe));
 
 module.exports = router;
