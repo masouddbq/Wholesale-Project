@@ -43,3 +43,13 @@ export const getOrderById = async (orderId: string) => {
 
   return response.data;
 };
+
+export const getMyOrderById = async (
+  orderId: string
+) => {
+  const response = await apiClient.get(
+    `/orders/my/${orderId}`
+  );
+
+  return response.data;
+};

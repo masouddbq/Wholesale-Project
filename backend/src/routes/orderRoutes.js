@@ -3,6 +3,7 @@ const express = require("express");
 const {
   createOrder,
   getMyOrders,
+  getMyOrderById,
   getAllOrders,
   getOrderById,
   updateOrderStatus,
@@ -34,10 +35,23 @@ router.get(
 );
 
 router.get(
+  "/my/:id",
+  protect,
+  asyncHandler(getMyOrderById)
+);
+
+router.get(
   "/",
   protect,
   adminOnly,
   asyncHandler(getAllOrders)
+);
+
+router.get(
+  "/:id",
+  protect,
+  adminOnly,
+  asyncHandler(getOrderById)
 );
 
 router.patch(
@@ -47,11 +61,6 @@ router.patch(
   asyncHandler(updateOrderStatus)
 );
 
-router.get(
-  "/:id",
-  protect,
-  adminOnly,
-  asyncHandler(getOrderById)
-);
+
 
 module.exports = router;

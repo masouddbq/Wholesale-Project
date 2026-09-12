@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { getOrderById } from "@/services/orderService";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { getMyOrderById } from "@/services/orderService";
 
 type OrderItem = {
   product: string;
@@ -32,12 +35,6 @@ type Order = {
   createdAt: string;
 };
 
-type OrderDetailPageProps = {
-  params: Promise<{
-    orderId: string;
-  }>;
-};
-
 const statusLabels: Record<string, string> = {
   pending: "در انتظار بررسی",
   confirmed: "تأیید شده",
@@ -52,19 +49,71 @@ const paymentStatusLabels: Record<string, string> = {
   paid: "پرداخت شده",
 };
 
-export default async function OrderDetailPage({
-  params,
-}: OrderDetailPageProps) {
-  const { orderId } = await params;
+export default function OrderDetailPage() {
+  const params = useParams();
 
-  let order: Order;
+  const orderId = params.orderId as string;
 
-  try {
-    const data = await getOrderById(orderId);
+  const [order, setOrder] = useState<Order | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-    order = data.order || data;
-  } catch {
-    notFound();
+  useEffect(() => {
+    if (!orderId) return;
+
+    const fetchOrder = async () => {
+      try {
+        setError(false);
+
+        const data = await getMyOrderById(orderId);
+
+        setOrder(data.order || data);
+      } catch {
+        setError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchOrder();
+  }, [orderId]);
+
+  if (isLoading) {
+    return (
+      <div className="mx-auto flex min-h-[600px] max-w-7xl items-center justify-center px-4">
+        <div className="text-center">
+          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-neutral-200 border-t-black" />
+
+          <p className="mt-4 text-sm text-neutral-500">
+            در حال دریافت جزئیات سفارش...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !order) {
+    return (
+      <div className="mx-auto flex min-h-[600px] max-w-7xl items-center justify-center px-4">
+        <div className="w-full max-w-md rounded-2xl border border-neutral-200 bg-white p-8 text-center">
+          <h1 className="text-2xl font-bold">
+            سفارش پیدا نشد
+          </h1>
+
+          <p className="mt-4 leading-7 text-neutral-500">
+            این سفارش وجود ندارد یا شما دسترسی مشاهده
+            آن را ندارید.
+          </p>
+
+          <Link
+            href="/account/orders"
+            className="mt-6 block rounded-xl bg-black px-6 py-3 font-medium text-white transition hover:bg-neutral-800"
+          >
+            بازگشت به سفارش‌ها
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -238,7 +287,7 @@ export default async function OrderDetailPage({
 
                 <p
                   dir="ltr"
-                  className="mt-1 font-medium text-right"
+                  className="mt-1 text-right font-medium"
                 >
                   {order.customer.phone}
                 </p>
@@ -265,7 +314,7 @@ export default async function OrderDetailPage({
 
                   <p
                     dir="ltr"
-                    className="mt-1 font-medium text-right"
+                    className="mt-1 text-right font-medium"
                   >
                     {order.customer.postalCode}
                   </p>

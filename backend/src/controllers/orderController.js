@@ -194,6 +194,24 @@ const getMyOrders = async (req, res) => {
   });
 };
 
+// GET /api/orders/my/:id
+const getMyOrderById = async (req, res) => {
+  const order = await Order.findOne({
+    _id: req.params.id,
+    user: req.user._id,
+  });
+
+  if (!order) {
+    return res.status(404).json({
+      message: "Order not found",
+    });
+  }
+
+  res.status(200).json({
+    order,
+  });
+};
+
 // GET /api/orders
 const getAllOrders = async (req, res) => {
   const orders = await Order.find()
@@ -344,6 +362,7 @@ const updateOrderStatus = async (req, res) => {
 module.exports = {
   createOrder,
   getMyOrders,
+  getMyOrderById,
   getAllOrders,
   getOrderById,
   updateOrderStatus,
