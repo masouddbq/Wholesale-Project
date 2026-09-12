@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import useCartStore from "@/store/cartStore";
+import { createOrder } from "@/services/orderService";
 
 export default function CheckoutPage() {
   const items = useCartStore((state) => state.items);
@@ -14,33 +15,58 @@ export default function CheckoutPage() {
   const [address, setAddress] = useState("");
   const [postalCode, setPostalCode] = useState("");
   const [note, setNote] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const totalAmount = items.reduce(
-    (total, item) =>
-      total + item.price * item.quantity,
-    0
+    (total, item) => total + item.price * item.quantity,
+    0,
   );
 
-  const totalItems = items.reduce(
-    (total, item) => total + item.quantity,
-    0
-  );
+  const totalItems = items.reduce((total, item) => total + item.quantity, 0);
 
-  const handleSubmit = (
-    event: FormEvent<HTMLFormElement>
-  ) => {
-    event.preventDefault();
+const handleSubmit = async (
+  event: FormEvent<HTMLFormElement>
+) => {
+  event.preventDefault();
 
-    console.log({
-      name,
-      phone,
-      province,
-      city,
-      address,
-      postalCode,
-      note,
-    });
-  };
+  setErrorMessage("");
+  setIsSubmitting(true);
+
+  try {
+    const payload = {
+      customer: {
+        name: name.trim(),
+        phone: phone.trim(),
+        province: province.trim(),
+        city: city.trim(),
+        address: address.trim(),
+        postalCode: postalCode.trim(),
+      },
+
+      items: items.map((item) => ({
+        product: item.productId,
+        variantId: item.variantId,
+        quantity: item.quantity,
+      })),
+
+      note: note.trim(),
+    };
+
+    const data = await createOrder(payload);
+
+    console.log("Order created:", data);
+  } catch (error: any) {
+    console.error("Create order failed:", error);
+
+    setErrorMessage(
+      error?.response?.data?.message ||
+        "ثبت سفارش با خطا مواجه شد."
+    );
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   if (items.length === 0) {
     return (
@@ -48,9 +74,7 @@ export default function CheckoutPage() {
         <div className="text-center">
           <div className="text-6xl">🛒</div>
 
-          <h1 className="mt-6 text-3xl font-bold">
-            سبد خرید شما خالی است
-          </h1>
+          <h1 className="mt-6 text-3xl font-bold">سبد خرید شما خالی است</h1>
 
           <p className="mt-4 text-neutral-500">
             برای ثبت سفارش ابتدا محصولی به سبد خرید اضافه کنید.
@@ -71,13 +95,9 @@ export default function CheckoutPage() {
     <div className="mx-auto max-w-7xl px-4 py-12">
       {/* Header */}
       <div className="mb-10">
-        <p className="text-sm text-neutral-500">
-          فروش عمده پوشاک
-        </p>
+        <p className="text-sm text-neutral-500">فروش عمده پوشاک</p>
 
-        <h1 className="mt-2 text-4xl font-bold">
-          ثبت سفارش
-        </h1>
+        <h1 className="mt-2 text-4xl font-bold">ثبت سفارش</h1>
 
         <p className="mt-4 max-w-2xl leading-7 text-neutral-500">
           اطلاعات خود را وارد کنید تا سفارش شما ثبت شود.
@@ -90,17 +110,12 @@ export default function CheckoutPage() {
           onSubmit={handleSubmit}
           className="rounded-2xl border border-neutral-200 bg-white p-5 md:p-8"
         >
-          <h2 className="text-xl font-bold">
-            اطلاعات مشتری
-          </h2>
+          <h2 className="text-xl font-bold">اطلاعات مشتری</h2>
 
           <div className="mt-6 grid gap-5 md:grid-cols-2">
             {/* Name */}
             <div>
-              <label
-                htmlFor="name"
-                className="mb-2 block text-sm font-medium"
-              >
+              <label htmlFor="name" className="mb-2 block text-sm font-medium">
                 نام و نام خانوادگی
               </label>
 
@@ -108,9 +123,7 @@ export default function CheckoutPage() {
                 id="name"
                 type="text"
                 value={name}
-                onChange={(event) =>
-                  setName(event.target.value)
-                }
+                onChange={(event) => setName(event.target.value)}
                 required
                 minLength={2}
                 placeholder="مثلاً علی محمدی"
@@ -120,10 +133,7 @@ export default function CheckoutPage() {
 
             {/* Phone */}
             <div>
-              <label
-                htmlFor="phone"
-                className="mb-2 block text-sm font-medium"
-              >
+              <label htmlFor="phone" className="mb-2 block text-sm font-medium">
                 شماره موبایل
               </label>
 
@@ -131,9 +141,7 @@ export default function CheckoutPage() {
                 id="phone"
                 type="tel"
                 value={phone}
-                onChange={(event) =>
-                  setPhone(event.target.value)
-                }
+                onChange={(event) => setPhone(event.target.value)}
                 required
                 placeholder="مثلاً 09121234567"
                 className="h-12 w-full rounded-lg border border-neutral-300 px-4 text-left outline-none transition focus:border-black"
@@ -154,9 +162,7 @@ export default function CheckoutPage() {
                 id="province"
                 type="text"
                 value={province}
-                onChange={(event) =>
-                  setProvince(event.target.value)
-                }
+                onChange={(event) => setProvince(event.target.value)}
                 required
                 placeholder="مثلاً خراسان رضوی"
                 className="h-12 w-full rounded-lg border border-neutral-300 px-4 outline-none transition focus:border-black"
@@ -165,10 +171,7 @@ export default function CheckoutPage() {
 
             {/* City */}
             <div>
-              <label
-                htmlFor="city"
-                className="mb-2 block text-sm font-medium"
-              >
+              <label htmlFor="city" className="mb-2 block text-sm font-medium">
                 شهر
               </label>
 
@@ -176,9 +179,7 @@ export default function CheckoutPage() {
                 id="city"
                 type="text"
                 value={city}
-                onChange={(event) =>
-                  setCity(event.target.value)
-                }
+                onChange={(event) => setCity(event.target.value)}
                 required
                 placeholder="مثلاً مشهد"
                 className="h-12 w-full rounded-lg border border-neutral-300 px-4 outline-none transition focus:border-black"
@@ -198,9 +199,7 @@ export default function CheckoutPage() {
                 id="postalCode"
                 type="text"
                 value={postalCode}
-                onChange={(event) =>
-                  setPostalCode(event.target.value)
-                }
+                onChange={(event) => setPostalCode(event.target.value)}
                 placeholder="۱۰ رقم"
                 maxLength={10}
                 dir="ltr"
@@ -211,19 +210,14 @@ export default function CheckoutPage() {
 
           {/* Address */}
           <div className="mt-5">
-            <label
-              htmlFor="address"
-              className="mb-2 block text-sm font-medium"
-            >
+            <label htmlFor="address" className="mb-2 block text-sm font-medium">
               آدرس
             </label>
 
             <textarea
               id="address"
               value={address}
-              onChange={(event) =>
-                setAddress(event.target.value)
-              }
+              onChange={(event) => setAddress(event.target.value)}
               required
               minLength={10}
               rows={4}
@@ -234,10 +228,7 @@ export default function CheckoutPage() {
 
           {/* Note */}
           <div className="mt-5">
-            <label
-              htmlFor="note"
-              className="mb-2 block text-sm font-medium"
-            >
+            <label htmlFor="note" className="mb-2 block text-sm font-medium">
               توضیحات سفارش
               <span className="mr-2 text-xs font-normal text-neutral-400">
                 اختیاری
@@ -247,29 +238,32 @@ export default function CheckoutPage() {
             <textarea
               id="note"
               value={note}
-              onChange={(event) =>
-                setNote(event.target.value)
-              }
+              onChange={(event) => setNote(event.target.value)}
               rows={3}
               placeholder="اگر توضیح خاصی درباره سفارش دارید..."
               className="w-full resize-none rounded-lg border border-neutral-300 px-4 py-3 outline-none transition focus:border-black"
             />
           </div>
 
-          <button
-            type="submit"
-            className="mt-8 w-full rounded-xl bg-black px-6 py-4 font-semibold text-white transition hover:bg-neutral-800"
-          >
-            ثبت سفارش
-          </button>
+        {errorMessage && (
+  <div className="mt-5 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+    {errorMessage}
+  </div>
+)}
+
+<button
+  type="submit"
+  disabled={isSubmitting}
+  className="mt-8 w-full rounded-xl bg-black px-6 py-4 font-semibold text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
+>
+  {isSubmitting ? "در حال ثبت سفارش..." : "ثبت سفارش"}
+</button>
         </form>
 
         {/* Order Summary */}
         <aside className="h-fit rounded-2xl border border-neutral-200 bg-neutral-50 p-6 lg:sticky lg:top-28">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold">
-              خلاصه سفارش
-            </h2>
+            <h2 className="text-xl font-bold">خلاصه سفارش</h2>
 
             <Link
               href="/cart"
@@ -296,25 +290,19 @@ export default function CheckoutPage() {
                 </div>
 
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold">
-                    {item.name}
-                  </p>
+                  <p className="truncate text-sm font-semibold">{item.name}</p>
 
                   <p className="mt-1 text-xs text-neutral-500">
                     {item.size} / {item.color}
                   </p>
 
                   <p className="mt-1 text-xs text-neutral-500">
-                    تعداد:{" "}
-                    {item.quantity.toLocaleString("fa-IR")}
+                    تعداد: {item.quantity.toLocaleString("fa-IR")}
                   </p>
                 </div>
 
                 <p className="shrink-0 text-sm font-semibold">
-                  {(item.price * item.quantity).toLocaleString(
-                    "fa-IR"
-                  )}{" "}
-                  تومان
+                  {(item.price * item.quantity).toLocaleString("fa-IR")} تومان
                 </p>
               </div>
             ))}
@@ -322,9 +310,7 @@ export default function CheckoutPage() {
 
           <div className="mt-6 space-y-4 border-t border-neutral-200 pt-5">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-neutral-500">
-                تعداد کالا
-              </span>
+              <span className="text-neutral-500">تعداد کالا</span>
 
               <span className="font-medium">
                 {totalItems.toLocaleString("fa-IR")} عدد
@@ -332,9 +318,7 @@ export default function CheckoutPage() {
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="font-semibold">
-                مبلغ کل
-              </span>
+              <span className="font-semibold">مبلغ کل</span>
 
               <span className="text-lg font-bold">
                 {totalAmount.toLocaleString("fa-IR")} تومان
