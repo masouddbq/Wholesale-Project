@@ -3,7 +3,7 @@ export default function Loading() {
     <div className="mx-auto max-w-7xl px-4 py-16">
       <div className="animate-pulse">
         {/* Hero skeleton */}
-        <div className="mb-16 h-[400px] rounded-2xl bg-neutral-200" />
+        <div className="mb-16 h-100 rounded-2xl bg-neutral-200" />
 
         {/* Categories */}
         <div className="mb-16">

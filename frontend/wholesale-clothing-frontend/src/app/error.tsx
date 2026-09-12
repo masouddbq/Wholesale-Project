@@ -7,7 +7,7 @@ export default function Error({
   reset: () => void;
 }) {
   return (
-    <div className="flex min-h-[500px] items-center justify-center px-4">
+    <div className="flex min-h-125 items-center justify-center px-4">
       <div className="max-w-md text-center">
         <p className="text-sm font-medium text-neutral-500">
           خطایی رخ داده است
