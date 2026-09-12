@@ -1,11 +1,11 @@
-import { getProducts } from "@/services/productService";
+import { getCategories } from "@/services/categoryService";
 
 export default async function Home() {
-  const data = await getProducts();
+  const data = await getCategories();
 
   return (
     <main>
-      <h1>Products</h1>
+      <h1>Categories</h1>
 
       <pre>
         {JSON.stringify(data, null, 2)}
