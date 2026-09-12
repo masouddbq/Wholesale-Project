@@ -20,3 +20,9 @@ export const getProducts = async (
   return response.data;
 };
 
+export const getProductBySlug = async (slug: string) => {
+  const response = await apiClient.get(`/products/${slug}`);
+
+  return response.data;
+};
+
