@@ -1,15 +1,15 @@
-import { getCategories } from "@/services/categoryService";
+import HeroSection from "@/components/HeroSection";
+import CategorySection from "@/components/CategorySection";
+import ProductSection from "@/components/ProductSection";
 
-export default async function Home() {
-  const data = await getCategories();
-
+export default function Home() {
   return (
-    <main>
-      <h1>Categories</h1>
+    <div>
+      <HeroSection />
 
-      <pre>
-        {JSON.stringify(data, null, 2)}
-      </pre>
-    </main>
+      <CategorySection />
+
+      <ProductSection />
+    </div>
   );
 }
