@@ -29,3 +29,17 @@ export const createOrder = async (
 
   return response.data;
 };
+
+export const getMyOrders = async () => {
+  const response = await apiClient.get("/orders/my");
+
+  return response.data;
+};
+
+export const getOrderById = async (orderId: string) => {
+  const response = await apiClient.get(
+    `/orders/${orderId}`
+  );
+
+  return response.data;
+};
