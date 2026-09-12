@@ -1,17 +1,46 @@
+"use client";
+
+import Link from "next/link";
+
 export default function Navbar() {
   return (
-    <header>
-      <nav>
-        <h1>Wholesale Clothing</h1>
+    <header className="border-b bg-white text-blue-900">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
+        
+        {/* Logo */}
+        <Link
+          href="/"
+          className="text-xl font-bold"
+        >
+          Wholesale
+        </Link>
 
-        <div>
-          <a href="/">خانه</a>
-          <a href="/products">محصولات</a>
-          <a href="/categories">دسته‌بندی‌ها</a>
-          <a href="/cart">سبد خرید</a>
-          <a href="/account">حساب کاربری</a>
+        {/* Navigation */}
+        <nav className="hidden items-center gap-6 md:flex">
+          <Link href="/">
+            خانه
+          </Link>
+
+          <Link href="/products">
+            محصولات
+          </Link>
+
+          <Link href="/categories">
+            دسته‌بندی‌ها
+          </Link>
+        </nav>
+
+        {/* Actions */}
+        <div className="flex items-center gap-4">
+          <Link href="/cart">
+            سبد خرید
+          </Link>
+
+          <Link href="/account">
+            حساب کاربری
+          </Link>
         </div>
-      </nav>
+      </div>
     </header>
   );
 }
