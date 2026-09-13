@@ -1,6 +1,10 @@
 import apiClient from "@/lib/appClient";
 
-type CreateOrderPayload = {
+/* =========================
+   Customer Orders
+========================= */
+
+export type CreateOrderPayload = {
   customer: {
     name: string;
     phone: string;
@@ -36,19 +40,73 @@ export const getMyOrders = async () => {
   return response.data;
 };
 
-export const getOrderById = async (orderId: string) => {
-  const response = await apiClient.get(
-    `/orders/${orderId}`
-  );
-
-  return response.data;
-};
-
 export const getMyOrderById = async (
   orderId: string
 ) => {
   const response = await apiClient.get(
     `/orders/my/${orderId}`
+  );
+
+  return response.data;
+};
+
+
+/* =========================
+   Admin Orders
+========================= */
+
+export type AdminOrder = {
+  _id: string;
+
+  orderNumber: string;
+
+  customer: {
+    name: string;
+    phone: string;
+  };
+
+  totalAmount: number;
+
+  status:
+    | "pending"
+    | "confirmed"
+    | "preparing"
+    | "shipped"
+    | "completed"
+    | "cancelled";
+
+  paymentStatus: "unpaid" | "paid";
+
+  createdAt: string;
+};
+
+export type AdminOrdersResponse = {
+  orders: AdminOrder[];
+
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+};
+
+export type AdminOrderQuery = {
+  page?: number;
+  limit?: number;
+  search?: string;
+  status?: string;
+  sort?: "newest" | "oldest";
+};
+
+export const getAdminOrders = async (
+  query?: AdminOrderQuery
+) => {
+  const response = await apiClient.get<AdminOrdersResponse>(
+    "/orders",
+    {
+      params: query,
+    }
   );
 
   return response.data;

@@ -212,15 +212,84 @@ const getMyOrderById = async (req, res) => {
   });
 };
 
-// GET /api/orders
 const getAllOrders = async (req, res) => {
-  const orders = await Order.find()
-    .populate("user", "name phone role")
-    .sort({ createdAt: -1 });
+  const {
+    page = 1,
+    limit = 20,
+    search = "",
+    status = "",
+    sort = "newest",
+  } = req.query;
 
-  res.status(200).json({
-    count: orders.length,
+  const safePage = Math.max(Number(page) || 1, 1);
+
+  const safeLimit = Math.min(
+    Math.max(Number(limit) || 20, 1),
+    100
+  );
+
+  const skip = (safePage - 1) * safeLimit;
+
+  const filter = {};
+
+  if (status) {
+    filter.status = status;
+  }
+
+  if (search.trim()) {
+    const searchRegex = new RegExp(
+      search.trim(),
+      "i"
+    );
+
+    filter.$or = [
+      {
+        orderNumber: searchRegex,
+      },
+      {
+        "customer.name": searchRegex,
+      },
+      {
+        "customer.phone": searchRegex,
+      },
+    ];
+  }
+
+  let sortOption = {
+    createdAt: -1,
+  };
+
+  if (sort === "oldest") {
+    sortOption = {
+      createdAt: 1,
+    };
+  }
+
+  const [orders, total] = await Promise.all([
+    Order.find(filter)
+      .select(
+        "orderNumber customer.name customer.phone totalAmount status paymentStatus createdAt"
+      )
+      .sort(sortOption)
+      .skip(skip)
+      .limit(safeLimit)
+      .lean(),
+
+    Order.countDocuments(filter),
+  ]);
+
+  const totalPages = Math.ceil(
+    total / safeLimit
+  );
+
+  res.json({
     orders,
+    pagination: {
+      page: safePage,
+      limit: safeLimit,
+      total,
+      totalPages,
+    },
   });
 };
 
