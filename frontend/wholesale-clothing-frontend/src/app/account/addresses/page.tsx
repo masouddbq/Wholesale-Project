@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import apiClient from "@/lib/appClient";
 import { getMe } from "@/services/authService";
 
@@ -129,7 +128,8 @@ export default function AddressesPage() {
       resetForm();
     } catch (error: any) {
       setError(
-        error?.response?.data?.message || "عملیات روی آدرس با مشکل مواجه شد.",
+        error?.response?.data?.message ||
+          "عملیات روی آدرس با مشکل مواجه شد.",
       );
     } finally {
       setIsSaving(false);
@@ -157,7 +157,9 @@ export default function AddressesPage() {
   };
 
   const handleDelete = async (addressId: string) => {
-    const confirmed = window.confirm("آیا از حذف این آدرس مطمئن هستید؟");
+    const confirmed = window.confirm(
+      "آیا از حذف این آدرس مطمئن هستید؟",
+    );
 
     if (!confirmed) {
       return;
@@ -179,13 +181,16 @@ export default function AddressesPage() {
 
       setSuccess("آدرس با موفقیت حذف شد.");
     } catch (error: any) {
-      setError(error?.response?.data?.message || "حذف آدرس با مشکل مواجه شد.");
+      setError(
+        error?.response?.data?.message ||
+          "حذف آدرس با مشکل مواجه شد.",
+      );
     }
   };
 
   if (isLoading) {
     return (
-      <div className="mx-auto flex min-h-[600px] max-w-7xl items-center justify-center px-4">
+      <div className="flex min-h-[600px] items-center justify-center">
         <div className="text-center">
           <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-neutral-200 border-t-black" />
 
@@ -198,288 +203,269 @@ export default function AddressesPage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12">
-      <div className="mb-10">
-        <p className="text-sm text-neutral-500">حساب کاربری</p>
+    <div className="py-2">
+      {/* Header */}
 
-        <h1 className="mt-2 text-4xl font-bold">آدرس‌های من</h1>
+      <div className="mb-10">
+        <p className="text-sm text-neutral-500">
+          حساب کاربری
+        </p>
+
+        <h1 className="mt-2 text-4xl font-bold">
+          آدرس‌های من
+        </h1>
 
         <p className="mt-4 max-w-2xl leading-7 text-neutral-500">
-          آدرس‌های خود را مدیریت کنید تا هنگام ثبت سفارش سریع‌تر آن‌ها را انتخاب
-          کنید.
+          آدرس‌های خود را مدیریت کنید تا هنگام ثبت سفارش سریع‌تر
+          آن‌ها را انتخاب کنید.
         </p>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
-        {/* Sidebar */}
+      <div className="space-y-6">
+        {/* Form */}
 
-        <aside className="h-fit rounded-2xl border border-neutral-200 bg-white p-4">
-          <nav className="space-y-2">
-            <Link
-              href="/account/profile"
-              className="block rounded-xl px-4 py-3 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
-            >
-              پروفایل
-            </Link>
+        <section className="rounded-2xl border border-neutral-200 bg-white p-6 md:p-8">
+          <div className="mb-8">
+            <h2 className="text-xl font-bold">
+              {editingAddressId
+                ? "ویرایش آدرس"
+                : "افزودن آدرس جدید"}
+            </h2>
 
-            <Link
-              href="/account/orders"
-              className="block rounded-xl px-4 py-3 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
-            >
-              سفارش‌های من
-            </Link>
+            <p className="mt-2 text-sm leading-6 text-neutral-500">
+              اطلاعات آدرس را وارد کنید.
+            </p>
+          </div>
 
-            <Link
-              href="/account/addresses"
-              className="block rounded-xl bg-black px-4 py-3 text-sm font-medium text-white"
-            >
-              آدرس‌های من
-            </Link>
-          </nav>
-        </aside>
+          <form
+            onSubmit={handleSubmit}
+            className="grid max-w-3xl gap-5 md:grid-cols-2"
+          >
+            {/* Title */}
 
-        {/* Main */}
+            <div>
+              <label
+                htmlFor="title"
+                className="mb-2 block text-sm font-medium"
+              >
+                عنوان آدرس
+              </label>
 
-        <div className="space-y-6">
-          {/* Form */}
-
-          <section className="rounded-2xl border border-neutral-200 bg-white p-6 md:p-8">
-            <div className="mb-8">
-              <h2 className="text-xl font-bold">
-                {editingAddressId ? "ویرایش آدرس" : "افزودن آدرس جدید"}
-              </h2>
-
-              <p className="mt-2 text-sm leading-6 text-neutral-500">
-                اطلاعات آدرس را وارد کنید.
-              </p>
+              <input
+                id="title"
+                name="title"
+                type="text"
+                value={form.title}
+                onChange={handleChange}
+                placeholder="مثلاً منزل"
+                className="w-full rounded-xl border border-neutral-300 px-4 py-3 outline-none transition focus:border-black"
+              />
             </div>
 
-            <form
-              onSubmit={handleSubmit}
-              className="grid max-w-3xl gap-5 md:grid-cols-2"
-            >
-              {/* Title */}
+            {/* Province */}
 
-              <div>
-                <label
-                  htmlFor="title"
-                  className="mb-2 block text-sm font-medium"
-                >
-                  عنوان آدرس
-                </label>
+            <div>
+              <label
+                htmlFor="province"
+                className="mb-2 block text-sm font-medium"
+              >
+                استان
+              </label>
 
-                <input
-                  id="title"
-                  name="title"
-                  type="text"
-                  value={form.title}
-                  onChange={handleChange}
-                  placeholder="مثلاً منزل"
-                  className="w-full rounded-xl border border-neutral-300 px-4 py-3 outline-none transition focus:border-black"
-                />
-              </div>
+              <input
+                id="province"
+                name="province"
+                type="text"
+                value={form.province}
+                onChange={handleChange}
+                placeholder="مثلاً خراسان رضوی"
+                className="w-full rounded-xl border border-neutral-300 px-4 py-3 outline-none transition focus:border-black"
+              />
+            </div>
 
-              {/* Province */}
+            {/* City */}
 
-              <div>
-                <label
-                  htmlFor="province"
-                  className="mb-2 block text-sm font-medium"
-                >
-                  استان
-                </label>
+            <div>
+              <label
+                htmlFor="city"
+                className="mb-2 block text-sm font-medium"
+              >
+                شهر
+              </label>
 
-                <input
-                  id="province"
-                  name="province"
-                  type="text"
-                  value={form.province}
-                  onChange={handleChange}
-                  placeholder="مثلاً خراسان رضوی"
-                  className="w-full rounded-xl border border-neutral-300 px-4 py-3 outline-none transition focus:border-black"
-                />
-              </div>
+              <input
+                id="city"
+                name="city"
+                type="text"
+                value={form.city}
+                onChange={handleChange}
+                placeholder="مثلاً مشهد"
+                className="w-full rounded-xl border border-neutral-300 px-4 py-3 outline-none transition focus:border-black"
+              />
+            </div>
 
-              {/* City */}
+            {/* Postal Code */}
 
-              <div>
-                <label
-                  htmlFor="city"
-                  className="mb-2 block text-sm font-medium"
-                >
-                  شهر
-                </label>
+            <div>
+              <label
+                htmlFor="postalCode"
+                className="mb-2 block text-sm font-medium"
+              >
+                کد پستی
+              </label>
 
-                <input
-                  id="city"
-                  name="city"
-                  type="text"
-                  value={form.city}
-                  onChange={handleChange}
-                  placeholder="مثلاً مشهد"
-                  className="w-full rounded-xl border border-neutral-300 px-4 py-3 outline-none transition focus:border-black"
-                />
-              </div>
+              <input
+                id="postalCode"
+                name="postalCode"
+                type="text"
+                value={form.postalCode}
+                onChange={handleChange}
+                placeholder="کد پستی"
+                dir="ltr"
+                className="w-full rounded-xl border border-neutral-300 px-4 py-3 outline-none transition focus:border-black"
+              />
+            </div>
 
-              {/* Postal Code */}
+            {/* Address */}
 
-              <div>
-                <label
-                  htmlFor="postalCode"
-                  className="mb-2 block text-sm font-medium"
-                >
-                  کد پستی
-                </label>
+            <div className="md:col-span-2">
+              <label
+                htmlFor="address"
+                className="mb-2 block text-sm font-medium"
+              >
+                آدرس کامل
+              </label>
 
-                <input
-                  id="postalCode"
-                  name="postalCode"
-                  type="text"
-                  value={form.postalCode}
-                  onChange={handleChange}
-                  placeholder="کد پستی"
-                  dir="ltr"
-                  className="w-full rounded-xl border border-neutral-300 px-4 py-3 outline-none transition focus:border-black"
-                />
-              </div>
+              <textarea
+                id="address"
+                name="address"
+                value={form.address}
+                onChange={handleChange}
+                rows={4}
+                placeholder="آدرس کامل خود را وارد کنید"
+                className="w-full resize-none rounded-xl border border-neutral-300 px-4 py-3 leading-7 outline-none transition focus:border-black"
+              />
+            </div>
 
-              {/* Address */}
+            {/* Messages */}
 
+            {(error || success) && (
               <div className="md:col-span-2">
-                <label
-                  htmlFor="address"
-                  className="mb-2 block text-sm font-medium"
-                >
-                  آدرس کامل
-                </label>
+                {error && (
+                  <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-600">
+                    {error}
+                  </div>
+                )}
 
-                <textarea
-                  id="address"
-                  name="address"
-                  value={form.address}
-                  onChange={handleChange}
-                  rows={4}
-                  placeholder="آدرس کامل خود را وارد کنید"
-                  className="w-full resize-none rounded-xl border border-neutral-300 px-4 py-3 leading-7 outline-none transition focus:border-black"
-                />
-              </div>
-
-              {/* Messages */}
-
-              {(error || success) && (
-                <div className="md:col-span-2">
-                  {error && (
-                    <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-600">
-                      {error}
-                    </div>
-                  )}
-
-                  {success && (
-                    <div className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm leading-6 text-green-600">
-                      {success}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Buttons */}
-
-              <div className="flex flex-wrap gap-3 md:col-span-2">
-                <button
-                  type="submit"
-                  disabled={isSaving}
-                  className="rounded-xl bg-black px-6 py-3 font-medium text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {isSaving
-                    ? "در حال ذخیره..."
-                    : editingAddressId
-                      ? "ذخیره تغییرات"
-                      : "افزودن آدرس"}
-                </button>
-
-                {editingAddressId && (
-                  <button
-                    type="button"
-                    onClick={resetForm}
-                    className="rounded-xl border border-neutral-300 px-6 py-3 font-medium transition hover:bg-neutral-50"
-                  >
-                    انصراف
-                  </button>
+                {success && (
+                  <div className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm leading-6 text-green-600">
+                    {success}
+                  </div>
                 )}
               </div>
-            </form>
-          </section>
+            )}
 
-          {/* Address List */}
+            {/* Buttons */}
 
-          <section className="rounded-2xl border border-neutral-200 bg-white p-6 md:p-8">
-            <div className="mb-6">
-              <h2 className="text-xl font-bold">آدرس‌های ذخیره‌شده</h2>
+            <div className="flex flex-wrap gap-3 md:col-span-2">
+              <button
+                type="submit"
+                disabled={isSaving}
+                className="rounded-xl bg-black px-6 py-3 font-medium text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {isSaving
+                  ? "در حال ذخیره..."
+                  : editingAddressId
+                    ? "ذخیره تغییرات"
+                    : "افزودن آدرس"}
+              </button>
+
+              {editingAddressId && (
+                <button
+                  type="button"
+                  onClick={resetForm}
+                  className="rounded-xl border border-neutral-300 px-6 py-3 font-medium transition hover:bg-neutral-50"
+                >
+                  انصراف
+                </button>
+              )}
             </div>
+          </form>
+        </section>
 
-            {addresses.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 px-6 py-16 text-center">
-                <h3 className="text-lg font-semibold">
-                  هنوز آدرسی ثبت نکرده‌اید
-                </h3>
+        {/* Address List */}
 
-                <p className="mt-2 text-sm text-neutral-500">
-                  از فرم بالا اولین آدرس خود را اضافه کنید.
-                </p>
-              </div>
-            ) : (
-              <div className="grid gap-4">
-                {addresses.map((address) => (
-                  <div
-                    key={address._id}
-                    className="rounded-2xl border border-neutral-200 p-5"
-                  >
-                    <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
-                      <div>
-                        <h3 className="font-bold">{address.title}</h3>
+        <section className="rounded-2xl border border-neutral-200 bg-white p-6 md:p-8">
+          <div className="mb-6">
+            <h2 className="text-xl font-bold">
+              آدرس‌های ذخیره‌شده
+            </h2>
+          </div>
 
-                        <p className="mt-3 leading-7 text-neutral-600">
-                          {address.province}، {address.city}
-                        </p>
+          {addresses.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 px-6 py-16 text-center">
+              <h3 className="text-lg font-semibold">
+                هنوز آدرسی ثبت نکرده‌اید
+              </h3>
 
-                        <p className="leading-7 text-neutral-600">
-                          {address.address}
-                        </p>
+              <p className="mt-2 text-sm text-neutral-500">
+                از فرم بالا اولین آدرس خود را اضافه کنید.
+              </p>
+            </div>
+          ) : (
+            <div className="grid gap-4">
+              {addresses.map((address) => (
+                <div
+                  key={address._id}
+                  className="rounded-2xl border border-neutral-200 p-5"
+                >
+                  <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+                    <div>
+                      <h3 className="font-bold">
+                        {address.title}
+                      </h3>
 
-                        {address.postalCode && (
-                          <p
-                            dir="ltr"
-                            className="mt-2 text-sm text-neutral-500"
-                          >
-                            {address.postalCode}
-                          </p>
-                        )}
-                      </div>
+                      <p className="mt-3 leading-7 text-neutral-600">
+                        {address.province}، {address.city}
+                      </p>
 
-                      <div className="flex shrink-0 gap-2">
-                        <button
-                          type="button"
-                          onClick={() => handleEdit(address)}
-                          className="rounded-xl border border-neutral-300 px-4 py-2 text-sm font-medium transition hover:bg-neutral-50"
+                      <p className="leading-7 text-neutral-600">
+                        {address.address}
+                      </p>
+
+                      {address.postalCode && (
+                        <p
+                          dir="ltr"
+                          className="mt-2 text-sm text-neutral-500"
                         >
-                          ویرایش
-                        </button>
+                          {address.postalCode}
+                        </p>
+                      )}
+                    </div>
 
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(address._id)}
-                          className="rounded-xl border border-red-200 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
-                        >
-                          حذف
-                        </button>
-                      </div>
+                    <div className="flex shrink-0 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleEdit(address)}
+                        className="rounded-xl border border-neutral-300 px-4 py-2 text-sm font-medium transition hover:bg-neutral-50"
+                      >
+                        ویرایش
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(address._id)}
+                        className="rounded-xl border border-red-200 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50"
+                      >
+                        حذف
+                      </button>
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
-          </section>
-        </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
       </div>
     </div>
   );

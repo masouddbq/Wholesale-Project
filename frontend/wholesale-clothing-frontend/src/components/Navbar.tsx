@@ -2,6 +2,10 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+import { logout } from "@/services/authService";
+import useAuthStore from "@/store/authStore";
 
 const navItems = [
   {
@@ -20,6 +24,29 @@ const navItems = [
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const router = useRouter();
+
+  const { isAuthenticated } = useAuthStore();
+
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true);
+
+      await logout();
+
+      useAuthStore.getState().clearUser();
+
+      setIsMenuOpen(false);
+
+      router.push("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 border-b border-neutral-200 bg-white/95 backdrop-blur">
@@ -54,12 +81,32 @@ export default function Navbar() {
             سبد خرید
           </Link>
 
-          <Link
-            href="/account"
-            className="rounded-lg bg-black px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800"
-          >
-            حساب کاربری
-          </Link>
+          {isAuthenticated ? (
+            <>
+              <Link
+                href="/account/profile"
+                className="rounded-lg bg-black px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800"
+              >
+                حساب کاربری
+              </Link>
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {isLoggingOut ? "در حال خروج..." : "خروج"}
+              </button>
+            </>
+          ) : (
+            <Link
+              href="/login"
+              className="rounded-lg bg-black px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800"
+            >
+              ورود
+            </Link>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -100,13 +147,34 @@ export default function Navbar() {
                 سبد خرید
               </Link>
 
-              <Link
-                href="/account"
-                onClick={() => setIsMenuOpen(false)}
-                className="py-4 text-sm font-medium"
-              >
-                حساب کاربری
-              </Link>
+              {isAuthenticated ? (
+                <>
+                  <Link
+                    href="/account/profile"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="border-b border-neutral-100 py-4 text-sm font-medium"
+                  >
+                    حساب کاربری
+                  </Link>
+
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    disabled={isLoggingOut}
+                    className="py-4 text-right text-sm font-medium text-red-600 disabled:opacity-50"
+                  >
+                    {isLoggingOut ? "در حال خروج..." : "خروج"}
+                  </button>
+                </>
+              ) : (
+                <Link
+                  href="/login"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="py-4 text-sm font-medium"
+                >
+                  ورود
+                </Link>
+              )}
             </div>
           </nav>
         </div>

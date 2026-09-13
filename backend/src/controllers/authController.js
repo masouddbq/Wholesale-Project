@@ -110,5 +110,5 @@ module.exports = {
   register,
   login,
   getMe,
-  logout,
+  logout
 };
