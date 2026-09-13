@@ -18,6 +18,7 @@ const productRoutes = require("./routes/prodsRoutes");
 const authRoutes = require("./routes/authRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const userRoutes = require("./routes/userRoutes");
+const siteContentRoutes = require("./routes/siteContentRoutes");
 
 const app = express();
 app.use(
@@ -52,6 +53,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/uploads", uploadRoutes);
+app.use("/api/site-content", siteContentRoutes);
 
 
 app.use(errorHandler);
