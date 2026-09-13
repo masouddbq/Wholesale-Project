@@ -6,19 +6,63 @@ import {
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
+
 import useCartStore from "@/store/cartStore";
 import { createOrder } from "@/services/orderService";
+import { getMe } from "@/services/authService";
+
+type Address = {
+  _id: string;
+  title: string;
+  province: string;
+  city: string;
+  address: string;
+  postalCode?: string;
+};
+
+type User = {
+  id: string;
+  name: string;
+  phone: string;
+  role: "customer" | "admin";
+  addresses?: Address[];
+};
 
 export default function CheckoutPage() {
   const router = useRouter();
 
-  const items = useCartStore((state) => state.items);
+  const items = useCartStore(
+    (state) => state.items
+  );
+
   const clearCart = useCartStore(
     (state) => state.clearCart
   );
 
+  const hasHydrated = useCartStore(
+    (state) => state.hasHydrated
+  );
+
   const [isCheckingCart, setIsCheckingCart] =
     useState(true);
+
+  const [isOrderCompleted, setIsOrderCompleted] =
+    useState(false);
+
+  const [user, setUser] =
+    useState<User | null>(null);
+
+  const [addresses, setAddresses] =
+    useState<Address[]>([]);
+
+  const [isLoadingUser, setIsLoadingUser] =
+    useState(true);
+
+  const [selectedAddressId, setSelectedAddressId] =
+    useState<string | null>(null);
+
+  const [isNewAddress, setIsNewAddress] =
+    useState(false);
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -36,31 +80,150 @@ export default function CheckoutPage() {
 
   /*
    * بررسی سبد خرید
-   *
-   * چون Zustand از localStorage استفاده می‌کند،
-   * باید بعد از mount شدن کامپوننت بررسی شود.
    */
   useEffect(() => {
+    if (!hasHydrated) {
+      return;
+    }
+
+    if (isOrderCompleted) {
+      return;
+    }
+
     if (items.length === 0) {
       router.replace("/cart");
       return;
     }
 
     setIsCheckingCart(false);
-  }, [items.length, router]);
+  }, [
+    hasHydrated,
+    items.length,
+    router,
+    isOrderCompleted,
+  ]);
 
   /*
-   * جلوگیری از نمایش لحظه‌ای Checkout
-   * قبل از مشخص شدن وضعیت سبد
+   * دریافت اطلاعات کاربر
+   *
+   * اگر کاربر مهمان باشد، getMe خطا می‌دهد
+   * و user همان null باقی می‌ماند.
    */
-  if (isCheckingCart) {
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const data = await getMe();
+
+        const currentUser = data.user as User;
+
+        setUser(currentUser);
+
+        setName(currentUser.name || "");
+        setPhone(currentUser.phone || "");
+
+        const userAddresses =
+          currentUser.addresses || [];
+
+        setAddresses(userAddresses);
+
+        /*
+         * اگر کاربر فقط یک آدرس داشته باشد،
+         * همان ابتدا انتخابش می‌کنیم.
+         */
+        if (userAddresses.length === 1) {
+          const firstAddress =
+            userAddresses[0];
+
+          setSelectedAddressId(
+            firstAddress._id
+          );
+
+          setProvince(
+            firstAddress.province || ""
+          );
+
+          setCity(
+            firstAddress.city || ""
+          );
+
+          setAddress(
+            firstAddress.address || ""
+          );
+
+          setPostalCode(
+            firstAddress.postalCode || ""
+          );
+        }
+      } catch {
+        /*
+         * کاربر مهمان است.
+         */
+        setUser(null);
+        setAddresses([]);
+      } finally {
+        setIsLoadingUser(false);
+      }
+    };
+
+    loadUser();
+  }, []);
+
+  /*
+   * انتخاب آدرس ذخیره‌شده
+   */
+  const handleSelectAddress = (
+    selectedAddress: Address
+  ) => {
+    setSelectedAddressId(
+      selectedAddress._id
+    );
+
+    setIsNewAddress(false);
+
+    setProvince(
+      selectedAddress.province || ""
+    );
+
+    setCity(
+      selectedAddress.city || ""
+    );
+
+    setAddress(
+      selectedAddress.address || ""
+    );
+
+    setPostalCode(
+      selectedAddress.postalCode || ""
+    );
+  };
+
+  /*
+   * انتخاب آدرس جدید
+   */
+  const handleNewAddress = () => {
+    setSelectedAddressId(null);
+    setIsNewAddress(true);
+
+    setProvince("");
+    setCity("");
+    setAddress("");
+    setPostalCode("");
+  };
+
+  /*
+   * نمایش لودینگ اولیه
+   */
+  if (
+    isCheckingCart ||
+    isLoadingUser
+  ) {
     return (
       <div className="mx-auto flex min-h-[600px] max-w-7xl items-center justify-center px-4">
         <div className="text-center">
           <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-neutral-200 border-t-black" />
 
           <p className="mt-4 text-sm text-neutral-500">
-            در حال بررسی سبد خرید...
+            در حال آماده‌سازی ثبت سفارش...
           </p>
         </div>
       </div>
@@ -69,12 +232,14 @@ export default function CheckoutPage() {
 
   const totalAmount = items.reduce(
     (total, item) =>
-      total + item.price * item.quantity,
+      total +
+      item.price * item.quantity,
     0
   );
 
   const totalItems = items.reduce(
-    (total, item) => total + item.quantity,
+    (total, item) =>
+      total + item.quantity,
     0
   );
 
@@ -106,17 +271,19 @@ export default function CheckoutPage() {
         note: note.trim(),
       };
 
-      const data = await createOrder(payload);
+      const data =
+        await createOrder(payload);
 
-      console.log("Order created:", data);
-
-      const orderNumber = data.order.orderNumber;
+      const orderNumber =
+        data.order.orderNumber;
 
       if (!orderNumber) {
         throw new Error(
           "شماره سفارش از Backend دریافت نشد."
         );
       }
+
+      setIsOrderCompleted(true);
 
       clearCart();
 
@@ -157,7 +324,8 @@ export default function CheckoutPage() {
       </div>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
-        {/* Customer Information */}
+
+        {/* اطلاعات مشتری */}
         <form
           onSubmit={handleSubmit}
           className="rounded-2xl border border-neutral-200 bg-white p-6 md:p-8"
@@ -167,6 +335,8 @@ export default function CheckoutPage() {
           </h2>
 
           <div className="mt-6 grid gap-5 md:grid-cols-2">
+
+            {/* نام */}
             <div>
               <label
                 htmlFor="name"
@@ -180,13 +350,16 @@ export default function CheckoutPage() {
                 type="text"
                 value={name}
                 onChange={(event) =>
-                  setName(event.target.value)
+                  setName(
+                    event.target.value
+                  )
                 }
                 required
                 className="h-12 w-full rounded-xl border border-neutral-300 bg-white px-4 outline-none transition focus:border-black"
               />
             </div>
 
+            {/* شماره */}
             <div>
               <label
                 htmlFor="phone"
@@ -200,92 +373,229 @@ export default function CheckoutPage() {
                 type="tel"
                 value={phone}
                 onChange={(event) =>
-                  setPhone(event.target.value)
+                  setPhone(
+                    event.target.value
+                  )
                 }
                 required
                 className="h-12 w-full rounded-xl border border-neutral-300 bg-white px-4 outline-none transition focus:border-black"
               />
             </div>
 
-            <div>
-              <label
-                htmlFor="province"
-                className="mb-2 block text-sm font-medium"
-              >
-                استان
-              </label>
+            {/* آدرس‌های ذخیره‌شده */}
+            {user &&
+              addresses.length > 0 && (
+                <div className="md:col-span-2">
+                  <div className="mb-3 flex items-center justify-between">
+                    <div>
+                      <h3 className="font-semibold">
+                        آدرس ارسال
+                      </h3>
 
-              <input
-                id="province"
-                type="text"
-                value={province}
-                onChange={(event) =>
-                  setProvince(event.target.value)
-                }
-                required
-                className="h-12 w-full rounded-xl border border-neutral-300 bg-white px-4 outline-none transition focus:border-black"
-              />
-            </div>
+                      <p className="mt-1 text-sm text-neutral-500">
+                        یکی از آدرس‌های ذخیره‌شده را انتخاب کنید.
+                      </p>
+                    </div>
+                  </div>
 
-            <div>
-              <label
-                htmlFor="city"
-                className="mb-2 block text-sm font-medium"
-              >
-                شهر
-              </label>
+                  <div className="space-y-3">
+                    {addresses.map(
+                      (savedAddress) => {
+                        const isSelected =
+                          selectedAddressId ===
+                          savedAddress._id;
 
-              <input
-                id="city"
-                type="text"
-                value={city}
-                onChange={(event) =>
-                  setCity(event.target.value)
-                }
-                required
-                className="h-12 w-full rounded-xl border border-neutral-300 bg-white px-4 outline-none transition focus:border-black"
-              />
-            </div>
+                        return (
+                          <button
+                            key={
+                              savedAddress._id
+                            }
+                            type="button"
+                            onClick={() =>
+                              handleSelectAddress(
+                                savedAddress
+                              )
+                            }
+                            className={`w-full rounded-2xl border p-4 text-right transition ${
+                              isSelected
+                                ? "border-black bg-neutral-50"
+                                : "border-neutral-200 hover:border-neutral-400"
+                            }`}
+                          >
+                            <div className="flex items-start gap-3">
+                              <div
+                                className={`mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
+                                  isSelected
+                                    ? "border-black"
+                                    : "border-neutral-300"
+                                }`}
+                              >
+                                {isSelected && (
+                                  <div className="h-2.5 w-2.5 rounded-full bg-black" />
+                                )}
+                              </div>
 
-            <div className="md:col-span-2">
-              <label
-                htmlFor="postalCode"
-                className="mb-2 block text-sm font-medium"
-              >
-                کد پستی
-              </label>
+                              <div className="min-w-0">
+                                <p className="font-semibold">
+                                  {
+                                    savedAddress.title
+                                  }
+                                </p>
 
-              <input
-                id="postalCode"
-                type="text"
-                value={postalCode}
-                onChange={(event) =>
-                  setPostalCode(event.target.value)
-                }
-                className="h-12 w-full rounded-xl border border-neutral-300 bg-white px-4 outline-none transition focus:border-black"
-              />
-            </div>
+                                <p className="mt-1 text-sm text-neutral-500">
+                                  {
+                                    savedAddress.province
+                                  }{" "}
+                                  -{" "}
+                                  {
+                                    savedAddress.city
+                                  }
+                                </p>
 
-            <div className="md:col-span-2">
-              <label
-                htmlFor="address"
-                className="mb-2 block text-sm font-medium"
-              >
-                آدرس
-              </label>
+                                <p className="mt-1 text-sm leading-6 text-neutral-600">
+                                  {
+                                    savedAddress.address
+                                  }
+                                </p>
 
-              <textarea
-                id="address"
-                value={address}
-                onChange={(event) =>
-                  setAddress(event.target.value)
-                }
-                required
-                rows={4}
-                className="w-full resize-none rounded-xl border border-neutral-300 bg-white px-4 py-3 outline-none transition focus:border-black"
-              />
-            </div>
+                                {savedAddress.postalCode && (
+                                  <p className="mt-1 text-xs text-neutral-400">
+                                    کد پستی:{" "}
+                                    {
+                                      savedAddress.postalCode
+                                    }
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          </button>
+                        );
+                      }
+                    )}
 
+                    <button
+                      type="button"
+                      onClick={
+                        handleNewAddress
+                      }
+                      className={`w-full rounded-2xl border border-dashed p-4 text-right transition ${
+                        isNewAddress
+                          ? "border-black bg-neutral-50"
+                          : "border-neutral-300 hover:border-neutral-500"
+                      }`}
+                    >
+                      <span className="font-semibold">
+                        + استفاده از آدرس جدید
+                      </span>
+
+                      <p className="mt-1 text-sm text-neutral-500">
+                        وارد کردن آدرس جدید برای این سفارش
+                      </p>
+                    </button>
+                  </div>
+                </div>
+              )}
+
+            {/* فرم آدرس */}
+            {(!user ||
+              addresses.length === 0 ||
+              isNewAddress ||
+              selectedAddressId) && (
+              <>
+                {/* استان */}
+                <div>
+                  <label
+                    htmlFor="province"
+                    className="mb-2 block text-sm font-medium"
+                  >
+                    استان
+                  </label>
+
+                  <input
+                    id="province"
+                    type="text"
+                    value={province}
+                    onChange={(event) =>
+                      setProvince(
+                        event.target.value
+                      )
+                    }
+                    required
+                    className="h-12 w-full rounded-xl border border-neutral-300 bg-white px-4 outline-none transition focus:border-black"
+                  />
+                </div>
+
+                {/* شهر */}
+                <div>
+                  <label
+                    htmlFor="city"
+                    className="mb-2 block text-sm font-medium"
+                  >
+                    شهر
+                  </label>
+
+                  <input
+                    id="city"
+                    type="text"
+                    value={city}
+                    onChange={(event) =>
+                      setCity(
+                        event.target.value
+                      )
+                    }
+                    required
+                    className="h-12 w-full rounded-xl border border-neutral-300 bg-white px-4 outline-none transition focus:border-black"
+                  />
+                </div>
+
+                {/* کد پستی */}
+                <div className="md:col-span-2">
+                  <label
+                    htmlFor="postalCode"
+                    className="mb-2 block text-sm font-medium"
+                  >
+                    کد پستی
+                  </label>
+
+                  <input
+                    id="postalCode"
+                    type="text"
+                    value={postalCode}
+                    onChange={(event) =>
+                      setPostalCode(
+                        event.target.value
+                      )
+                    }
+                    className="h-12 w-full rounded-xl border border-neutral-300 bg-white px-4 outline-none transition focus:border-black"
+                  />
+                </div>
+
+                {/* آدرس */}
+                <div className="md:col-span-2">
+                  <label
+                    htmlFor="address"
+                    className="mb-2 block text-sm font-medium"
+                  >
+                    آدرس
+                  </label>
+
+                  <textarea
+                    id="address"
+                    value={address}
+                    onChange={(event) =>
+                      setAddress(
+                        event.target.value
+                      )
+                    }
+                    required
+                    rows={4}
+                    className="w-full resize-none rounded-xl border border-neutral-300 bg-white px-4 py-3 outline-none transition focus:border-black"
+                  />
+                </div>
+              </>
+            )}
+
+            {/* توضیحات */}
             <div className="md:col-span-2">
               <label
                 htmlFor="note"
@@ -298,7 +608,9 @@ export default function CheckoutPage() {
                 id="note"
                 value={note}
                 onChange={(event) =>
-                  setNote(event.target.value)
+                  setNote(
+                    event.target.value
+                  )
                 }
                 rows={4}
                 placeholder="اگر توضیح خاصی درباره سفارش دارید..."
@@ -324,7 +636,7 @@ export default function CheckoutPage() {
           </button>
         </form>
 
-        {/* Order Summary */}
+        {/* خلاصه سفارش */}
         <aside className="h-fit rounded-2xl border border-neutral-200 bg-neutral-50 p-6 lg:sticky lg:top-28">
           <h2 className="text-xl font-bold">
             خلاصه سفارش
@@ -356,7 +668,8 @@ export default function CheckoutPage() {
                   </h3>
 
                   <p className="mt-1 text-xs text-neutral-500">
-                    {item.size} / {item.color}
+                    {item.size} /{" "}
+                    {item.color}
                   </p>
 
                   <p className="mt-1 text-xs text-neutral-500">
@@ -368,8 +681,11 @@ export default function CheckoutPage() {
 
                   <p className="mt-2 text-sm font-semibold">
                     {(
-                      item.price * item.quantity
-                    ).toLocaleString("fa-IR")}{" "}
+                      item.price *
+                      item.quantity
+                    ).toLocaleString(
+                      "fa-IR"
+                    )}{" "}
                     تومان
                   </p>
                 </div>
@@ -384,7 +700,10 @@ export default function CheckoutPage() {
               </span>
 
               <span className="font-medium">
-                {totalItems.toLocaleString("fa-IR")} عدد
+                {totalItems.toLocaleString(
+                  "fa-IR"
+                )}{" "}
+                عدد
               </span>
             </div>
 
@@ -406,4 +725,3 @@ export default function CheckoutPage() {
     </div>
   );
 }
-

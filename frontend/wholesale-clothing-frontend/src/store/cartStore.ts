@@ -22,22 +22,31 @@ type CartState = {
   items: CartItem[];
 
   addItem: (item: CartItem) => void;
-  removeItem: (
-    productId: string,
-    variantId: string
-  ) => void;
+  removeItem: (productId: string, variantId: string) => void;
+
   updateQuantity: (
     productId: string,
     variantId: string,
     quantity: number
   ) => void;
+
   clearCart: () => void;
+
+  hasHydrated: boolean;
+  setHasHydrated: (value: boolean) => void;
 };
 
 const useCartStore = create<CartState>()(
   persist(
     (set) => ({
       items: [],
+
+      hasHydrated: false,
+
+      setHasHydrated: (value) =>
+        set({
+          hasHydrated: value,
+        }),
 
       addItem: (item) =>
         set((state) => {
@@ -49,19 +58,25 @@ const useCartStore = create<CartState>()(
 
           if (existingItem) {
             return {
-              items: state.items.map((cartItem) =>
-                cartItem.productId === item.productId &&
-                cartItem.variantId === item.variantId
-                  ? {
-                      ...cartItem,
-                      quantity: Math.min(
-                        cartItem.quantity +
-                          item.quantity,
-                        cartItem.stock
-                      ),
-                    }
-                  : cartItem
-              ),
+              items: state.items.map((cartItem) => {
+                if (
+                  cartItem.productId === item.productId &&
+                  cartItem.variantId === item.variantId
+                ) {
+                  const newQuantity =
+                    cartItem.quantity + item.quantity;
+
+                  return {
+                    ...cartItem,
+                    quantity: Math.min(
+                      newQuantity,
+                      cartItem.stock
+                    ),
+                  };
+                }
+
+                return cartItem;
+              }),
             };
           }
 
@@ -70,10 +85,7 @@ const useCartStore = create<CartState>()(
           };
         }),
 
-      removeItem: (
-        productId,
-        variantId
-      ) =>
+      removeItem: (productId, variantId) =>
         set((state) => ({
           items: state.items.filter(
             (item) =>
@@ -92,21 +104,26 @@ const useCartStore = create<CartState>()(
         set((state) => ({
           items: state.items.map((item) => {
             if (
-              item.productId !== productId ||
-              item.variantId !== variantId
+              item.productId === productId &&
+              item.variantId === variantId
             ) {
-              return item;
+              const minQuantity =
+                item.minimumOrderQuantity;
+
+              const maxQuantity = item.stock;
+
+              const safeQuantity = Math.max(
+                minQuantity,
+                Math.min(quantity, maxQuantity)
+              );
+
+              return {
+                ...item,
+                quantity: safeQuantity,
+              };
             }
 
-            const safeQuantity = Math.max(
-              item.minimumOrderQuantity,
-              Math.min(quantity, item.stock)
-            );
-
-            return {
-              ...item,
-              quantity: safeQuantity,
-            };
+            return item;
           }),
         })),
 
@@ -115,8 +132,27 @@ const useCartStore = create<CartState>()(
           items: [],
         }),
     }),
+
     {
       name: "wholesale-cart",
+
+      /*
+       * فقط items را در localStorage ذخیره کن.
+       * hasHydrated وضعیت موقتی برنامه است.
+       */
+      partialize: (state) => ({
+        items: state.items,
+      }),
+
+      /*
+       * بعد از اینکه Zustand اطلاعات localStorage
+       * را خواند، hydration را تمام‌شده اعلام کن.
+       */
+      onRehydrateStorage: () => {
+        return (state) => {
+          state?.setHasHydrated(true);
+        };
+      },
     }
   )
 );

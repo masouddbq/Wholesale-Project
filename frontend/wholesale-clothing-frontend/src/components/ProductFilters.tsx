@@ -1,7 +1,7 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 type Category = {
   _id: string;
@@ -11,46 +11,45 @@ type Category = {
 
 type ProductFiltersProps = {
   categories: Category[];
+  initialSearch?: string;
+  initialCategory?: string;
+  initialMinPrice?: string;
+  initialMaxPrice?: string;
+  initialSort?: string;
 };
 
 export default function ProductFilters({
   categories,
+  initialSearch = "",
+  initialCategory = "",
+  initialMinPrice = "",
+  initialMaxPrice = "",
+  initialSort = "newest",
 }: ProductFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [search, setSearch] = useState(
-    searchParams.get("search") || ""
-  );
+  const [search, setSearch] = useState(initialSearch);
+  const [category, setCategory] = useState(initialCategory);
+  const [minPrice, setMinPrice] = useState(initialMinPrice);
+  const [maxPrice, setMaxPrice] = useState(initialMaxPrice);
+  const [sort, setSort] = useState(initialSort);
 
-  const [minPrice, setMinPrice] = useState(
-    searchParams.get("minPrice") || ""
-  );
-
-  const [maxPrice, setMaxPrice] = useState(
-    searchParams.get("maxPrice") || ""
-  );
-
-  const [sort, setSort] = useState(
-    searchParams.get("sort") || ""
-  );
-
-  const currentCategory =
-    searchParams.get("category") || "";
-
-  const handleSubmit = (
-    event: FormEvent<HTMLFormElement>
-  ) => {
+  const updateUrl = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const params = new URLSearchParams(
-      searchParams.toString()
-    );
+    const params = new URLSearchParams(searchParams.toString());
 
     if (search.trim()) {
       params.set("search", search.trim());
     } else {
       params.delete("search");
+    }
+
+    if (category) {
+      params.set("category", category);
+    } else {
+      params.delete("category");
     }
 
     if (minPrice) {
@@ -71,191 +70,160 @@ export default function ProductFilters({
       params.delete("sort");
     }
 
-    params.delete("page");
+    params.set("page", "1");
 
-    const queryString = params.toString();
-
-    router.push(
-      queryString
-        ? `/products?${queryString}`
-        : "/products"
-    );
+    router.push(`/products?${params.toString()}`);
   };
 
-  const handleCategoryChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const category = event.target.value;
+  const resetFilters = () => {
+    setSearch("");
+    setCategory("");
+    setMinPrice("");
+    setMaxPrice("");
+    setSort("newest");
 
-    const params = new URLSearchParams(
-      searchParams.toString()
-    );
-
-    if (category) {
-      params.set("category", category);
-    } else {
-      params.delete("category");
-    }
-
-    params.delete("page");
-
-    const queryString = params.toString();
-
-    router.push(
-      queryString
-        ? `/products?${queryString}`
-        : "/products"
-    );
+    router.push("/products");
   };
 
   return (
-    <div className="mb-10 rounded-2xl border border-neutral-200 bg-neutral-50 p-4 md:p-6">
-      <form
-        onSubmit={handleSubmit}
-        className="grid gap-4 md:grid-cols-2 lg:grid-cols-6"
-      >
-        {/* Search */}
-        <div className="lg:col-span-2">
-          <label
-            htmlFor="search"
-            className="mb-2 block text-sm font-medium"
-          >
-            جستجوی محصول
-          </label>
-
-          <input
-            id="search"
-            type="text"
-            value={search}
-            onChange={(event) =>
-              setSearch(event.target.value)
-            }
-            placeholder="نام محصول را وارد کنید..."
-            className="h-11 w-full rounded-lg border border-neutral-300 bg-white px-4 outline-none transition focus:border-black"
-          />
-        </div>
-
-        {/* Category */}
+    <div className="rounded-2xl border border-[var(--border)] bg-white p-4 sm:p-5">
+      <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <label
-            htmlFor="category"
-            className="mb-2 block text-sm font-medium"
-          >
-            دسته‌بندی
-          </label>
+          <h2 className="text-base font-bold text-[var(--text-primary)]">
+            جستجو و فیلتر محصولات
+          </h2>
 
-          <select
-            id="category"
-            value={currentCategory}
-            onChange={handleCategoryChange}
-            className="h-11 w-full rounded-lg border border-neutral-300 bg-white px-3 outline-none transition focus:border-black"
-          >
-            <option value="">
-              همه دسته‌بندی‌ها
-            </option>
-
-            {categories.map((category) => (
-              <option
-                key={category._id}
-                value={category.slug}
-              >
-                {category.name}
-              </option>
-            ))}
-          </select>
+          <p className="mt-1 text-xs text-[var(--text-muted)]">
+            محصول موردنظر خود را سریع‌تر پیدا کنید.
+          </p>
         </div>
 
-        {/* Minimum Price */}
-        <div>
-          <label
-            htmlFor="minPrice"
-            className="mb-2 block text-sm font-medium"
-          >
-            حداقل قیمت
-          </label>
+        <button
+          type="button"
+          onClick={resetFilters}
+          className="w-fit text-xs font-medium text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
+        >
+          حذف همه فیلترها
+        </button>
+      </div>
 
-          <input
-            id="minPrice"
-            type="number"
-            min="0"
-            value={minPrice}
-            onChange={(event) =>
-              setMinPrice(event.target.value)
-            }
-            placeholder="مثلاً 100000"
-            className="h-11 w-full rounded-lg border border-neutral-300 bg-white px-4 outline-none transition focus:border-black"
-          />
-        </div>
+      <form onSubmit={updateUrl}>
+        <div className="grid gap-4 lg:grid-cols-12">
+          {/* Search */}
+          <div className="lg:col-span-4">
+            <label
+              htmlFor="search"
+              className="mb-2 block text-xs font-medium text-[var(--text-secondary)]"
+            >
+              جستجو
+            </label>
 
-        {/* Maximum Price */}
-        <div>
-          <label
-            htmlFor="maxPrice"
-            className="mb-2 block text-sm font-medium"
-          >
-            حداکثر قیمت
-          </label>
+            <input
+              id="search"
+              type="text"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="نام محصول را وارد کنید..."
+              className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-muted)] px-4 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)] focus:border-[var(--border-strong)] focus:bg-white focus:ring-2 focus:ring-black/5"
+            />
+          </div>
 
-          <input
-            id="maxPrice"
-            type="number"
-            min="0"
-            value={maxPrice}
-            onChange={(event) =>
-              setMaxPrice(event.target.value)
-            }
-            placeholder="مثلاً 500000"
-            className="h-11 w-full rounded-lg border border-neutral-300 bg-white px-4 outline-none transition focus:border-black"
-          />
-        </div>
+          {/* Category */}
+          <div className="lg:col-span-3">
+            <label
+              htmlFor="category"
+              className="mb-2 block text-xs font-medium text-[var(--text-secondary)]"
+            >
+              دسته‌بندی
+            </label>
 
-        {/* Sort */}
-        <div>
-          <label
-            htmlFor="sort"
-            className="mb-2 block text-sm font-medium"
-          >
-            مرتب‌سازی
-          </label>
+            <select
+              id="category"
+              value={category}
+              onChange={(event) => setCategory(event.target.value)}
+              className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-muted)] px-4 text-sm text-[var(--text-primary)] outline-none transition focus:border-[var(--border-strong)] focus:bg-white focus:ring-2 focus:ring-black/5"
+            >
+              <option value="">همه دسته‌بندی‌ها</option>
 
-          <select
-            id="sort"
-            value={sort}
-            onChange={(event) =>
-              setSort(event.target.value)
-            }
-            className="h-11 w-full rounded-lg border border-neutral-300 bg-white px-3 outline-none transition focus:border-black"
-          >
-            <option value="">
-              پیش‌فرض
-            </option>
+              {categories.map((item) => (
+                <option key={item._id} value={item.slug}>
+                  {item.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-            <option value="newest">
-              جدیدترین
-            </option>
+          {/* Sort */}
+          <div className="lg:col-span-2">
+            <label
+              htmlFor="sort"
+              className="mb-2 block text-xs font-medium text-[var(--text-secondary)]"
+            >
+              مرتب‌سازی
+            </label>
 
-            <option value="oldest">
-              قدیمی‌ترین
-            </option>
+            <select
+              id="sort"
+              value={sort}
+              onChange={(event) => setSort(event.target.value)}
+              className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-muted)] px-4 text-sm text-[var(--text-primary)] outline-none transition focus:border-[var(--border-strong)] focus:bg-white focus:ring-2 focus:ring-black/5"
+            >
+              <option value="newest">جدیدترین</option>
+              <option value="oldest">قدیمی‌ترین</option>
+              <option value="price_asc">ارزان‌ترین</option>
+              <option value="price_desc">گران‌ترین</option>
+            </select>
+          </div>
 
-            <option value="price_asc">
-              ارزان‌ترین
-            </option>
+          {/* Min Price */}
+          <div className="lg:col-span-1">
+            <label
+              htmlFor="minPrice"
+              className="mb-2 block text-xs font-medium text-[var(--text-secondary)]"
+            >
+              حداقل
+            </label>
 
-            <option value="price_desc">
-              گران‌ترین
-            </option>
-          </select>
-        </div>
+            <input
+              id="minPrice"
+              type="number"
+              min="0"
+              value={minPrice}
+              onChange={(event) => setMinPrice(event.target.value)}
+              placeholder="۰"
+              className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-muted)] px-3 text-sm text-[var(--text-primary)] outline-none transition focus:border-[var(--border-strong)] focus:bg-white focus:ring-2 focus:ring-black/5"
+            />
+          </div>
 
-        {/* Submit */}
-        <div className="flex items-end">
-          <button
-            type="submit"
-            className="h-11 w-full rounded-lg bg-black px-6 font-medium text-white transition hover:bg-neutral-800"
-          >
-            اعمال فیلتر
-          </button>
+          {/* Max Price */}
+          <div className="lg:col-span-1">
+            <label
+              htmlFor="maxPrice"
+              className="mb-2 block text-xs font-medium text-[var(--text-secondary)]"
+            >
+              حداکثر
+            </label>
+
+            <input
+              id="maxPrice"
+              type="number"
+              min="0"
+              value={maxPrice}
+              onChange={(event) => setMaxPrice(event.target.value)}
+              placeholder="۰"
+              className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-muted)] px-3 text-sm text-[var(--text-primary)] outline-none transition focus:border-[var(--border-strong)] focus:bg-white focus:ring-2 focus:ring-black/5"
+            />
+          </div>
+
+          {/* Submit */}
+          <div className="flex items-end lg:col-span-1">
+            <button
+              type="submit"
+              className="h-11 w-full rounded-xl bg-[var(--primary)] px-4 text-sm font-medium text-white transition hover:bg-[var(--primary-hover)]"
+            >
+              اعمال
+            </button>
+          </div>
         </div>
       </form>
     </div>

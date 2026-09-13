@@ -14,29 +14,24 @@ export default async function OrderSuccessPage({
   return (
     <div className="mx-auto flex min-h-[650px] max-w-7xl items-center justify-center px-4 py-16">
       <div className="w-full max-w-xl rounded-3xl border border-neutral-200 bg-white p-8 text-center shadow-sm md:p-12">
-        {/* Success Icon */}
         <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-green-100 text-4xl text-green-600">
           ✓
         </div>
 
-        {/* Status */}
         <p className="mt-8 text-sm font-medium text-green-600">
           سفارش با موفقیت ثبت شد
         </p>
 
-        {/* Title */}
         <h1 className="mt-3 text-3xl font-bold md:text-4xl">
           ممنون از ثبت سفارش شما
         </h1>
 
-        {/* Description */}
         <p className="mx-auto mt-5 max-w-md leading-8 text-neutral-500">
           سفارش شما با موفقیت ثبت شده است.
           کارشناسان ما برای هماهنگی و ادامه مراحل
           سفارش با شما تماس خواهند گرفت.
         </p>
 
-        {/* Order Number */}
         <div className="mt-8 rounded-2xl bg-neutral-50 p-5">
           <p className="text-sm text-neutral-500">
             شماره سفارش
@@ -50,7 +45,6 @@ export default async function OrderSuccessPage({
           </p>
         </div>
 
-        {/* Actions */}
         <div className="mt-8 grid gap-3 sm:grid-cols-2">
           <Link
             href="/account/orders"
@@ -67,7 +61,6 @@ export default async function OrderSuccessPage({
           </Link>
         </div>
 
-        {/* Home */}
         <Link
           href="/"
           className="mt-6 inline-block text-sm text-neutral-500 underline underline-offset-4 transition hover:text-black"
@@ -78,4 +71,3 @@ export default async function OrderSuccessPage({
     </div>
   );
 }
-
