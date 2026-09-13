@@ -1,6 +1,6 @@
 const express = require("express");
 
-const { register, login, getMe } = require("../controllers/authController");
+const { register, login, getMe , logout } = require("../controllers/authController");
 
 const { authLimiter } = require("../middlewares/rateLimitMiddleware");
 
@@ -25,5 +25,7 @@ router.post(
 router.post("/login", authLimiter, validate(loginSchema), asyncHandler(login));
 
 router.get("/me", protect, asyncHandler(getMe));
+
+router.post("/logout", logout);
 
 module.exports = router;

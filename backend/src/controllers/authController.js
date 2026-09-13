@@ -91,8 +91,24 @@ const getMe = async (req, res) => {
   });
 };
 
+const logout = async (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.COOKIE_SECURE === "true",
+    sameSite: process.env.COOKIE_SAME_SITE || "lax",
+    path: "/",
+  });
+
+  res.status(200).json({
+    message: "Logout successful",
+  });
+};
+
+
+
 module.exports = {
   register,
   login,
   getMe,
+  logout,
 };
