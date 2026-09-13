@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Vazirmatn } from "next/font/google";
 
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -17,7 +18,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fa" dir="rtl">
+    <html
+      lang="fa"
+      dir="rtl"
+    >
       <body>
         <AuthInitializer />
 
