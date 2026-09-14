@@ -1,5 +1,6 @@
 const Product = require("../models/Product");
 const Category = require("../models/Category");
+const mongoose = require("mongoose");
 
 // POST /api/products
 const createProduct = async (req, res) => {
@@ -272,10 +273,161 @@ const deleteProduct = async (req, res) => {
   });
 };
 
+const getProductById = async (req, res) => {
+  const { id } = req.params;
+
+  if (!mongoose.isValidObjectId(id)) {
+    return res.status(400).json({
+      message: "Invalid product id",
+    });
+  }
+
+  const product = await Product.findById(id).populate(
+    "category",
+    "name slug"
+  );
+
+  if (!product) {
+    return res.status(404).json({
+      message: "Product not found",
+    });
+  }
+
+  res.status(200).json({
+    product,
+  });
+};
+
+const getAdminProducts = async (req, res) => {
+  const {
+    search,
+    category,
+    minPrice,
+    maxPrice,
+    sort = "newest",
+    page = 1,
+    limit = 20,
+  } = req.query;
+
+  const currentPage = Math.max(Number(page), 1);
+
+  const perPage = Math.min(
+    Math.max(Number(limit), 1),
+    100
+  );
+
+  const skip = (currentPage - 1) * perPage;
+
+  // نکته مهم:
+  // اینجا isActive نداریم
+  // چون ادمین باید محصولات فعال و غیرفعال را ببیند.
+  const filter = {};
+
+  if (search) {
+    filter.name = {
+      $regex: search,
+      $options: "i",
+    };
+  }
+
+  if (category) {
+    const categoryDoc = await Category.findOne({
+      slug: category,
+    });
+
+    if (!categoryDoc) {
+      return res.status(200).json({
+        products: [],
+        pagination: {
+          page: currentPage,
+          limit: perPage,
+          total: 0,
+          totalPages: 0,
+        },
+      });
+    }
+
+    filter.category = categoryDoc._id;
+  }
+
+  if (minPrice !== undefined) {
+    const min = Number(minPrice);
+
+    if (Number.isNaN(min) || min < 0) {
+      return res.status(400).json({
+        message: "Invalid minPrice",
+      });
+    }
+
+    filter.price = {
+      ...filter.price,
+      $gte: min,
+    };
+  }
+
+  if (maxPrice !== undefined) {
+    const max = Number(maxPrice);
+
+    if (Number.isNaN(max) || max < 0) {
+      return res.status(400).json({
+        message: "Invalid maxPrice",
+      });
+    }
+
+    filter.price = {
+      ...filter.price,
+      $lte: max,
+    };
+  }
+
+  const sortOptions = {
+    newest: { createdAt: -1 },
+    oldest: { createdAt: 1 },
+    price_asc: { price: 1 },
+    price_desc: { price: -1 },
+    name_asc: { name: 1 },
+    name_desc: { name: -1 },
+  };
+
+  const selectedSort =
+    sortOptions[sort] ||
+    sortOptions.newest;
+
+  const [products, total] =
+    await Promise.all([
+      Product.find(filter)
+        .populate(
+          "category",
+          "name slug"
+        )
+        .sort(selectedSort)
+        .skip(skip)
+        .limit(perPage),
+
+      Product.countDocuments(filter),
+    ]);
+
+  const totalPages = Math.ceil(
+    total / perPage
+  );
+
+  res.status(200).json({
+    products,
+    pagination: {
+      page: currentPage,
+      limit: perPage,
+      total,
+      totalPages,
+    },
+  });
+};
+
 module.exports = {
   createProduct,
   getProducts,
   getProductBySlug,
   updateProduct,
   deleteProduct,
+  getProductById,
+  getAdminProducts,
 };

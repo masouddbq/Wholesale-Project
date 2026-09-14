@@ -6,6 +6,8 @@ const {
   getProductBySlug,
   updateProduct,
   deleteProduct,
+  getProductById,
+  getAdminProducts,
 } = require("../controllers/prodsController");
 
 const protect = require("../middlewares/authMiddleware");
@@ -31,6 +33,20 @@ router.post(
 router.get(
   "/",
   asyncHandler(getProducts)
+);
+
+router.get(
+  "/id/:id",
+  protect,
+  adminOnly,
+  asyncHandler(getProductById)
+);
+
+router.get(
+  "/admin",
+  protect,
+  adminOnly,
+  asyncHandler(getAdminProducts)
 );
 
 router.get(

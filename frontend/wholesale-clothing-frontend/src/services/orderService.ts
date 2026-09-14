@@ -111,3 +111,108 @@ export const getAdminOrders = async (
 
   return response.data;
 };
+
+export type AdminOrderDetail = {
+  _id: string;
+
+  orderNumber: string;
+
+  user?: string | null;
+
+  customer: {
+    name: string;
+    phone: string;
+    province: string;
+    city: string;
+    address: string;
+    postalCode?: string;
+  };
+
+  items: {
+    product: string;
+    name: string;
+    image?: string;
+    price: number;
+    quantity: number;
+    size?: string;
+    color?: string;
+    sku?: string;
+  }[];
+
+  totalAmount: number;
+
+  status:
+    | "pending"
+    | "confirmed"
+    | "preparing"
+    | "shipped"
+    | "completed"
+    | "cancelled";
+
+  paymentStatus: "unpaid" | "paid";
+
+  note?: string;
+
+  statusHistory: {
+    _id: string;
+
+    status:
+      | "pending"
+      | "confirmed"
+      | "preparing"
+      | "shipped"
+      | "completed"
+      | "cancelled";
+
+    previousStatus:
+      | "pending"
+      | "confirmed"
+      | "preparing"
+      | "shipped"
+      | "completed"
+      | "cancelled"
+      | null;
+
+    changedBy?: {
+      _id: string;
+      name: string;
+      phone: string;
+    } | null;
+
+    changedAt: string;
+  }[];
+
+  createdAt: string;
+  updatedAt: string;
+};
+
+export const getAdminOrderById = async (
+  orderId: string
+) => {
+  const response = await apiClient.get<{
+    order: AdminOrderDetail;
+  }>(`/orders/${orderId}`);
+
+  return response.data.order;
+};
+
+export type OrderStatus =
+  | "pending"
+  | "confirmed"
+  | "preparing"
+  | "shipped"
+  | "completed"
+  | "cancelled";
+
+export const updateAdminOrderStatus = async (
+  orderId: string,
+  status: OrderStatus
+) => {
+  const response = await apiClient.patch(
+    `/orders/${orderId}/status`,
+    { status }
+  );
+
+  return response.data;
+};
+

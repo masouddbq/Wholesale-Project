@@ -1,11 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
-import {
-  getAdminOrders,
-  type AdminOrder,
-} from "@/services/orderService";
+import { getAdminOrders, type AdminOrder } from "@/services/orderService";
 
 const statusOptions = [
   { value: "", label: "همه وضعیت‌ها" },
@@ -53,9 +51,7 @@ export default function AdminOrdersPage() {
       setOrders(data.orders);
       setPagination(data.pagination);
     } catch {
-      setError(
-        "دریافت سفارش‌ها با مشکل مواجه شد."
-      );
+      setError("دریافت سفارش‌ها با مشکل مواجه شد.");
     } finally {
       setIsLoading(false);
     }
@@ -70,16 +66,12 @@ export default function AdminOrdersPage() {
     loadOrders();
   };
 
-  const handleStatusChange = (
-    value: string
-  ) => {
+  const handleStatusChange = (value: string) => {
     setPage(1);
     setStatus(value);
   };
 
-  const handleSortChange = (
-    value: "newest" | "oldest"
-  ) => {
+  const handleSortChange = (value: "newest" | "oldest") => {
     setPage(1);
     setSort(value);
   };
@@ -98,9 +90,7 @@ export default function AdminOrdersPage() {
     }).format(new Date(date));
   };
 
-  const getStatusLabel = (
-    orderStatus: AdminOrder["status"]
-  ) => {
+  const getStatusLabel = (orderStatus: AdminOrder["status"]) => {
     const labels = {
       pending: "در انتظار بررسی",
       confirmed: "تأیید شده",
@@ -113,33 +103,23 @@ export default function AdminOrdersPage() {
     return labels[orderStatus];
   };
 
-  const getStatusClass = (
-    orderStatus: AdminOrder["status"]
-  ) => {
+  const getStatusClass = (orderStatus: AdminOrder["status"]) => {
     const classes = {
-      pending:
-        "bg-amber-100 text-amber-700",
-      confirmed:
-        "bg-blue-100 text-blue-700",
-      preparing:
-        "bg-purple-100 text-purple-700",
-      shipped:
-        "bg-indigo-100 text-indigo-700",
-      completed:
-        "bg-green-100 text-green-700",
-      cancelled:
-        "bg-red-100 text-red-700",
+      pending: "bg-amber-100 text-amber-700",
+      confirmed: "bg-blue-100 text-blue-700",
+      preparing: "bg-purple-100 text-purple-700",
+      shipped: "bg-indigo-100 text-indigo-700",
+      completed: "bg-green-100 text-green-700",
+      cancelled: "bg-red-100 text-red-700",
     };
 
     return classes[orderStatus];
   };
 
   const getPaymentStatusLabel = (
-    paymentStatus: AdminOrder["paymentStatus"]
+    paymentStatus: AdminOrder["paymentStatus"],
   ) => {
-    return paymentStatus === "paid"
-      ? "پرداخت شده"
-      : "پرداخت نشده";
+    return paymentStatus === "paid" ? "پرداخت شده" : "پرداخت نشده";
   };
 
   return (
@@ -147,13 +127,9 @@ export default function AdminOrdersPage() {
       {/* Header */}
 
       <div>
-        <p className="text-sm text-neutral-500">
-          مدیریت فروشگاه
-        </p>
+        <p className="text-sm text-neutral-500">مدیریت فروشگاه</p>
 
-        <h1 className="mt-2 text-3xl font-bold">
-          سفارش‌ها
-        </h1>
+        <h1 className="mt-2 text-3xl font-bold">سفارش‌ها</h1>
 
         <p className="mt-2 text-sm text-neutral-500">
           مشاهده و مدیریت سفارش‌های مشتریان
@@ -183,9 +159,7 @@ export default function AdminOrdersPage() {
               <input
                 type="text"
                 value={search}
-                onChange={(event) =>
-                  setSearch(event.target.value)
-                }
+                onChange={(event) => setSearch(event.target.value)}
                 onKeyDown={(event) => {
                   if (event.key === "Enter") {
                     handleSearch();
@@ -208,22 +182,15 @@ export default function AdminOrdersPage() {
           {/* Status */}
 
           <div>
-            <label className="mb-2 block text-sm font-medium">
-              وضعیت
-            </label>
+            <label className="mb-2 block text-sm font-medium">وضعیت</label>
 
             <select
               value={status}
-              onChange={(event) =>
-                handleStatusChange(event.target.value)
-              }
+              onChange={(event) => handleStatusChange(event.target.value)}
               className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-sm outline-none focus:border-black"
             >
               {statusOptions.map((option) => (
-                <option
-                  key={option.value}
-                  value={option.value}
-                >
+                <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
               ))}
@@ -233,28 +200,18 @@ export default function AdminOrdersPage() {
           {/* Sort */}
 
           <div>
-            <label className="mb-2 block text-sm font-medium">
-              مرتب‌سازی
-            </label>
+            <label className="mb-2 block text-sm font-medium">مرتب‌سازی</label>
 
             <select
               value={sort}
               onChange={(event) =>
-                handleSortChange(
-                  event.target.value as
-                    | "newest"
-                    | "oldest"
-                )
+                handleSortChange(event.target.value as "newest" | "oldest")
               }
               className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-sm outline-none focus:border-black"
             >
-              <option value="newest">
-                جدیدترین
-              </option>
+              <option value="newest">جدیدترین</option>
 
-              <option value="oldest">
-                قدیمی‌ترین
-              </option>
+              <option value="oldest">قدیمی‌ترین</option>
             </select>
           </div>
 
@@ -283,9 +240,7 @@ export default function AdminOrdersPage() {
         <p className="text-sm text-neutral-500">
           {isLoading
             ? "در حال دریافت..."
-            : `${pagination.total.toLocaleString(
-                "fa-IR"
-              )} سفارش`}
+            : `${pagination.total.toLocaleString("fa-IR")} سفارش`}
         </p>
       </div>
 
@@ -309,25 +264,15 @@ export default function AdminOrdersPage() {
                     شماره سفارش
                   </th>
 
-                  <th className="px-5 py-4 text-sm font-semibold">
-                    مشتری
-                  </th>
+                  <th className="px-5 py-4 text-sm font-semibold">مشتری</th>
 
-                  <th className="px-5 py-4 text-sm font-semibold">
-                    مبلغ
-                  </th>
+                  <th className="px-5 py-4 text-sm font-semibold">مبلغ</th>
 
-                  <th className="px-5 py-4 text-sm font-semibold">
-                    وضعیت
-                  </th>
+                  <th className="px-5 py-4 text-sm font-semibold">وضعیت</th>
 
-                  <th className="px-5 py-4 text-sm font-semibold">
-                    پرداخت
-                  </th>
+                  <th className="px-5 py-4 text-sm font-semibold">پرداخت</th>
 
-                  <th className="px-5 py-4 text-sm font-semibold">
-                    تاریخ
-                  </th>
+                  <th className="px-5 py-4 text-sm font-semibold">تاریخ</th>
                 </tr>
               </thead>
 
@@ -338,12 +283,12 @@ export default function AdminOrdersPage() {
                     className="border-b border-neutral-100 last:border-b-0 hover:bg-neutral-50"
                   >
                     <td className="px-5 py-4">
-                      <span
-                        dir="ltr"
-                        className="text-sm font-semibold"
+                      <Link
+                        href={`/admin/orders/${order._id}`}
+                        className="inline-block text-sm font-semibold transition hover:underline"
                       >
-                        {order.orderNumber}
-                      </span>
+                        <span dir="ltr">{order.orderNumber}</span>
+                      </Link>
                     </td>
 
                     <td className="px-5 py-4">
@@ -352,10 +297,7 @@ export default function AdminOrdersPage() {
                           {order.customer.name}
                         </p>
 
-                        <p
-                          dir="ltr"
-                          className="mt-1 text-xs text-neutral-500"
-                        >
+                        <p dir="ltr" className="mt-1 text-xs text-neutral-500">
                           {order.customer.phone}
                         </p>
                       </div>
@@ -363,9 +305,7 @@ export default function AdminOrdersPage() {
 
                     <td className="px-5 py-4">
                       <span className="text-sm font-medium">
-                        {formatPrice(
-                          order.totalAmount
-                        )}
+                        {formatPrice(order.totalAmount)}
                       </span>
 
                       <span className="mr-1 text-xs text-neutral-500">
@@ -376,35 +316,28 @@ export default function AdminOrdersPage() {
                     <td className="px-5 py-4">
                       <span
                         className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getStatusClass(
-                          order.status
+                          order.status,
                         )}`}
                       >
-                        {getStatusLabel(
-                          order.status
-                        )}
+                        {getStatusLabel(order.status)}
                       </span>
                     </td>
 
                     <td className="px-5 py-4">
                       <span
                         className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${
-                          order.paymentStatus ===
-                          "paid"
+                          order.paymentStatus === "paid"
                             ? "bg-green-100 text-green-700"
                             : "bg-neutral-100 text-neutral-600"
                         }`}
                       >
-                        {getPaymentStatusLabel(
-                          order.paymentStatus
-                        )}
+                        {getPaymentStatusLabel(order.paymentStatus)}
                       </span>
                     </td>
 
                     <td className="px-5 py-4">
                       <span className="text-sm text-neutral-500">
-                        {formatDate(
-                          order.createdAt
-                        )}
+                        {formatDate(order.createdAt)}
                       </span>
                     </td>
                   </tr>
@@ -417,48 +350,34 @@ export default function AdminOrdersPage() {
 
       {/* Pagination */}
 
-      {!isLoading &&
-        pagination.totalPages > 1 && (
-          <div className="mt-5 flex items-center justify-center gap-2">
-            <button
-              type="button"
-              disabled={page === 1}
-              onClick={() =>
-                setPage((current) =>
-                  Math.max(current - 1, 1)
-                )
-              }
-              className="rounded-xl border border-neutral-300 px-4 py-2.5 text-sm transition hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              قبلی
-            </button>
+      {!isLoading && pagination.totalPages > 1 && (
+        <div className="mt-5 flex items-center justify-center gap-2">
+          <button
+            type="button"
+            disabled={page === 1}
+            onClick={() => setPage((current) => Math.max(current - 1, 1))}
+            className="rounded-xl border border-neutral-300 px-4 py-2.5 text-sm transition hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            قبلی
+          </button>
 
-            <div className="rounded-xl bg-black px-4 py-2.5 text-sm text-white">
-              صفحه {page.toLocaleString("fa-IR")} از{" "}
-              {pagination.totalPages.toLocaleString(
-                "fa-IR"
-              )}
-            </div>
-
-            <button
-              type="button"
-              disabled={
-                page === pagination.totalPages
-              }
-              onClick={() =>
-                setPage((current) =>
-                  Math.min(
-                    current + 1,
-                    pagination.totalPages
-                  )
-                )
-              }
-              className="rounded-xl border border-neutral-300 px-4 py-2.5 text-sm transition hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              بعدی
-            </button>
+          <div className="rounded-xl bg-black px-4 py-2.5 text-sm text-white">
+            صفحه {page.toLocaleString("fa-IR")} از{" "}
+            {pagination.totalPages.toLocaleString("fa-IR")}
           </div>
-        )}
+
+          <button
+            type="button"
+            disabled={page === pagination.totalPages}
+            onClick={() =>
+              setPage((current) => Math.min(current + 1, pagination.totalPages))
+            }
+            className="rounded-xl border border-neutral-300 px-4 py-2.5 text-sm transition hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            بعدی
+          </button>
+        </div>
+      )}
     </div>
   );
 }
