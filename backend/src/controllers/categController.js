@@ -1,4 +1,5 @@
 const Category = require("../models/Category");
+const Product = require("../models/Product");
 
 // POST /api/categories
 const createCategory = async (req, res) => {
@@ -26,8 +27,23 @@ const createCategory = async (req, res) => {
 
 // GET /api/categories
 const getCategories = async (req, res) => {
+  const categories = await Category.find({
+    isActive: true,
+  }).sort({
+    createdAt: -1,
+  });
+
+  res.status(200).json({
+    count: categories.length,
+    categories,
+  });
+};
+
+const getAdminCategories = async (req, res) => {
   const categories = await Category.find()
-    .sort({ createdAt: -1 });
+    .sort({
+      createdAt: -1,
+    });
 
   res.status(200).json({
     count: categories.length,
@@ -90,6 +106,7 @@ const updateCategory = async (req, res) => {
 };
 
 // DELETE /api/categories/:id
+
 const deleteCategory = async (req, res) => {
   const category = await Category.findById(
     req.params.id
@@ -101,6 +118,18 @@ const deleteCategory = async (req, res) => {
     });
   }
 
+  const productCount = await Product.countDocuments({
+    category: category._id,
+  });
+
+  if (productCount > 0) {
+    return res.status(400).json({
+      message:
+        "این دسته‌بندی دارای محصول است و قابل حذف نیست.",
+      productCount,
+    });
+  }
+
   await category.deleteOne();
 
   res.status(200).json({
@@ -108,10 +137,12 @@ const deleteCategory = async (req, res) => {
   });
 };
 
+
 module.exports = {
   createCategory,
   getCategories,
   getCategoryBySlug,
   updateCategory,
   deleteCategory,
+  getAdminCategories,
 };

@@ -1,118 +1,60 @@
 const SiteContent = require("../models/siteContents");
 
-const getContentBySlug = async (req, res) => {
-  const content = await SiteContent.findOne({
-    slug: req.params.slug,
-    isActive: true,
-  });
-
-  if (!content) {
-    return res.status(404).json({
-      message: "Content not found",
-    });
-  }
+// GET /api/site-content
+const getSiteContents = async (req, res) => {
+  const contents = await SiteContent.find()
+    .sort({
+      key: 1,
+    })
+    .lean();
 
   res.status(200).json({
-    content,
-  });
-};
-
-const getAllContents = async (req, res) => {
-  const contents = await SiteContent.find().sort({
-    createdAt: -1,
-  });
-
-  res.status(200).json({
-    count: contents.length,
     contents,
   });
 };
 
-const createContent = async (req, res) => {
-  const {
-    title,
-    slug,
-    content,
-    isActive,
-  } = req.body;
-
-  const newContent = await SiteContent.create({
-    title,
-    slug,
-    content,
-    isActive,
-  });
-
-  res.status(201).json({
-    message: "Content created successfully",
-    content: newContent,
-  });
-};
-
-const updateContent = async (req, res) => {
-  const content = await SiteContent.findById(
-    req.params.id
-  );
+// GET /api/site-content/:key
+const getSiteContent = async (req, res) => {
+  const content = await SiteContent.findOne({
+    key: req.params.key,
+  }).lean();
 
   if (!content) {
     return res.status(404).json({
-      message: "Content not found",
+      message: "Site content not found",
     });
   }
 
-  const {
-    title,
-    slug,
-    content: contentText,
-    isActive,
-  } = req.body;
-
-  if (title !== undefined) {
-    content.title = title;
-  }
-
-  if (slug !== undefined) {
-    content.slug = slug;
-  }
-
-  if (contentText !== undefined) {
-    content.content = contentText;
-  }
-
-  if (isActive !== undefined) {
-    content.isActive = isActive;
-  }
-
-  await content.save();
-
   res.status(200).json({
-    message: "Content updated successfully",
     content,
   });
 };
 
-const deleteContent = async (req, res) => {
-  const content = await SiteContent.findById(
-    req.params.id
+// PUT /api/site-content/:key
+const upsertSiteContent = async (req, res) => {
+  const key = req.params.key;
+
+  const content = await SiteContent.findOneAndUpdate(
+    { key },
+    {
+      key,
+      data: req.body,
+    },
+    {
+      new: true,
+      upsert: true,
+      runValidators: true,
+    }
   );
 
-  if (!content) {
-    return res.status(404).json({
-      message: "Content not found",
-    });
-  }
-
-  await content.deleteOne();
-
   res.status(200).json({
-    message: "Content deleted successfully",
+    message: "Site content updated successfully",
+    content,
   });
 };
 
 module.exports = {
-  getContentBySlug,
-  getAllContents,
-  createContent,
-  updateContent,
-  deleteContent,
+  getSiteContents,
+  getSiteContent,
+  upsertSiteContent,
 };

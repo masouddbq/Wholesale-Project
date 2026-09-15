@@ -4,6 +4,7 @@ const {
   createCategory,
   getCategories,
   getCategoryBySlug,
+  getAdminCategories,
   updateCategory,
   deleteCategory,
 } = require("../controllers/categController");
@@ -34,6 +35,19 @@ router.get(
 );
 
 router.get(
+  "/admin",
+  protect,
+  adminOnly,
+  asyncHandler(getAdminCategories)
+);
+
+router.get("/test-admin", (req, res) => {
+  res.json({
+    message: "category admin route works",
+  });
+});
+
+router.get(
   "/:slug",
   asyncHandler(getCategoryBySlug)
 );
@@ -52,5 +66,6 @@ router.delete(
   adminOnly,
   asyncHandler(deleteCategory)
 );
+
 
 module.exports = router;

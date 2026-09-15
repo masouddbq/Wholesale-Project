@@ -37,6 +37,14 @@ app.use("/api", apiLimiter);
 
 app.use(
   "/uploads",
+  (req, res, next) => {
+    res.setHeader(
+      "Cross-Origin-Resource-Policy",
+      "cross-origin"
+    );
+
+    next();
+  },
   express.static(
     path.join(__dirname, "../uploads")
   )
