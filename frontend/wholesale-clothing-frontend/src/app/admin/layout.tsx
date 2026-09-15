@@ -74,6 +74,10 @@ export default function AdminLayout({
       href: "/admin/categories",
     },
     {
+      title: "کاربران",
+      href: "/admin/users",
+    },
+    {
       title: "محتوای سایت",
       href: "/admin/contents",
     },

@@ -23,6 +23,8 @@ export default function Navbar() {
     0
   );
 
+  const isAdmin = user?.role === "admin";
+
   const navItems = [
     { title: "خانه", href: "/" },
     { title: "محصولات", href: "/products" },
@@ -85,8 +87,8 @@ export default function Navbar() {
           </div>
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden items-center gap-8 md:flex">
+        {/* Desktop / Tablet Navigation */}
+        <nav className="hidden items-center gap-4 md:flex lg:gap-8">
           {navItems.map((item) => {
             const active = isActive(item.href);
 
@@ -110,12 +112,12 @@ export default function Navbar() {
           })}
         </nav>
 
-        {/* Desktop Actions */}
-        <div className="hidden items-center gap-2 md:flex">
+        {/* Desktop / Tablet Actions */}
+        <div className="hidden items-center gap-1.5 md:flex lg:gap-2">
           {/* Cart */}
           <Link
             href="/cart"
-            className="relative flex items-center gap-2 rounded-xl border border-[var(--border)] px-4 py-2.5 text-sm font-medium text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface-muted)]"
+            className="relative flex items-center gap-1.5 rounded-xl border border-[var(--border)] px-2.5 py-2 text-xs font-medium text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface-muted)] lg:gap-2 lg:px-4 lg:py-2.5 lg:text-sm"
           >
             <span>سبد خرید</span>
 
@@ -128,17 +130,32 @@ export default function Navbar() {
 
           {isAuthenticated ? (
             <>
+              {/* Admin Panel */}
+              {isAdmin && (
+                <Link
+                  href="/admin"
+                  title="ورود به پنل مدیریت"
+                  className={`rounded-xl border px-2.5 py-2 text-xs font-medium transition lg:px-4 lg:py-2.5 lg:text-sm ${
+                    pathname.startsWith("/admin")
+                      ? "border-[var(--primary)] bg-[var(--primary)] text-white"
+                      : "border-[var(--border)] text-[var(--text-primary)] hover:border-[var(--border-strong)] hover:bg-[var(--surface-muted)]"
+                  }`}
+                >
+                  پنل ادمین
+                </Link>
+              )}
+
               {/* User */}
               <Link
                 href="/account/profile"
                 title="مشاهده پروفایل کاربری"
-                className="group flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-[var(--text-primary)] transition hover:bg-[var(--surface-muted)]"
+                className="group flex min-w-0 items-center gap-1.5 rounded-xl px-2 py-2 text-xs font-medium text-[var(--text-primary)] transition hover:bg-[var(--surface-muted)] lg:gap-2 lg:px-3 lg:py-2.5 lg:text-sm"
               >
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--surface-muted)] text-base transition group-hover:bg-[var(--primary)] group-hover:text-white">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--surface-muted)] text-sm transition group-hover:bg-[var(--primary)] group-hover:text-white lg:h-9 lg:w-9 lg:text-base">
                   👤
                 </span>
 
-                <span className="max-w-[140px] truncate">
+                <span className="max-w-[80px] truncate lg:max-w-[140px]">
                   {user?.name || "کاربر"}
                 </span>
               </Link>
@@ -148,7 +165,7 @@ export default function Navbar() {
                 type="button"
                 onClick={handleLogout}
                 disabled={isLoggingOut}
-                className="rounded-xl border border-red-200 px-4 py-2.5 text-sm font-medium text-[var(--danger)] transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-xl border border-red-200 px-2.5 py-2 text-xs font-medium text-[var(--danger)] transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50 lg:px-4 lg:py-2.5 lg:text-sm"
               >
                 {isLoggingOut ? "در حال خروج..." : "خروج"}
               </button>
@@ -156,7 +173,7 @@ export default function Navbar() {
           ) : (
             <Link
               href="/login"
-              className="rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-medium text-white transition hover:bg-[var(--primary-hover)]"
+              className="rounded-xl bg-[var(--primary)] px-4 py-2 text-xs font-medium text-white transition hover:bg-[var(--primary-hover)] lg:px-5 lg:py-2.5 lg:text-sm"
             >
               ورود
             </Link>
@@ -245,6 +262,21 @@ export default function Navbar() {
                     ←
                   </span>
                 </Link>
+
+                {/* Admin Panel */}
+                {isAdmin && (
+                  <Link
+                    href="/admin"
+                    onClick={closeMenu}
+                    className={`block border-b border-[var(--border)] py-4 text-sm font-bold transition ${
+                      pathname.startsWith("/admin")
+                        ? "text-[var(--primary)]"
+                        : "text-[var(--text-secondary)] hover:text-[var(--primary)]"
+                    }`}
+                  >
+                    پنل ادمین
+                  </Link>
+                )}
 
                 {/* Orders */}
                 <Link
