@@ -80,7 +80,7 @@ export default function AdminPage() {
         {statItems.map((item) => (
           <div
             key={item.title}
-            className="rounded-2xl border border-neutral-200 bg-white p-6"
+            className="rounded-2xl border border-neutral-200 bg-red-50 p-6"
           >
             <p className="text-sm text-neutral-500">
               {item.title}

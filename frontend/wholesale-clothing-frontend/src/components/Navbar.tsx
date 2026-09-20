@@ -18,10 +18,7 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const cartCount = cartItems.reduce(
-    (total, item) => total + item.quantity,
-    0
-  );
+  const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   const isAdmin = user?.role === "admin";
 
@@ -68,17 +65,18 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-white/95 backdrop-blur">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link
-          href="/"
-          className="group flex shrink-0 items-center gap-2"
-        >
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--primary)] text-lg font-bold text-white transition group-hover:bg-[var(--primary-hover)]">
-            W
+        <Link href="/" className="group flex shrink-0 items-center gap-2">
+          <span className="flex object-cover shadow-amber-400 shadow-2xl  h-12 w-12 items-center justify-center rounded-xl bg-[var(--primary)] text-lg font-bold text-yellow-300 transition group-hover:bg-[var(--primary-hover)]">
+            <img
+              className="w-12 h-12 rounded-full object-fill"
+              src="/photo_2026-09-19_08-01-39.jpg"
+              alt=""
+            />
           </span>
 
           <div className="hidden sm:block">
             <p className="text-base font-bold leading-none text-[var(--text-primary)]">
-              Wholesale
+              AM-Clothing
             </p>
 
             <p className="mt-1 text-xs text-[var(--text-muted)]">
@@ -86,7 +84,21 @@ export default function Navbar() {
             </p>
           </div>
         </Link>
-
+        
+        {/* Mobile Brand */}
+        <div className="absolute shadow-2xl shadow-gray-200 left-1/2 -translate-x-1/2 md:hidden">
+          <Link
+            href="/"
+            className="text-base bg-transparent font-bold tracking-wide text-[var(--text-primary)]"
+          >
+            AM-Clothing
+          </Link>
+          <hr />
+          <div className="text-xs text-gray-700 mt-1">
+            <p>فروشگاه عمده پوشاک</p>
+          </div>
+        </div>
+        
         {/* Desktop / Tablet Navigation */}
         <nav className="hidden items-center gap-4 md:flex lg:gap-8">
           {navItems.map((item) => {
@@ -111,7 +123,6 @@ export default function Navbar() {
             );
           })}
         </nav>
-
         {/* Desktop / Tablet Actions */}
         <div className="hidden items-center gap-1.5 md:flex lg:gap-2">
           {/* Cart */}
@@ -179,7 +190,6 @@ export default function Navbar() {
             </Link>
           )}
         </div>
-
         {/* Mobile Menu Button */}
         <button
           type="button"
@@ -188,9 +198,7 @@ export default function Navbar() {
           aria-expanded={isMenuOpen}
           className="flex h-11 w-11 items-center justify-center rounded-xl border border-[var(--border)] text-[var(--text-primary)] transition hover:bg-[var(--surface-muted)] md:hidden"
         >
-          <span className="text-xl">
-            {isMenuOpen ? "×" : "☰"}
-          </span>
+          <span className="text-xl">{isMenuOpen ? "×" : "☰"}</span>
         </button>
       </div>
 
@@ -258,9 +266,7 @@ export default function Navbar() {
                     </span>
                   </div>
 
-                  <span className="text-lg text-[var(--text-muted)]">
-                    ←
-                  </span>
+                  <span className="text-lg text-[var(--text-muted)]">←</span>
                 </Link>
 
                 {/* Admin Panel */}
@@ -303,9 +309,7 @@ export default function Navbar() {
                   disabled={isLoggingOut}
                   className="block w-full py-4 text-right text-sm font-medium text-[var(--danger)] transition hover:bg-red-50 disabled:opacity-50"
                 >
-                  {isLoggingOut
-                    ? "در حال خروج..."
-                    : "خروج از حساب"}
+                  {isLoggingOut ? "در حال خروج..." : "خروج از حساب"}
                 </button>
               </div>
             ) : (

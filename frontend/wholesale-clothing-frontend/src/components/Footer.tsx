@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-[var(--border)] bg-[var(--primary)] text-white">
+    <footer className="border-t border-[var(--border)] bg-red-700 text-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         {/* Main Footer */}
@@ -23,13 +23,13 @@ export default function Footer() {
                   Wholesale
                 </p>
 
-                <p className="mt-1 text-xs text-white/50">
+                <p className="mt-1 text-xs text-white/80">
                   فروشگاه عمده پوشاک
                 </p>
               </div>
             </Link>
 
-            <p className="mt-6 max-w-xs text-sm leading-7 text-white/55">
+            <p className="mt-6 max-w-xs text-sm leading-7 text-white/90">
               تأمین و فروش عمده پوشاک برای فروشگاه‌ها و کسب‌وکارها،
               با تمرکز بر کیفیت، تنوع و تجربه ساده در ثبت سفارش.
             </p>
@@ -53,7 +53,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/"
-                  className="text-sm text-white/55 transition hover:text-white"
+                  className="text-sm text-white/75 transition hover:text-white"
                 >
                   صفحه اصلی
                 </Link>
@@ -62,7 +62,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/products"
-                  className="text-sm text-white/55 transition hover:text-white"
+                  className="text-sm text-white/75 transition hover:text-white"
                 >
                   محصولات
                 </Link>
@@ -71,7 +71,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/categories"
-                  className="text-sm text-white/55 transition hover:text-white"
+                  className="text-sm text-white/75 transition hover:text-white"
                 >
                   دسته‌بندی‌ها
                 </Link>
@@ -80,7 +80,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/cart"
-                  className="text-sm text-white/55 transition hover:text-white"
+                  className="text-sm text-white/75 transition hover:text-white"
                 >
                   سبد خرید
                 </Link>
@@ -98,7 +98,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/about"
-                  className="text-sm text-white/55 transition hover:text-white"
+                  className="text-sm text-white/75 transition hover:text-white"
                 >
                   درباره ما
                 </Link>
@@ -107,7 +107,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/wholesale-guide"
-                  className="text-sm text-white/55 transition hover:text-white"
+                  className="text-sm text-white/75 transition hover:text-white"
                 >
                   راهنمای خرید عمده
                 </Link>
@@ -116,7 +116,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/terms"
-                  className="text-sm text-white/55 transition hover:text-white"
+                  className="text-sm text-white/75 transition hover:text-white"
                 >
                   قوانین و شرایط سفارش
                 </Link>
@@ -125,7 +125,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/account/orders"
-                  className="text-sm text-white/55 transition hover:text-white"
+                  className="text-sm text-white/75 transition hover:text-white"
                 >
                   پیگیری سفارش‌ها
                 </Link>
@@ -143,13 +143,13 @@ export default function Footer() {
 
               {/* Phone */}
               <div>
-                <p className="text-xs text-white/35">
+                <p className="text-xs text-white/55">
                   تلفن
                 </p>
 
                 <a
                   href="tel:+989000000000"
-                  className="mt-1 block text-sm text-white/70 transition hover:text-white"
+                  className="mt-1 block text-sm text-white/90 transition hover:text-white"
                   dir="ltr"
                 >
                   ۰۹۰۰ ۰۰۰ ۰۰۰۰
@@ -158,13 +158,13 @@ export default function Footer() {
 
               {/* Email */}
               <div>
-                <p className="text-xs text-white/35">
+                <p className="text-xs text-white/55">
                   ایمیل
                 </p>
 
                 <a
                   href="mailto:info@example.com"
-                  className="mt-1 block text-sm text-white/70 transition hover:text-white"
+                  className="mt-1 block text-sm text-white/90 transition hover:text-white"
                   dir="ltr"
                 >
                   info@example.com
@@ -173,11 +173,11 @@ export default function Footer() {
 
               {/* Working Hours */}
               <div>
-                <p className="text-xs text-white/35">
+                <p className="text-xs text-white/55">
                   ساعات پاسخگویی
                 </p>
 
-                <p className="mt-1 text-sm text-white/70">
+                <p className="mt-1 text-sm text-white/90">
                   شنبه تا چهارشنبه، ۹ تا ۱۸
                 </p>
               </div>

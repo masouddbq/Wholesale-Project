@@ -30,7 +30,7 @@ export default function CartPage() {
 
           <Link
             href="/products"
-            className="mt-8 inline-block rounded-xl bg-black px-6 py-3 font-medium text-white transition hover:bg-neutral-800"
+            className="mt-8 inline-block rounded-xl bg-red-500 px-6 py-3 font-medium text-white transition hover:bg-red-600"
           >
             مشاهده محصولات
           </Link>

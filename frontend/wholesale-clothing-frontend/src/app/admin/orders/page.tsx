@@ -172,7 +172,7 @@ export default function AdminOrdersPage() {
               <button
                 type="button"
                 onClick={handleSearch}
-                className="rounded-xl bg-black px-5 py-3 text-sm font-medium text-white transition hover:bg-neutral-800"
+                className="rounded-xl bg-red-500 px-5 py-3 text-sm font-medium text-white transition hover:bg-red-800"
               >
                 جستجو
               </button>
@@ -187,7 +187,7 @@ export default function AdminOrdersPage() {
             <select
               value={status}
               onChange={(event) => handleStatusChange(event.target.value)}
-              className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-sm outline-none focus:border-black"
+              className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-1 text-sm outline-none focus:border-black"
             >
               {statusOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -207,7 +207,7 @@ export default function AdminOrdersPage() {
               onChange={(event) =>
                 handleSortChange(event.target.value as "newest" | "oldest")
               }
-              className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-sm outline-none focus:border-black"
+              className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-1 text-sm outline-none focus:border-black"
             >
               <option value="newest">جدیدترین</option>
 
@@ -226,7 +226,7 @@ export default function AdminOrdersPage() {
                 setSort("newest");
                 setPage(1);
               }}
-              className="w-full rounded-xl border border-neutral-300 px-5 py-3 text-sm font-medium transition hover:bg-neutral-50"
+              className="w-full rounded-xl border border-neutral-300 px-5 py-5 text-sm font-medium transition hover:bg-neutral-50"
             >
               پاک کردن فیلترها
             </button>

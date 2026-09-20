@@ -100,7 +100,7 @@ export default async function ProductSection() {
                   )}
 
                   {/* Hover Action */}
-                  <div className="absolute bottom-3 left-3 right-3 translate-y-3 rounded-xl bg-black/90 px-4 py-3 text-center text-xs font-medium text-white opacity-0 transition duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                  <div className="absolute bottom-3 left-3 right-3 translate-y-3 rounded-xl bg-red-500 hover:bg-red-600 px-4 py-3 text-center text-xs font-medium text-white opacity-0 transition duration-300 group-hover:translate-y-0 group-hover:opacity-100">
                     مشاهده جزئیات محصول
                   </div>
                 </div>

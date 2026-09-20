@@ -120,7 +120,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="h-12 w-full rounded-xl bg-black font-medium text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
+              className="h-12 w-full rounded-xl bg-red-600 font-medium text-white transition hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isLoading
                 ? "در حال ورود..."

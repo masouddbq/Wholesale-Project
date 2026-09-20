@@ -256,7 +256,7 @@ export default function ProductVariantSelector({
           !selectedVariant || selectedVariant.stock < minimumOrderQuantity
         }
         onClick={handleAddToCart}
-        className="w-full rounded-xl bg-black px-6 py-4 font-semibold text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-40"
+        className="w-full rounded-xl bg-red-600 px-6 py-4 font-semibold text-white transition hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-40"
       >
         افزودن به سبد خرید
       </button>

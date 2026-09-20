@@ -15,40 +15,70 @@ import {
 
 import { uploadSiteContentImage } from "@/services/uploadService";
 
+type HeroFormData = {
+  title: string;
+  subtitle: string;
+  buttonText: string;
+  buttonLink: string;
+  images: string[];
+};
+
 export default function HeroContentEditPage() {
   const router = useRouter();
 
-  const [formData, setFormData] = useState({
-    title: "",
-    subtitle: "",
-    buttonText: "",
-    buttonLink: "",
-    image: "",
-  });
+  const [formData, setFormData] =
+    useState<HeroFormData>({
+      title: "",
+      subtitle: "",
+      buttonText: "",
+      buttonLink: "",
+      images: [],
+    });
 
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const [error, setError] = useState("");
+  const [loading, setLoading] =
+    useState(true);
+
+  const [saving, setSaving] =
+    useState(false);
+
+  const [uploading, setUploading] =
+    useState(false);
+
+  const [error, setError] =
+    useState("");
+
+  // =========================
+  // Load Hero Content
+  // =========================
 
   useEffect(() => {
     const loadHeroContent = async () => {
       try {
-        const response = await getSiteContent("hero");
+        const response =
+          await getSiteContent("hero");
+
+        const data = response.content.data;
+
+        const images =
+          Array.isArray(data?.images) &&
+          data.images.length > 0
+            ? data.images
+            : data?.image
+            ? [data.image]
+            : [];
 
         setFormData({
-          title: response.content.data?.title || "",
-          subtitle:
-            response.content.data?.subtitle || "",
+          title: data?.title || "",
+          subtitle: data?.subtitle || "",
           buttonText:
-            response.content.data?.buttonText || "",
+            data?.buttonText || "",
           buttonLink:
-            response.content.data?.buttonLink || "",
-          image:
-            response.content.data?.image || "",
+            data?.buttonLink || "",
+          images,
         });
       } catch (error) {
         console.error(error);
+
         setError(
           "خطا در دریافت اطلاعات Hero"
         );
@@ -60,12 +90,17 @@ export default function HeroContentEditPage() {
     loadHeroContent();
   }, []);
 
+  // =========================
+  // Text Inputs
+  // =========================
+
   const handleChange = (
     event: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement
     >
   ) => {
-    const { name, value } = event.target;
+    const { name, value } =
+      event.target;
 
     setFormData((previous) => ({
       ...previous,
@@ -73,12 +108,16 @@ export default function HeroContentEditPage() {
     }));
   };
 
+  // =========================
+  // Upload Images
+  // =========================
+
   const handleImageChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const file = event.target.files?.[0];
+    const files = event.target.files;
 
-    if (!file) {
+    if (!files || files.length === 0) {
       return;
     }
 
@@ -86,12 +125,25 @@ export default function HeroContentEditPage() {
     setError("");
 
     try {
-      const response =
-        await uploadSiteContentImage(file);
+      const uploadedImages: string[] = [];
+
+      for (const file of Array.from(files)) {
+        const response =
+          await uploadSiteContentImage(file);
+
+        if (response.image) {
+          uploadedImages.push(
+            response.image
+          );
+        }
+      }
 
       setFormData((previous) => ({
         ...previous,
-        image: response.image,
+        images: [
+          ...previous.images,
+          ...uploadedImages,
+        ],
       }));
     } catch (error) {
       console.error(error);
@@ -106,6 +158,26 @@ export default function HeroContentEditPage() {
     }
   };
 
+  // =========================
+  // Remove Image
+  // =========================
+
+  const handleRemoveImage = (
+    index: number
+  ) => {
+    setFormData((previous) => ({
+      ...previous,
+      images: previous.images.filter(
+        (_, imageIndex) =>
+          imageIndex !== index
+      ),
+    }));
+  };
+
+  // =========================
+  // Submit
+  // =========================
+
   const handleSubmit = async (
     event: FormEvent<HTMLFormElement>
   ) => {
@@ -117,7 +189,15 @@ export default function HeroContentEditPage() {
     try {
       await updateSiteContent(
         "hero",
-        formData
+        {
+          title: formData.title,
+          subtitle: formData.subtitle,
+          buttonText:
+            formData.buttonText,
+          buttonLink:
+            formData.buttonLink,
+          images: formData.images,
+        }
       );
 
       router.push("/admin/contents");
@@ -133,6 +213,10 @@ export default function HeroContentEditPage() {
     }
   };
 
+  // =========================
+  // Loading
+  // =========================
+
   if (loading) {
     return (
       <div className="p-6">
@@ -143,9 +227,15 @@ export default function HeroContentEditPage() {
     );
   }
 
+  // =========================
+  // UI
+  // =========================
+
   return (
     <div className="p-6">
-      <div className="mx-auto max-w-3xl">
+      <div className="mx-auto max-w-4xl">
+
+        {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-neutral-900">
             ویرایش Hero
@@ -156,6 +246,7 @@ export default function HeroContentEditPage() {
           </p>
         </div>
 
+        {/* Error */}
         {error && (
           <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
             {error}
@@ -167,6 +258,8 @@ export default function HeroContentEditPage() {
           className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm"
         >
           <div className="space-y-6">
+
+            {/* Title */}
             <div>
               <label
                 htmlFor="title"
@@ -186,6 +279,7 @@ export default function HeroContentEditPage() {
               />
             </div>
 
+            {/* Subtitle */}
             <div>
               <label
                 htmlFor="subtitle"
@@ -205,6 +299,7 @@ export default function HeroContentEditPage() {
               />
             </div>
 
+            {/* Button Text */}
             <div>
               <label
                 htmlFor="buttonText"
@@ -224,6 +319,7 @@ export default function HeroContentEditPage() {
               />
             </div>
 
+            {/* Button Link */}
             <div>
               <label
                 htmlFor="buttonLink"
@@ -243,18 +339,19 @@ export default function HeroContentEditPage() {
               />
             </div>
 
-            {/* Hero Image */}
+            {/* Hero Images */}
             <div>
               <label
-                htmlFor="heroImage"
+                htmlFor="heroImages"
                 className="mb-2 block text-sm font-medium text-neutral-700"
               >
-                تصویر Hero
+                تصاویر Hero
               </label>
 
               <input
-                id="heroImage"
+                id="heroImages"
                 type="file"
+                multiple
                 accept="image/jpeg,image/png,image/webp"
                 onChange={handleImageChange}
                 disabled={uploading}
@@ -262,38 +359,63 @@ export default function HeroContentEditPage() {
               />
 
               <p className="mt-2 text-xs text-neutral-500">
+                می‌توانید چند تصویر انتخاب کنید.
                 فرمت‌های مجاز: JPG، PNG و WebP — حداکثر 5MB
               </p>
 
               {uploading && (
                 <p className="mt-3 text-sm text-neutral-500">
-                  در حال آپلود تصویر...
+                  در حال آپلود تصاویر...
                 </p>
               )}
 
-             {formData.image && !uploading && (
-  <div className="mt-4 rounded-xl border border-neutral-200 bg-neutral-50 p-4">
-    <p className="mb-3 text-xs text-neutral-500">
-      آدرس تصویر:
-    </p>
+              {/* Image Preview */}
+              {formData.images.length > 0 && (
+                <div className="mt-6">
+                  <p className="mb-3 text-sm font-medium text-neutral-700">
+                    تصاویر فعلی
+                  </p>
 
-    <p className="mb-4 break-all text-xs text-red-500">
-      http://localhost:5000{formData.image}
-    </p>
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    {formData.images.map(
+                      (image, index) => (
+                        <div
+                          key={`${image}-${index}`}
+                          className="overflow-hidden rounded-xl border border-neutral-200 bg-neutral-50"
+                        >
+                          <img
+                            src={`http://localhost:5000${image}`}
+                            alt={`Hero ${index + 1}`}
+                            className="h-48 w-full object-cover"
+                          />
 
-    <img
-      src={`http://localhost:5000${formData.image}`}
-      alt="Hero preview"
-      width={800}
-      height={450}
-      className="h-auto w-full rounded-xl object-cover"
-    />
-  </div>
-)}
+                          <div className="flex items-center justify-between gap-3 p-3">
+                            <span className="text-xs text-neutral-500">
+                              تصویر {index + 1}
+                            </span>
+
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleRemoveImage(index)
+                              }
+                              className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-50"
+                            >
+                              حذف
+                            </button>
+                          </div>
+                        </div>
+                      )
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
+          {/* Actions */}
           <div className="mt-8 flex items-center justify-end gap-3 border-t border-neutral-100 pt-6">
+
             <button
               type="button"
               onClick={() =>
@@ -313,6 +435,7 @@ export default function HeroContentEditPage() {
                 ? "در حال ذخیره..."
                 : "ذخیره تغییرات"}
             </button>
+
           </div>
         </form>
       </div>

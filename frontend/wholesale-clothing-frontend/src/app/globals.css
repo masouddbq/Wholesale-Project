@@ -26,30 +26,34 @@
 
 :root {
   /* Main colors */
-  --background: #fafafa;
-  --foreground: #171717;
+  --background: #FFFFFF;
+  --foreground: #191a0d;
 
   /* Surfaces */
-  --surface: #ffffff;
-  --surface-muted: #f5f5f5;
+  --surface: #1900ff;
+  --surface-muted: #e6dfc378;
 
   /* Text */
-  --text-primary: #171717;
-  --text-secondary: #737373;
-  --text-muted: #a3a3a3;
+  --text-primary: #010000;
+  --text-secondary: #00000079;
+  --text-muted: #00000072;
 
   /* Borders */
-  --border: #e5e5e5;
-  --border-strong: #d4d4d4;
+  --border: #f7ffd2d5;
+  --border-strong: #fffbda;
 
   /* Brand */
-  --primary: #111111;
-  --primary-hover: #262626;
+  --primary: #000000ad;
+  --primary-hover: #000000;
+
+  /* Accent */
+  --accent: #b7ff00;
+  --accent-hover: #5B6938;
 
   /* Status */
-  --success: #16a34a;
-  --warning: #d97706;
-  --danger: #dc2626;
+  --success: #3a7750;
+  --warning: #B17A35;
+  --danger: #B94A48;
 }
 
 * {
@@ -81,4 +85,8 @@ select {
 
 h1 {
   font-size: 2rem;
+}
+
+.nad {
+  color: var(--success);
 }

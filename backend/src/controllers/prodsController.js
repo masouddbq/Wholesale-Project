@@ -75,12 +75,17 @@ const getProducts = async (req, res) => {
     isActive: true,
   };
 
-  if (search) {
-    filter.name = {
-      $regex: search,
-      $options: "i",
-    };
-  }
+ if (search && search.trim()) {
+  const searchRegex = new RegExp(
+    search.trim(),
+    "i"
+  );
+
+  filter.$or = [
+    { name: searchRegex },
+    { "variants.sku": searchRegex },
+  ];
+}
 
   if (category) {
     const categoryDoc = await Category.findOne({

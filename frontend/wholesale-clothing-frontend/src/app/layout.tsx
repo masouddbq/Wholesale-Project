@@ -4,6 +4,7 @@ import { Vazirmatn } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AuthInitializer from "@/components/authInitializer";
+import BottomNav from "@/components/BottomNav";
 
 import "./globals.css";
 
@@ -28,6 +29,8 @@ export default function RootLayout({
         <Navbar />
 
         <main>{children}</main>
+
+        <BottomNav />
 
         <Footer />
       </body>

@@ -88,13 +88,13 @@ export default function AdminLayout({
       <div className="mx-auto flex max-w-[1600px]">
         <aside className="hidden min-h-[calc(100vh-80px)] w-64 shrink-0 border-l border-neutral-200 bg-white lg:block">
           <div className="sticky top-[80px] p-5">
-            <div className="mb-6 rounded-2xl bg-black p-5 text-white">
-              <p className="text-xs text-neutral-400">
+            <div className="mb-6 rounded-2xl bg-red-600 p-5 text-white">
+              <p className="text-xs text-neutral-100">
                 پنل مدیریت
               </p>
 
               <h2 className="mt-2 text-xl font-bold">
-                Wholesale Admin
+                AM-Clothing
               </h2>
             </div>
 
@@ -111,7 +111,7 @@ export default function AdminLayout({
                     href={item.href}
                     className={`block rounded-xl px-4 py-3 text-sm font-medium transition ${
                       isActive
-                        ? "bg-black text-white"
+                        ? "bg-red-600 text-white"
                         : "text-neutral-600 hover:bg-neutral-100 hover:text-black"
                     }`}
                   >
@@ -124,7 +124,7 @@ export default function AdminLayout({
             <div className="mt-8 border-t border-neutral-200 pt-5">
               <Link
                 href="/"
-                className="block rounded-xl px-4 py-3 text-sm text-neutral-500 transition hover:bg-neutral-100 hover:text-black"
+                className="block rounded-xl px-4 py-3 text-sm text-red-500 transition hover:bg-neutral-100 hover:text-red-800"
               >
                 ← مشاهده سایت
               </Link>
@@ -147,7 +147,7 @@ export default function AdminLayout({
                     href={item.href}
                     className={`shrink-0 rounded-xl px-4 py-2.5 text-sm font-medium transition ${
                       isActive
-                        ? "bg-black text-white"
+                        ? "bg-red-500 text-white"
                         : "bg-white text-neutral-600 hover:bg-neutral-100"
                     }`}
                   >
