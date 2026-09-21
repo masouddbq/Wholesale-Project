@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { API_BASE } from "@/lib/imageUrl";
 
 type HeroSliderProps = {
   images?: string[];
@@ -67,7 +68,7 @@ export default function HeroSlider({ images = [], title }: HeroSliderProps) {
           }`}
         >
           <img
-            src={`http://localhost:5000${image}`}
+            src={`${API_BASE}${image}`}
             alt={title}
             className="absolute inset-0 h-full w-full object-cover"
           />

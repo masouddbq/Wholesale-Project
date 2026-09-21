@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getProducts } from "@/services/productService";
+import { API_BASE } from "@/lib/imageUrl";
 
 type Product = {
   _id: string;
@@ -80,7 +81,7 @@ export default async function ProductSection() {
                 <div className="relative aspect-[4/5] overflow-hidden bg-[var(--surface-muted)]">
                   {image ? (
                     <img
-                      src={`http://localhost:5000${image}`}
+                      src={`${API_BASE}${image}`}
                       alt={product.name}
                       className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                     />

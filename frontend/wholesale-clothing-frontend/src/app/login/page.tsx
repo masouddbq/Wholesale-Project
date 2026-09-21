@@ -6,9 +6,11 @@ import { useRouter } from "next/navigation";
 
 import { login } from "@/services/authService";
 import useAuthStore from "@/store/authStore";
+import { useToast } from "@/components/Toast";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { addToast } = useToast();
 
   const setUser = useAuthStore(
     (state) => state.setUser
@@ -32,6 +34,8 @@ export default function LoginPage() {
       const data = await login(phone, password);
 
       setUser(data.user);
+
+      addToast("ورود موفقیت‌آمیز بود", "success");
 
       router.push("/account/orders");
     } catch (error: any) {

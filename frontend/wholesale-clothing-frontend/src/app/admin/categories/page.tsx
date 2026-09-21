@@ -8,6 +8,7 @@ import {
   AdminCategory,
   deleteCategory,
 } from "@/services/categoryService";
+import { API_BASE } from "@/lib/imageUrl";
 
 const formatDate = (date: string) => {
   return new Date(date).toLocaleDateString("fa-IR");
@@ -144,7 +145,7 @@ export default function AdminCategoriesPage() {
                         <div className="flex items-center gap-3">
                           {category.image ? (
                             <img
-                              src={`http://localhost:5000${category.image}`}
+                              src={`${API_BASE}${category.image}`}
                               alt={category.name}
                               className="h-12 w-12 rounded-xl object-cover"
                             />

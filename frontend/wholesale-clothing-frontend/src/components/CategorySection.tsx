@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getCategories } from "@/services/categoryService";
+import { API_BASE } from "@/lib/imageUrl";
 
 type Category = {
   _id: string;
@@ -65,7 +66,7 @@ export default async function CategorySection() {
               <div className="relative aspect-[4/3] overflow-hidden bg-[var(--surface-muted)]">
                 {category.image ? (
                   <img
-                    src={`http://localhost:5000${category.image}`}
+                    src={`${API_BASE}${category.image}`}
                     alt={category.name}
                     className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                   />

@@ -8,6 +8,7 @@ import { getAdminProductById, updateProduct } from "@/services/productService";
 
 import { getCategories } from "@/services/categoryService";
 import { uploadProductImages } from "@/services/uploadService";
+import { API_BASE } from "@/lib/imageUrl";
 
 type Category = {
   _id: string;
@@ -538,7 +539,7 @@ export default function EditProductPage() {
                 className="relative overflow-hidden rounded-xl border border-gray-200"
               >
                 <img
-                  src={`http://localhost:5000${image}`}
+                  src={`${API_BASE}${image}`}
                   alt={name}
                   className="aspect-square w-full object-cover"
                 />

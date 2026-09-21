@@ -2,12 +2,15 @@
 
 import Link from "next/link";
 import useCartStore from "@/store/cartStore";
+import { API_BASE } from "@/lib/imageUrl";
+import { useToast } from "@/components/Toast";
 
 export default function CartPage() {
   const items = useCartStore((state) => state.items);
   const removeItem = useCartStore((state) => state.removeItem);
   const updateQuantity = useCartStore((state) => state.updateQuantity);
   const clearCart = useCartStore((state) => state.clearCart);
+  const { addToast } = useToast();
 
   const totalAmount = items.reduce(
     (total, item) => total + item.price * item.quantity,
@@ -83,7 +86,7 @@ export default function CartPage() {
                   >
                     {item.image ? (
                       <img
-                        src={`http://localhost:5000${item.image}`}
+                        src={`${API_BASE}${item.image}`}
                         alt={item.name}
                         className="h-full w-full object-cover"
                       />
@@ -120,9 +123,10 @@ export default function CartPage() {
 
                       <button
                         type="button"
-                        onClick={() =>
-                          removeItem(item.productId, item.variantId)
-                        }
+                        onClick={() => {
+                          removeItem(item.productId, item.variantId);
+                          addToast("محصول از سبد خرید حذف شد", "success");
+                        }}
                         className="text-sm text-neutral-600 transition hover:text-black"
                       >
                         حذف

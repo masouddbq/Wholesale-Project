@@ -10,6 +10,7 @@ import {
   type AdminOrderDetail,
   type OrderStatus,
 } from "@/services/orderService";
+import { API_BASE } from "@/lib/imageUrl";
 
 export default function AdminOrderDetailPage() {
   const params = useParams();
@@ -328,7 +329,7 @@ const [isUpdatingStatus, setIsUpdatingStatus] =
               <div className="h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-neutral-100">
                 {item.image ? (
                   <img
-                    src={`http://localhost:5000${item.image}`}
+                    src={`${API_BASE}${item.image}`}
                     alt={item.name}
                     className="h-full w-full object-cover"
                   />

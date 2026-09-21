@@ -4,6 +4,14 @@ import { getCategories } from "@/services/categoryService";
 
 import ProductFilters from "@/components/ProductFilters";
 import Pagination from "@/components/Pagination";
+import { API_BASE } from "@/lib/imageUrl";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "محصولات",
+  description:
+    "مجموعه محصولات عمده پوشاک - مشاهده و خرید عمده پوشاک مردانه و زنانه",
+};
 
 type SearchParams = {
   search?: string;
@@ -151,7 +159,7 @@ export default async function ProductsPage({
                       <div className="relative aspect-[4/5] overflow-hidden bg-[var(--surface-muted)]">
                         {image ? (
                           <img
-                            src={`http://localhost:5000${image}`}
+                            src={`${API_BASE}${image}`}
                             alt={product.name}
                             className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                           />

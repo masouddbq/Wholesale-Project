@@ -8,6 +8,7 @@ import {
   getProducts,
   type ProductQuery,
 } from "@/services/productService";
+import { API_BASE } from "@/lib/imageUrl";
 
 type SearchProduct = {
   _id: string;
@@ -243,7 +244,7 @@ export default function SearchBar() {
                         <div className="h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-neutral-100">
                           {product.images?.[0] && (
                             <img
-                              src={`http://localhost:5000${product.images[0]}`}
+                              src={`${API_BASE}${product.images[0]}`}
                               alt={product.name}
                               className="h-full w-full object-cover"
                             />

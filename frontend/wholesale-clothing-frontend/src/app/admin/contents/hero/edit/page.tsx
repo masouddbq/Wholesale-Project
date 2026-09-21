@@ -14,6 +14,7 @@ import {
 } from "@/services/siteContentService";
 
 import { uploadSiteContentImage } from "@/services/uploadService";
+import { API_BASE } from "@/lib/imageUrl";
 
 type HeroFormData = {
   title: string;
@@ -384,7 +385,7 @@ export default function HeroContentEditPage() {
                           className="overflow-hidden rounded-xl border border-neutral-200 bg-neutral-50"
                         >
                           <img
-                            src={`http://localhost:5000${image}`}
+                            src={`${API_BASE}${image}`}
                             alt={`Hero ${index + 1}`}
                             className="h-48 w-full object-cover"
                           />

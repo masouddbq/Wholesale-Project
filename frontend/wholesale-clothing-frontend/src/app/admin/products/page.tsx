@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { AdminProduct, getAdminProducts } from "@/services/productService";
 
 import { getCategories } from "@/services/categoryService";
+import { API_BASE } from "@/lib/imageUrl";
 
 type Category = {
   _id: string;
@@ -428,7 +429,7 @@ export default function AdminProductsPage() {
                         <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-neutral-100">
                           {product.images?.[0] ? (
                             <img
-                              src={`http://localhost:5000${product.images[0]}`}
+                              src={`${API_BASE}${product.images[0]}`}
                               alt={product.name}
                               className="h-full w-full object-cover"
                             />

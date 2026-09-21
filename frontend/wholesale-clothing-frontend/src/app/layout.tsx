@@ -5,12 +5,39 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AuthInitializer from "@/components/authInitializer";
 import BottomNav from "@/components/BottomNav";
+import { ToastProvider } from "@/components/Toast";
 
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Wholesale Clothing",
-  description: "فروشگاه عمده پوشاک",
+  title: {
+    default: "AM-Clothing | فروشگاه عمده پوشاک",
+    template: "%s | AM-Clothing",
+  },
+  description:
+    "فروشگاه عمده فروشی پوشاک مردانه و زنانه - تأمین مستقیم پوشاک عمده برای فروشگاه‌ها و کسب‌وکارها با بهترین قیمت و کیفیت",
+  keywords: [
+    "پوشاک عمده",
+    "عمده فروشی پوشاک",
+    "فروشگاه عمده",
+    "پوشاک مردانه",
+    "پوشاک زنانه",
+    "تیشرت عمده",
+    "هودی عمده",
+  ],
+  authors: [{ name: "AM-Clothing" }],
+  openGraph: {
+    type: "website",
+    locale: "fa_IR",
+    siteName: "AM-Clothing",
+    title: "AM-Clothing | فروشگاه عمده پوشاک",
+    description:
+      "فروشگاه عمده فروشی پوشاک مردانه و زنانه - تأمین مستقیم پوشاک عمده برای فروشگاه‌ها",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
@@ -24,15 +51,17 @@ export default function RootLayout({
       dir="rtl"
     >
       <body>
-        <AuthInitializer />
+        <ToastProvider>
+          <AuthInitializer />
 
-        <Navbar />
+          <Navbar />
 
-        <main>{children}</main>
+          <main>{children}</main>
 
-        <BottomNav />
+          <BottomNav />
 
-        <Footer />
+          <Footer />
+        </ToastProvider>
       </body>
     </html>
   );

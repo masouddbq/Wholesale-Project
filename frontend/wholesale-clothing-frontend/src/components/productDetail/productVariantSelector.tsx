@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import useCartStore from "@/store/cartStore";
+import { useToast } from "@/components/Toast";
 
 type Variant = {
   _id: string;
@@ -35,6 +36,7 @@ export default function ProductVariantSelector({
   const [quantity, setQuantity] = useState(minimumOrderQuantity);
 
   const addItem = useCartStore((state) => state.addItem);
+  const { addToast } = useToast();
 
   const sizes = Array.from(new Set(variants.map((variant) => variant.size)));
 
@@ -132,6 +134,8 @@ export default function ProductVariantSelector({
       minimumOrderQuantity,
       stock: selectedVariant.stock,
     });
+
+    addToast("محصول به سبد خرید اضافه شد", "success");
   };
 
   return (

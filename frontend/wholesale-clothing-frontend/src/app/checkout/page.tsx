@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import useCartStore from "@/store/cartStore";
 import { createOrder } from "@/services/orderService";
 import { getMe } from "@/services/authService";
+import { useToast } from "@/components/Toast";
 
 type Address = {
   _id: string;
@@ -30,6 +31,7 @@ type User = {
 
 export default function CheckoutPage() {
   const router = useRouter();
+  const { addToast } = useToast();
 
   const items = useCartStore(
     (state) => state.items
@@ -286,6 +288,8 @@ export default function CheckoutPage() {
       setIsOrderCompleted(true);
 
       clearCart();
+
+      addToast("سفارش شما با موفقیت ثبت شد", "success");
 
       router.push(
         `/order-success/${orderNumber}`

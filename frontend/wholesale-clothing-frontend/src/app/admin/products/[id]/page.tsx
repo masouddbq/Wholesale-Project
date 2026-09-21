@@ -8,6 +8,7 @@ import {
   AdminProduct,
   getAdminProductById,
 } from "@/services/productService";
+import { API_BASE } from "@/lib/imageUrl";
 
 export default function AdminProductDetailPage() {
   const params = useParams();
@@ -168,7 +169,7 @@ export default function AdminProductDetailPage() {
                   className="aspect-square overflow-hidden rounded-xl bg-neutral-100"
                 >
                   <img
-                    src={`http://localhost:5000${image}`}
+                    src={`${API_BASE}${image}`}
                     alt={`${product.name} ${index + 1}`}
                     className="h-full w-full object-cover"
                   />

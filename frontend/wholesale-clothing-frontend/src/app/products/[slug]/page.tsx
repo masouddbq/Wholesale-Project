@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getProductBySlug } from "@/services/productService";
 import ProductVariantSelector from "@/components/productDetail/productVariantSelector";
+import { API_BASE } from "@/lib/imageUrl";
 
 type Variant = {
   _id: string;
@@ -54,7 +55,7 @@ export default async function ProductDetailPage({
           <div className="aspect-square overflow-hidden rounded-2xl bg-neutral-100">
             {product.images?.[0] ? (
               <img
-                src={`http://localhost:5000${product.images[0]}`}
+                src={`${API_BASE}${product.images[0]}`}
                 alt={product.name}
                 className="product-image-zoom h-full w-full object-cover"
               />

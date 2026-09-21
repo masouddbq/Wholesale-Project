@@ -15,6 +15,7 @@ import {
 } from "@/services/categoryService";
 
 import { uploadCategoryImage } from "@/services/uploadService";
+import { API_BASE } from "@/lib/imageUrl";
 
 export default function EditCategoryPage() {
   const params = useParams();
@@ -325,7 +326,7 @@ export default function EditCategoryPage() {
           {currentImage ? (
             <div className="relative w-fit">
               <img
-                src={`http://localhost:5000${currentImage}`}
+                src={`${API_BASE}${currentImage}`}
                 alt={name}
                 className="h-40 w-40 rounded-2xl object-cover"
               />
