@@ -74,10 +74,10 @@ export default function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
-              className={`relative flex h-full min-w-[72px] flex-col items-center justify-center gap-1 text-xs font-medium transition ${
+              className={`relative flex h-full min-w-[72px] flex-col items-center justify-center gap-1 text-xs font-medium transition-all duration-200 ${
                 isActive
-                  ? "text-red-500"
-                  : "text-neutral-500"
+                  ? "text-black"
+                  : "text-neutral-500 active:scale-95"
               }`}
             >
               <Icon
@@ -90,7 +90,7 @@ export default function BottomNav() {
               <span>{item.title}</span>
 
               {isActive && (
-                <span className="absolute bottom-0 h-0.5 w-7 rounded-full bg-red-500" />
+                <span className="absolute bottom-0 h-0.5 w-7 rounded-full bg-black" />
               )}
             </Link>
           );
@@ -119,7 +119,7 @@ export default function BottomNav() {
           href="/cart"
           className={`relative flex h-full min-w-[72px] flex-col items-center justify-center gap-1 text-xs font-medium transition ${
             pathname.startsWith("/cart")
-              ? "text-red-500"
+              ? "text-black"
               : "text-neutral-500"
           }`}
         >
@@ -134,7 +134,7 @@ export default function BottomNav() {
             />
 
             {cartCount > 0 && (
-              <span className="absolute -right-3 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+              <span className="absolute -right-3 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-black px-1 text-[10px] font-bold text-white">
                 {cartCount > 99
                   ? "99+"
                   : cartCount}
@@ -145,7 +145,7 @@ export default function BottomNav() {
           <span>سبد خرید</span>
 
           {pathname.startsWith("/cart") && (
-            <span className="absolute bottom-0 h-0.5 w-7 rounded-full bg-red-500" />
+            <span className="absolute bottom-0 h-0.5 w-7 rounded-full bg-black" />
           )}
         </Link>
       </div>

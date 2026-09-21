@@ -451,7 +451,7 @@ export default function NewProductPage() {
       {/* Error */}
 
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-700">
           {error}
         </div>
       )}
@@ -715,7 +715,7 @@ export default function NewProductPage() {
                         onClick={() =>
                           removeVariant(index)
                         }
-                        className="text-xs text-red-500 transition hover:text-red-700"
+                        className="text-xs text-neutral-500 transition hover:text-black"
                       >
                         حذف تنوع
                       </button>

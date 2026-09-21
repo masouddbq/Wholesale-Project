@@ -74,7 +74,7 @@ export default async function ProductSection() {
               <Link
                 key={product._id}
                 href={`/products/${product.slug}`}
-                className="group overflow-hidden rounded-2xl border border-[var(--border)] bg-white transition duration-300 hover:-translate-y-1 hover:border-[var(--border-strong)] hover:shadow-xl"
+                className="group product-card-gold overflow-hidden rounded-2xl border border-[var(--border)] bg-white transition duration-300 hover:-translate-y-1 hover:border-[var(--border-strong)] hover:shadow-xl"
               >
                 {/* Image */}
                 <div className="relative aspect-[4/5] overflow-hidden bg-[var(--surface-muted)]">
@@ -100,7 +100,7 @@ export default async function ProductSection() {
                   )}
 
                   {/* Hover Action */}
-                  <div className="absolute bottom-3 left-3 right-3 translate-y-3 rounded-xl bg-red-500 hover:bg-red-600 px-4 py-3 text-center text-xs font-medium text-white opacity-0 transition duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                  <div className="absolute bottom-3 left-3 right-3 translate-y-3 rounded-xl bg-black hover:bg-neutral-800 px-4 py-3 text-center text-xs font-medium text-white opacity-0 transition duration-300 group-hover:translate-y-0 group-hover:opacity-100">
                     مشاهده جزئیات محصول
                   </div>
                 </div>

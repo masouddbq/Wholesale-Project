@@ -211,7 +211,7 @@ export default function EditCategoryPage() {
   if (!category) {
     return (
       <div dir="rtl" className="space-y-4">
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+        <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4 text-sm text-neutral-700">
           {error || "دسته‌بندی پیدا نشد."}
         </div>
 
@@ -248,7 +248,7 @@ export default function EditCategoryPage() {
       {/* Error */}
 
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+        <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4 text-sm text-neutral-700">
           {error}
         </div>
       )}

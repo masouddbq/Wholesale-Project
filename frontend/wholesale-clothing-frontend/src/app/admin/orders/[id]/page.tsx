@@ -102,7 +102,7 @@ const [isUpdatingStatus, setIsUpdatingStatus] =
       completed:
         "bg-green-100 text-green-700",
       cancelled:
-        "bg-red-100 text-red-700",
+        "bg-neutral-100 text-neutral-600",
     };
 
     return classes[status];
@@ -132,7 +132,7 @@ const [isUpdatingStatus, setIsUpdatingStatus] =
           بازگشت به سفارش‌ها
         </Link>
 
-        <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-600">
+        <div className="mt-6 rounded-2xl border border-neutral-200 bg-neutral-50 px-5 py-4 text-sm text-neutral-700">
           {error || "سفارش پیدا نشد."}
         </div>
       </div>
@@ -226,7 +226,7 @@ const [isUpdatingStatus, setIsUpdatingStatus] =
           setIsUpdatingStatus(false);
         }
       }}
-      className="rounded-xl bg-black px-5 py-3 text-sm font-semibold text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
+      className="btn-primary-glow rounded-xl bg-black px-5 py-3 text-sm font-semibold text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
     >
       {isUpdatingStatus ? "در حال ذخیره..." : "ذخیره وضعیت"}
     </button>

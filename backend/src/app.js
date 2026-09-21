@@ -23,9 +23,10 @@ const adminRoutes = require("./routes/adminRoutes");
 const adminUserRoutes = require("./routes/adminUserRoutes");
 
 const app = express();
+/* تغییر جدید: CORS از متغیر محیطی خونده بشه */
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",
     credentials: true,
   })
 );

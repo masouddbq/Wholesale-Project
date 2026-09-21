@@ -355,7 +355,7 @@ export default function CheckoutPage() {
                   )
                 }
                 required
-                className="h-12 w-full rounded-xl border border-neutral-300 bg-white px-4 outline-none transition focus:border-black"
+                className="h-12 w-full rounded-xl border border-neutral-300 bg-neutral-50 px-4 outline-none transition focus:border-[var(--accent)] focus:bg-white focus:shadow-[0_0_0_3px_rgba(201,169,110,0.15)]"
               />
             </div>
 
@@ -378,7 +378,7 @@ export default function CheckoutPage() {
                   )
                 }
                 required
-                className="h-12 w-full rounded-xl border border-neutral-300 bg-white px-4 outline-none transition focus:border-black"
+                className="h-12 w-full rounded-xl border border-neutral-300 bg-neutral-50 px-4 outline-none transition focus:border-[var(--accent)] focus:bg-white focus:shadow-[0_0_0_3px_rgba(201,169,110,0.15)]"
               />
             </div>
 
@@ -521,7 +521,7 @@ export default function CheckoutPage() {
                       )
                     }
                     required
-                    className="h-12 w-full rounded-xl border border-neutral-300 bg-white px-4 outline-none transition focus:border-black"
+                    className="h-12 w-full rounded-xl border border-neutral-300 bg-neutral-50 px-4 outline-none transition focus:border-[var(--accent)] focus:bg-white focus:shadow-[0_0_0_3px_rgba(201,169,110,0.15)]"
                   />
                 </div>
 
@@ -544,7 +544,7 @@ export default function CheckoutPage() {
                       )
                     }
                     required
-                    className="h-12 w-full rounded-xl border border-neutral-300 bg-white px-4 outline-none transition focus:border-black"
+                    className="h-12 w-full rounded-xl border border-neutral-300 bg-neutral-50 px-4 outline-none transition focus:border-[var(--accent)] focus:bg-white focus:shadow-[0_0_0_3px_rgba(201,169,110,0.15)]"
                   />
                 </div>
 
@@ -566,7 +566,7 @@ export default function CheckoutPage() {
                         event.target.value
                       )
                     }
-                    className="h-12 w-full rounded-xl border border-neutral-300 bg-white px-4 outline-none transition focus:border-black"
+                    className="h-12 w-full rounded-xl border border-neutral-300 bg-neutral-50 px-4 outline-none transition focus:border-[var(--accent)] focus:bg-white focus:shadow-[0_0_0_3px_rgba(201,169,110,0.15)]"
                   />
                 </div>
 
@@ -620,7 +620,7 @@ export default function CheckoutPage() {
           </div>
 
           {errorMessage && (
-            <div className="mt-5 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+            <div className="mt-5 rounded-xl border border-neutral-200 bg-neutral-50 p-4 text-sm text-neutral-700">
               {errorMessage}
             </div>
           )}
@@ -628,7 +628,7 @@ export default function CheckoutPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="mt-8 w-full rounded-xl bg-black px-6 py-4 font-semibold text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
+            className="btn-primary-glow mt-8 w-full rounded-xl bg-black px-6 py-4 font-semibold text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isSubmitting
               ? "در حال ثبت سفارش..."

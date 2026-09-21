@@ -355,7 +355,7 @@ export default function EditProductPage() {
   if (isLoading) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
-        <p className="text-gray-500">در حال دریافت اطلاعات محصول...</p>
+        <p className="text-neutral-500">در حال دریافت اطلاعات محصول...</p>
       </div>
     );
   }
@@ -363,7 +363,7 @@ export default function EditProductPage() {
   if (!product) {
     return (
       <div className="space-y-4">
-        <p className="text-red-500">محصول پیدا نشد.</p>
+        <p className="text-neutral-600">محصول پیدا نشد.</p>
 
         <Link
           href="/admin/products"
@@ -386,19 +386,19 @@ export default function EditProductPage() {
             ویرایش محصول
           </Link>
 
-          <p className="mt-1 text-sm text-gray-500">{product.name}</p>
+          <p className="mt-1 text-sm text-neutral-500">{product.name}</p>
         </div>
 
         <Link
           href={`/admin/products/${product._id}`}
-          className="rounded-lg border border-gray-300 px-4 py-2 text-sm transition hover:bg-gray-50"
+          className="rounded-xl border border-neutral-200 px-4 py-2 text-sm transition hover:bg-neutral-50"
         >
           بازگشت به جزئیات
         </Link>
       </div>
 
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4 text-sm text-neutral-700">
           {error}
         </div>
       )}
@@ -412,7 +412,7 @@ export default function EditProductPage() {
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* اطلاعات اصلی */}
 
-        <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+        <section className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm">
           <h2 className="mb-6 text-lg font-bold">اطلاعات اصلی</h2>
 
           <div className="grid gap-5 md:grid-cols-2">
@@ -424,7 +424,7 @@ export default function EditProductPage() {
               <input
                 value={name}
                 onChange={(event) => setName(event.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-black"
+                className="w-full rounded-lg border border-neutral-200 px-4 py-3 outline-none transition focus:border-black"
               />
             </div>
 
@@ -435,7 +435,7 @@ export default function EditProductPage() {
                 dir="ltr"
                 value={slug}
                 onChange={(event) => setSlug(event.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 text-left outline-none transition focus:border-black"
+                className="w-full rounded-xl border border-neutral-200 px-4 py-3 text-left outline-none transition focus:border-black"
               />
             </div>
 
@@ -447,7 +447,7 @@ export default function EditProductPage() {
                 min="0"
                 value={price}
                 onChange={(event) => setPrice(event.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-black"
+                className="w-full rounded-lg border border-neutral-200 px-4 py-3 outline-none transition focus:border-black"
               />
             </div>
 
@@ -463,7 +463,7 @@ export default function EditProductPage() {
                 onChange={(event) =>
                   setMinimumOrderQuantity(event.target.value)
                 }
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-black"
+                className="w-full rounded-lg border border-neutral-200 px-4 py-3 outline-none transition focus:border-black"
               />
             </div>
 
@@ -475,7 +475,7 @@ export default function EditProductPage() {
               <select
                 value={category}
                 onChange={(event) => setCategory(event.target.value)}
-                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 outline-none transition focus:border-black"
+                className="w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 outline-none transition focus:border-black"
               >
                 <option value="">انتخاب دسته‌بندی</option>
 
@@ -509,24 +509,24 @@ export default function EditProductPage() {
               rows={5}
               value={description}
               onChange={(event) => setDescription(event.target.value)}
-              className="w-full resize-none rounded-lg border border-gray-300 px-4 py-3 outline-none transition focus:border-black"
+              className="w-full resize-none rounded-xl border border-neutral-200 px-4 py-3 outline-none transition focus:border-black"
             />
           </div>
         </section>
 
         {/* تصاویر */}
 
-        <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+        <section className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm">
           <div className="mb-6 flex items-center justify-between">
             <div>
               <h2 className="text-lg font-bold">تصاویر محصول</h2>
 
-              <p className="mt-1 text-xs text-gray-500">
+              <p className="mt-1 text-xs text-neutral-500">
                 حداکثر 5 تصویر، هر تصویر حداکثر 5MB
               </p>
             </div>
 
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-neutral-500">
               {existingImages.length + newImages.length} / 5
             </span>
           </div>
@@ -577,7 +577,7 @@ export default function EditProductPage() {
 
           {existingImages.length + newImages.length < 5 && (
             <div className="mt-5">
-              <label className="inline-flex cursor-pointer rounded-lg border border-gray-300 px-5 py-3 text-sm transition hover:bg-gray-50">
+              <label className="inline-flex cursor-pointer rounded-xl border border-neutral-200 px-5 py-3 text-sm transition hover:bg-neutral-50">
                 افزودن تصویر
                 <input
                   type="file"
@@ -593,12 +593,12 @@ export default function EditProductPage() {
 
         {/* Variant ها */}
 
-        <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+        <section className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm">
           <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 className="text-lg font-bold">Variant ها</h2>
 
-              <p className="mt-1 text-xs text-gray-500">
+              <p className="mt-1 text-xs text-neutral-500">
                 سایز، رنگ، موجودی و SKU محصول
               </p>
             </div>
@@ -606,7 +606,7 @@ export default function EditProductPage() {
             <button
               type="button"
               onClick={addVariant}
-              className="rounded-lg bg-black px-4 py-2 text-sm text-white transition hover:bg-gray-800"
+              className="rounded-xl bg-black px-4 py-2 text-sm text-white transition hover:bg-neutral-800"
             >
               + افزودن Variant
             </button>
@@ -616,7 +616,7 @@ export default function EditProductPage() {
             {variants.map((variant, index) => (
               <div
                 key={index}
-                className="rounded-xl border border-gray-200 p-4"
+                className="rounded-xl border border-neutral-200 p-4"
               >
                 <div className="grid gap-4 md:grid-cols-4">
                   <div>
@@ -629,7 +629,7 @@ export default function EditProductPage() {
                       onChange={(event) =>
                         updateVariant(index, "size", event.target.value)
                       }
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-black"
+                      className="w-full rounded-lg border border-neutral-200 px-3 py-2 outline-none focus:border-black"
                     />
                   </div>
 
@@ -643,7 +643,7 @@ export default function EditProductPage() {
                       onChange={(event) =>
                         updateVariant(index, "color", event.target.value)
                       }
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-black"
+                      className="w-full rounded-lg border border-neutral-200 px-3 py-2 outline-none focus:border-black"
                     />
                   </div>
 
@@ -659,7 +659,7 @@ export default function EditProductPage() {
                       onChange={(event) =>
                         updateVariant(index, "stock", event.target.value)
                       }
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-black"
+                      className="w-full rounded-lg border border-neutral-200 px-3 py-2 outline-none focus:border-black"
                     />
                   </div>
 
@@ -674,7 +674,7 @@ export default function EditProductPage() {
                       onChange={(event) =>
                         updateVariant(index, "sku", event.target.value)
                       }
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-left outline-none focus:border-black"
+                      className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-left outline-none focus:border-black"
                     />
                   </div>
                 </div>
@@ -683,7 +683,7 @@ export default function EditProductPage() {
                   <button
                     type="button"
                     onClick={() => removeVariant(index)}
-                    className="text-sm text-red-600 hover:underline"
+                    className="text-sm text-neutral-500 hover:text-black hover:underline"
                   >
                     حذف Variant
                   </button>
@@ -693,7 +693,7 @@ export default function EditProductPage() {
           </div>
 
           {!variants.length && (
-            <div className="rounded-lg bg-gray-50 p-5 text-center text-sm text-gray-500">
+            <div className="rounded-lg bg-neutral-50 p-5 text-center text-sm text-neutral-500">
               هنوز Variantای اضافه نشده است.
             </div>
           )}
@@ -704,7 +704,7 @@ export default function EditProductPage() {
         <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
           <Link
             href={`/admin/products/${product._id}`}
-            className="rounded-lg border border-gray-300 px-6 py-3 text-center text-sm transition hover:bg-gray-50"
+            className="rounded-xl border border-neutral-200 px-6 py-3 text-center text-sm transition hover:bg-neutral-50"
           >
             انصراف
           </Link>
@@ -712,7 +712,7 @@ export default function EditProductPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="rounded-lg bg-black px-8 py-3 text-sm font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-xl bg-black px-8 py-3 text-sm font-medium text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isSubmitting ? "در حال ذخیره..." : "ذخیره تغییرات"}
           </button>

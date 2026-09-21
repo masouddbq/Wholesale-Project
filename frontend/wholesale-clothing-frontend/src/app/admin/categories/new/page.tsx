@@ -182,7 +182,7 @@ export default function NewCategoryPage() {
 
       {/* Error */}
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+        <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4 text-sm text-neutral-700">
           {error}
         </div>
       )}

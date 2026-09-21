@@ -1,3 +1,4 @@
+// تغییر جدید: اسکلتون لودینگ با افکت shimmer
 export default function Loading() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
@@ -14,7 +15,7 @@ export default function Loading() {
               key={index}
               className="overflow-hidden rounded-2xl border border-neutral-200"
             >
-              <div className="aspect-square bg-neutral-200" />
+              <div className="skeleton-shimmer aspect-square bg-neutral-200" />
 
               <div className="space-y-3 p-4">
                 <div className="h-5 w-3/4 rounded bg-neutral-200" />

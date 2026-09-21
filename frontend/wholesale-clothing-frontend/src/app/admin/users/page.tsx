@@ -176,7 +176,7 @@ export default function AdminUsersPage() {
       {/* Error */}
 
       {error && (
-        <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-600">
+        <div className="rounded-2xl border border-neutral-200 bg-neutral-50 px-5 py-4 text-sm text-neutral-700">
           {error}
         </div>
       )}

@@ -248,7 +248,7 @@ export default function HeroContentEditPage() {
 
         {/* Error */}
         {error && (
-          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+          <div className="mb-6 rounded-lg border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-700">
             {error}
           </div>
         )}
@@ -399,7 +399,7 @@ export default function HeroContentEditPage() {
                               onClick={() =>
                                 handleRemoveImage(index)
                               }
-                              className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-50"
+                              className="rounded-lg border border-neutral-200 px-3 py-1.5 text-xs font-medium text-neutral-600 transition hover:bg-neutral-50"
                             >
                               حذف
                             </button>

@@ -30,7 +30,7 @@ export default function CartPage() {
 
           <Link
             href="/products"
-            className="mt-8 inline-block rounded-xl bg-red-500 px-6 py-3 font-medium text-white transition hover:bg-red-600"
+            className="btn-primary-glow mt-8 inline-block rounded-xl bg-black px-6 py-3 font-medium text-white transition hover:bg-neutral-800"
           >
             مشاهده محصولات
           </Link>
@@ -57,7 +57,7 @@ export default function CartPage() {
           <button
             type="button"
             onClick={clearCart}
-            className="text-sm font-medium text-red-600 transition hover:text-red-700"
+            className="text-sm font-medium text-neutral-600 transition hover:text-black"
           >
             خالی کردن سبد
           </button>
@@ -123,7 +123,7 @@ export default function CartPage() {
                         onClick={() =>
                           removeItem(item.productId, item.variantId)
                         }
-                        className="text-sm text-red-600 transition hover:text-red-700"
+                        className="text-sm text-neutral-600 transition hover:text-black"
                       >
                         حذف
                       </button>
@@ -215,7 +215,7 @@ export default function CartPage() {
 
           <Link
             href="/checkout"
-            className="mt-6 block w-full rounded-xl bg-black px-6 py-4 text-center font-semibold text-white transition hover:bg-neutral-800"
+            className="btn-primary-glow mt-6 block w-full rounded-xl bg-black px-6 py-4 text-center font-semibold text-white transition hover:bg-neutral-800"
           >
             ادامه ثبت سفارش
           </Link>

@@ -85,7 +85,7 @@ export default function LoginPage() {
                 placeholder="09123456789"
                 autoComplete="tel"
                 required
-                className="h-12 w-full rounded-xl border border-neutral-300 bg-white px-4 outline-none transition focus:border-black"
+                className="h-12 w-full rounded-xl border border-neutral-300 bg-neutral-50 px-4 outline-none transition focus:border-[var(--accent)] focus:bg-white focus:shadow-[0_0_0_3px_rgba(201,169,110,0.15)]"
               />
             </div>
 
@@ -107,12 +107,12 @@ export default function LoginPage() {
                 placeholder="رمز عبور خود را وارد کنید"
                 autoComplete="current-password"
                 required
-                className="h-12 w-full rounded-xl border border-neutral-300 bg-white px-4 outline-none transition focus:border-black"
+                className="h-12 w-full rounded-xl border border-neutral-300 bg-neutral-50 px-4 outline-none transition focus:border-[var(--accent)] focus:bg-white focus:shadow-[0_0_0_3px_rgba(201,169,110,0.15)]"
               />
             </div>
 
             {error && (
-              <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-600">
+              <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm leading-6 text-neutral-700">
                 {error}
               </div>
             )}
@@ -120,7 +120,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="h-12 w-full rounded-xl bg-red-600 font-medium text-white transition hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-50"
+              className="btn-primary-glow h-12 w-full rounded-xl bg-black font-medium text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isLoading
                 ? "در حال ورود..."

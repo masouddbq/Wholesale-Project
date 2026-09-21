@@ -86,7 +86,7 @@ export default function AdminProductDetailPage() {
         dir="rtl"
         className="flex min-h-[400px] flex-col items-center justify-center gap-4"
       >
-        <p className="text-sm text-red-500">
+        <p className="text-sm text-neutral-600">
           {error || "محصول پیدا نشد."}
         </p>
 
@@ -141,7 +141,7 @@ export default function AdminProductDetailPage() {
 
         <Link
           href={`/admin/products/${product._id}/edit`}
-          className="rounded-xl bg-black px-6 py-3 text-center text-sm font-medium text-white transition hover:bg-neutral-800"
+          className="btn-primary-glow rounded-xl bg-black px-6 py-3 text-center text-sm font-medium text-white transition hover:bg-neutral-800"
         >
           ویرایش محصول
         </Link>
@@ -253,7 +253,7 @@ export default function AdminProductDetailPage() {
                 className={`mt-1 inline-flex rounded-full px-3 py-1 text-xs font-medium ${
                   product.isActive
                     ? "bg-green-100 text-green-700"
-                    : "bg-red-100 text-red-700"
+                    : "bg-neutral-100 text-neutral-600"
                 }`}
               >
                 {product.isActive
@@ -363,7 +363,7 @@ export default function AdminProductDetailPage() {
                           className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${
                             variant.stock > 0
                               ? "bg-green-100 text-green-700"
-                              : "bg-red-100 text-red-700"
+                              : "bg-neutral-100 text-neutral-600"
                           }`}
                         >
                           {formatPrice(

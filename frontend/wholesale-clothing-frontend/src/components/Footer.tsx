@@ -1,8 +1,10 @@
 import Link from "next/link";
 
+// تغییر جدید: فوتر مشکی به جای قرمز + افکت shimmer طلایی
 export default function Footer() {
   return (
-    <footer className="border-t border-[var(--border)] bg-red-700 text-white">
+    <>
+      <footer className="gold-shimmer-border border-t border-[var(--border)] bg-neutral-900 text-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         {/* Main Footer */}
@@ -53,7 +55,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/"
-                  className="text-sm text-white/75 transition hover:text-white"
+                  className="footer-link text-sm text-white/75 transition hover:text-white"
                 >
                   صفحه اصلی
                 </Link>
@@ -62,7 +64,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/products"
-                  className="text-sm text-white/75 transition hover:text-white"
+                  className="footer-link text-sm text-white/75 transition hover:text-white"
                 >
                   محصولات
                 </Link>
@@ -71,7 +73,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/categories"
-                  className="text-sm text-white/75 transition hover:text-white"
+                  className="footer-link text-sm text-white/75 transition hover:text-white"
                 >
                   دسته‌بندی‌ها
                 </Link>
@@ -80,7 +82,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/cart"
-                  className="text-sm text-white/75 transition hover:text-white"
+                  className="footer-link text-sm text-white/75 transition hover:text-white"
                 >
                   سبد خرید
                 </Link>
@@ -98,7 +100,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/about"
-                  className="text-sm text-white/75 transition hover:text-white"
+                  className="footer-link text-sm text-white/75 transition hover:text-white"
                 >
                   درباره ما
                 </Link>
@@ -107,7 +109,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/wholesale-guide"
-                  className="text-sm text-white/75 transition hover:text-white"
+                  className="footer-link text-sm text-white/75 transition hover:text-white"
                 >
                   راهنمای خرید عمده
                 </Link>
@@ -116,7 +118,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/terms"
-                  className="text-sm text-white/75 transition hover:text-white"
+                  className="footer-link text-sm text-white/75 transition hover:text-white"
                 >
                   قوانین و شرایط سفارش
                 </Link>
@@ -125,7 +127,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/account/orders"
-                  className="text-sm text-white/75 transition hover:text-white"
+                  className="footer-link text-sm text-white/75 transition hover:text-white"
                 >
                   پیگیری سفارش‌ها
                 </Link>
@@ -212,5 +214,6 @@ export default function Footer() {
         </div>
       </div>
     </footer>
+    </>
   );
 }

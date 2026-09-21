@@ -110,7 +110,7 @@ export default function AdminOrdersPage() {
       preparing: "bg-purple-100 text-purple-700",
       shipped: "bg-indigo-100 text-indigo-700",
       completed: "bg-green-100 text-green-700",
-      cancelled: "bg-red-100 text-red-700",
+      cancelled: "bg-neutral-100 text-neutral-600",
     };
 
     return classes[orderStatus];
@@ -139,7 +139,7 @@ export default function AdminOrdersPage() {
       {/* Error */}
 
       {error && (
-        <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-600">
+        <div className="mt-6 rounded-2xl border border-neutral-200 bg-neutral-50 px-5 py-4 text-sm text-neutral-700">
           {error}
         </div>
       )}
@@ -172,7 +172,7 @@ export default function AdminOrdersPage() {
               <button
                 type="button"
                 onClick={handleSearch}
-                className="rounded-xl bg-red-500 px-5 py-3 text-sm font-medium text-white transition hover:bg-red-800"
+                className="rounded-xl bg-black px-5 py-3 text-sm font-medium text-white transition hover:bg-neutral-800"
               >
                 جستجو
               </button>

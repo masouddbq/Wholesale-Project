@@ -143,6 +143,7 @@ export default function SearchBar() {
     router.push(`/products/${slug}`);
   };
 
+  // تغییر جدید: افکت shimmer طلایی در سرچ‌بار
   return (
     <section
       id="site-search"
@@ -150,7 +151,7 @@ export default function SearchBar() {
     >
       <div
         ref={searchRef}
-        className="relative mx-auto max-w-3xl"
+        className="relative mx-auto max-w-3xl pb-2"
       >
         {/* Title */}
 
@@ -168,7 +169,7 @@ export default function SearchBar() {
 
         <form
           onSubmit={handleSubmit}
-          className="flex items-center overflow-hidden rounded-2xl border border-neutral-200 bg-white p-1.5 shadow-sm transition focus-within:border-red-800 focus-within:ring-4 focus-within:ring-[#C96B3C]/10"
+          className="flex items-center overflow-hidden rounded-2xl border border-neutral-200 bg-white p-1.5 shadow-sm transition focus-within:border-[var(--accent)] focus-within:ring-4 focus-within:ring-[rgba(201,169,110,0.15)]"
         >
           <div className="flex flex-1 items-center">
             <Search className="mr-2 h-5 w-5 shrink-0 text-neutral-400" />
@@ -193,7 +194,7 @@ export default function SearchBar() {
           <button
             type="submit"
             disabled={!search.trim()}
-            className="h-11 rounded-xl bg-red-500 px-5 text-sm font-medium text-white transition hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-50 sm:px-7"
+            className="btn-primary-glow h-11 rounded-xl bg-black px-5 text-sm font-medium text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50 sm:px-7"
           >
             جستجو
           </button>
@@ -275,7 +276,7 @@ export default function SearchBar() {
                       onClick={() =>
                         handleSearch(search)
                       }
-                      className="flex w-full items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-[#C96B3C] transition hover:bg-neutral-50"
+                      className="flex w-full items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-black transition hover:bg-neutral-50"
                     >
                       مشاهده همه نتایج
 

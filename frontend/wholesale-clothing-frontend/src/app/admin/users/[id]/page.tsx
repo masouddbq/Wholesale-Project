@@ -31,7 +31,7 @@ const statusClasses: Record<string, string> = {
   completed:
     "bg-green-50 text-green-700 border-green-200",
   cancelled:
-    "bg-red-50 text-red-700 border-red-200",
+    "bg-neutral-50 text-neutral-600 border-neutral-200",
 };
 
 export default function AdminUserDetailsPage() {
@@ -148,7 +148,7 @@ export default function AdminUserDetailsPage() {
   if (error && !data) {
     return (
       <div className="p-6">
-        <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-sm text-red-600">
+        <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-6 text-sm text-neutral-700">
           {error}
         </div>
 
@@ -207,7 +207,7 @@ export default function AdminUserDetailsPage() {
       {/* Error */}
 
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+        <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-700">
           {error}
         </div>
       )}

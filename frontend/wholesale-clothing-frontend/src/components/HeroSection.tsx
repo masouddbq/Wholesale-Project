@@ -4,6 +4,8 @@ import { getSiteContent } from "@/services/siteContentService";
 
 import HeroSlider from "./HeroSlider";
 
+import '../app/globals.css'
+
 export default async function HeroSection() {
   const response = await getSiteContent("hero");
 
@@ -35,11 +37,11 @@ export default async function HeroSection() {
 
           {/* Content */}
 
-          <div className="max-w-2xl">
+          <div className="mx-auto max-w-2xl text-center">
 
             {/* Small Label */}
 
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface-muted)] px-4 py-2">
+            <div className="mb-6 mx-auto inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface-muted)] px-4 py-2">
               <span className="h-2 w-2 rounded-full bg-[var(--success)]" />
 
               <span className="text-xs font-medium text-[var(--text-secondary)] sm:text-sm">
@@ -49,19 +51,19 @@ export default async function HeroSection() {
 
             {/* Heading */}
 
-            <h1 className="text-4xl font-bold leading-[1.5] tracking-tight text-[var(--text-primary)] sm:text-5xl">
+            <h1 className="text-4xl hover:border-2 font-bold leading-[1.5] tracking-tight text-[var(--text-primary)] sm:text-5xl">
               {hero.title}
             </h1>
 
             {/* Description */}
 
-            <p className="mt-6 max-w-xl text-base leading-8 text-[var(--text-secondary)] sm:text-lg">
+            <p className="mx-auto mt-6 max-w-xl text-base leading-8 text-[var(--text-secondary)] sm:text-lg">
               {hero.subtitle}
             </p>
 
             {/* Actions */}
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row">
               <Link
                 href={hero.buttonLink}
                 className="inline-flex items-center justify-center rounded-xl bg-[var(--primary)] px-7 py-3.5 text-sm font-semibold text-white transition hover:bg-[var(--primary-hover)]"
@@ -155,7 +157,7 @@ export default async function HeroSection() {
 
           {/* Trust Items */}
 
-          <div className="mt-12 grid grid-cols-3 gap-2 border-t border-[var(--border)] pt-6">
+          <div className="mx-auto mt-12 grid max-w-md grid-cols-3 gap-2 border-t border-[var(--border)] pt-6">
 
             <div className="text-center">
               <p className="text-base font-bold text-[var(--text-primary)]">
@@ -217,7 +219,7 @@ export default async function HeroSection() {
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
                 href={hero.buttonLink}
-                className="inline-flex items-center justify-center rounded-xl bg-[var(--primary)] px-7 py-3.5 text-sm font-semibold text-white transition hover:bg-[var(--primary-hover)]"
+                className="btn-primary-glow inline-flex items-center justify-center rounded-xl bg-[var(--primary)] px-7 py-3.5 text-sm font-semibold text-white transition hover:btn-primary-glow transition-all"
               >
                 {hero.buttonText}
 

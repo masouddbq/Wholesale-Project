@@ -61,8 +61,9 @@ export default function Navbar() {
     return pathname.startsWith(href);
   };
 
+  // تغییر جدید: افکت shimmer طلایی در navbar
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-white/95 backdrop-blur">
+    <header className="gold-shimmer-border sticky top-0 z-50 border-b border-[var(--border)] bg-white/95 backdrop-blur">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link href="/" className="group flex shrink-0 items-center gap-2">
@@ -128,7 +129,7 @@ export default function Navbar() {
           {/* Cart */}
           <Link
             href="/cart"
-            className="relative flex items-center gap-1.5 rounded-xl border border-[var(--border)] px-2.5 py-2 text-xs font-medium text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface-muted)] lg:gap-2 lg:px-4 lg:py-2.5 lg:text-sm"
+            className="btn-outline-glow relative flex items-center gap-1.5 rounded-xl border border-[var(--border)] px-2.5 py-2 text-xs font-medium text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface-muted)] lg:gap-2 lg:px-4 lg:py-2.5 lg:text-sm"
           >
             <span>سبد خرید</span>
 
@@ -176,7 +177,7 @@ export default function Navbar() {
                 type="button"
                 onClick={handleLogout}
                 disabled={isLoggingOut}
-                className="rounded-xl border border-red-200 px-2.5 py-2 text-xs font-medium text-[var(--danger)] transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50 lg:px-4 lg:py-2.5 lg:text-sm"
+                className="rounded-xl border border-neutral-200 px-2.5 py-2 text-xs font-medium text-neutral-600 transition hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-50 lg:px-4 lg:py-2.5 lg:text-sm"
               >
                 {isLoggingOut ? "در حال خروج..." : "خروج"}
               </button>
@@ -184,7 +185,7 @@ export default function Navbar() {
           ) : (
             <Link
               href="/login"
-              className="rounded-xl bg-[var(--primary)] px-4 py-2 text-xs font-medium text-white transition hover:bg-[var(--primary-hover)] lg:px-5 lg:py-2.5 lg:text-sm"
+              className="btn-primary-glow rounded-xl bg-[var(--primary)] px-4 py-2 text-xs font-medium text-white transition hover:bg-[var(--primary-hover)] lg:px-5 lg:py-2.5 lg:text-sm"
             >
               ورود
             </Link>
@@ -307,7 +308,7 @@ export default function Navbar() {
                   type="button"
                   onClick={handleLogout}
                   disabled={isLoggingOut}
-                  className="block w-full py-4 text-right text-sm font-medium text-[var(--danger)] transition hover:bg-red-50 disabled:opacity-50"
+                  className="block w-full py-4 text-right text-sm font-medium text-neutral-600 transition hover:bg-neutral-50 disabled:opacity-50"
                 >
                   {isLoggingOut ? "در حال خروج..." : "خروج از حساب"}
                 </button>

@@ -112,7 +112,7 @@ export default function Pagination({
             }
             className={`h-10 min-w-10 rounded-lg px-3 text-sm font-medium transition ${
               page === currentPage
-                ? "bg-red-500 text-white"
+                ? "pagination-active"
                 : "border border-neutral-200 bg-white hover:bg-neutral-100"
             }`}
           >

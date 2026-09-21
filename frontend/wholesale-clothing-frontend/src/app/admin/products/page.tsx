@@ -227,7 +227,7 @@ export default function AdminProductsPage() {
 
         <Link
           href="/admin/products/new"
-          className="rounded-xl bg-black px-5 py-3 text-center text-sm font-medium text-white transition hover:bg-neutral-800"
+          className="btn-primary-glow rounded-xl bg-black px-5 py-3 text-center text-sm font-medium text-white transition hover:bg-neutral-800"
         >
           افزودن محصول
         </Link>
@@ -490,23 +490,15 @@ export default function AdminProductsPage() {
                     {/* Status */}
 
                     <td className="px-5 py-4">
-                      <span
-                        className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${
-                          product.isActive
-                            ? "bg-green-100 text-green-700"
-                            : "bg-red-100 text-red-700"
-                        }`}
-                      >
-                        {product.isActive ? (
-  <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
-    فعال
-  </span>
-) : (
-  <span className="rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-700">
-    غیرفعال
-  </span>
-)}
-                      </span>
+                      {product.isActive ? (
+                        <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
+                          فعال
+                        </span>
+                      ) : (
+                        <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-600">
+                          غیرفعال
+                        </span>
+                      )}
                     </td>
                   </tr>
                 ))

@@ -56,7 +56,7 @@ export default async function ProductDetailPage({
               <img
                 src={`http://localhost:5000${product.images[0]}`}
                 alt={product.name}
-                className="h-full w-full object-cover"
+                className="product-image-zoom h-full w-full object-cover"
               />
             ) : (
               <div className="flex h-full items-center justify-center text-neutral-400">

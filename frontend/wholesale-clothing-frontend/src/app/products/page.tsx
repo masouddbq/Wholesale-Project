@@ -145,7 +145,7 @@ export default async function ProductsPage({
                     <Link
                       key={product._id}
                       href={`/products/${product.slug}`}
-                      className="group overflow-hidden rounded-2xl border border-[var(--border)] bg-white transition duration-300 hover:-translate-y-1 hover:border-[var(--border-strong)] hover:shadow-xl"
+                      className="group product-card-gold overflow-hidden rounded-2xl border border-[var(--border)] bg-white transition duration-300 hover:-translate-y-1 hover:border-[var(--border-strong)] hover:shadow-xl"
                     >
                       {/* Image */}
                       <div className="relative aspect-[4/5] overflow-hidden bg-[var(--surface-muted)]">

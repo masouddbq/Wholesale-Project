@@ -7,6 +7,7 @@ import {
   type DashboardStats,
 } from "@/services/adminService";
 
+// تغییر جدید: داشبورد ادمین با تم جدید
 export default function AdminPage() {
   const [stats, setStats] =
     useState<DashboardStats | null>(null);
@@ -71,7 +72,7 @@ export default function AdminPage() {
       </div>
 
       {error && (
-        <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-600">
+        <div className="mt-6 rounded-2xl border border-neutral-200 bg-neutral-50 px-5 py-4 text-sm text-neutral-700">
           {error}
         </div>
       )}
@@ -80,7 +81,7 @@ export default function AdminPage() {
         {statItems.map((item) => (
           <div
             key={item.title}
-            className="rounded-2xl border border-neutral-200 bg-red-50 p-6"
+            className="rounded-2xl border border-neutral-200 bg-neutral-50 p-6 gold-shimmer-border"
           >
             <p className="text-sm text-neutral-500">
               {item.title}
