@@ -20,7 +20,7 @@ export default async function HeroSection() {
       : [];
 
   return (
-    <section className="relative overflow-hidden border-b border-[var(--border)] bg-white">
+    <section className="relative overflow-hidden border-b border-[var(--border)] bg-transparent">
       {/* Decorative Background */}
 
       <div className="pointer-events-none absolute inset-0">
@@ -51,7 +51,7 @@ export default async function HeroSection() {
 
             {/* Heading */}
 
-            <h1 className="text-4xl hover:border-2 font-bold leading-[1.5] tracking-tight text-[var(--text-primary)] sm:text-5xl">
+            <h1 className="text-4xl font-bold leading-[1.5] tracking-tight text-[var(--text-primary)] sm:text-5xl">
               {hero.title}
             </h1>
 

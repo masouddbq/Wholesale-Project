@@ -36,7 +36,7 @@ export default async function ProductSection() {
   };
 
   return (
-    <section className="border-b border-[var(--border)] bg-white">
+    <section className="border-b border-[var(--border)] bg-transparent">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
 
         {/* Header */}

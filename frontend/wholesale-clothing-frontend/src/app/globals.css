@@ -68,11 +68,12 @@ html {
 
 body {
   margin: 0;
-  background: var(--background);
+  background: linear-gradient(180deg, #FFFFFF 0%, #d3d2d275 80%, #ffdd0073 100%);
   color: var(--foreground);
   font-family: "pinar", "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  min-height: 100vh;
 }
 
 h1,
