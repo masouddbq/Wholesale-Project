@@ -1,32 +1,11 @@
-import { getContentBySlug } from "@/services/siteContentService";
-import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 
-export default async function AboutPage() {
-  try {
-    const data = await getContentBySlug("about");
+import CmsTextPage from "@/components/CmsTextPage";
 
-    const content = data.content;
+export const metadata: Metadata = {
+  title: "درباره ما",
+};
 
-    return (
-      <main className="mx-auto max-w-5xl px-4 py-16">
-        <div className="mb-10">
-          <p className="text-sm text-neutral-500">
-            درباره فروشگاه
-          </p>
-
-          <h1 className="mt-2 text-4xl font-bold md:text-5xl">
-            {content.title}
-          </h1>
-        </div>
-
-        <section className="rounded-3xl border border-neutral-200 bg-white p-6 md:p-10">
-          <div className="whitespace-pre-line text-base leading-9 text-neutral-600 md:text-lg">
-            {content.content}
-          </div>
-        </section>
-      </main>
-    );
-  } catch {
-    notFound();
-  }
+export default function AboutPage() {
+  return <CmsTextPage contentKey="about" eyebrow="درباره فروشگاه" />;
 }

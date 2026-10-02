@@ -6,6 +6,7 @@ import {
   getDashboardStats,
   type DashboardStats,
 } from "@/services/adminService";
+import FormNotice from "@/components/FormNotice";
 
 // تغییر جدید: داشبورد ادمین با تم جدید
 export default function AdminPage() {
@@ -71,11 +72,7 @@ export default function AdminPage() {
         </p>
       </div>
 
-      {error && (
-        <div className="mt-6 rounded-2xl border border-neutral-200 bg-neutral-50 px-5 py-4 text-sm text-neutral-700">
-          {error}
-        </div>
-      )}
+      <FormNotice message={error} className="mt-6" />
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {statItems.map((item) => (

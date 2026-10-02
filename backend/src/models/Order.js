@@ -125,7 +125,7 @@ const orderStatusHistorySchema = new mongoose.Schema(
     changedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      default: null,
     },
 
     changedAt: {

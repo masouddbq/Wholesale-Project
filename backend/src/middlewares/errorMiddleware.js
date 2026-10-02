@@ -3,8 +3,11 @@ const errorHandler = (err, req, res, next) => {
 
   // Zod Error
   if (err.name === "ZodError") {
+    const firstIssue = err.issues?.[0];
+
     return res.status(400).json({
-      message: "Validation failed",
+      message:
+        firstIssue?.message || "اطلاعات سفارش نامعتبر است.",
       errors: err.issues.map((issue) => ({
         field: issue.path.join("."),
         message: issue.message,
@@ -53,7 +56,7 @@ if (err.name === "MulterError") {
 
   if (err.code === "LIMIT_FILE_COUNT") {
     return res.status(400).json({
-      message: "You can upload a maximum of 5 images",
+      message: "You can upload a maximum of 10 images",
     });
   }
 

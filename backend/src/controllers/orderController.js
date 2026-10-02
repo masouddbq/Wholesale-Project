@@ -2,6 +2,12 @@ const mongoose = require("mongoose");
 
 const Order = require("../models/Order");
 const Product = require("../models/Product");
+const { applyOrderStatusChange } = require("../services/orderStatusService");
+const {
+  notifyAdminsNewOrder,
+  notifyAdminsStatus,
+  notifyCustomerStatus,
+} = require("../services/rubikaNotify");
 
 const generateOrderNumber = () => {
   return `ORD-${Date.now()}-${Math.floor(
@@ -16,6 +22,7 @@ const createOrder = async (req, res) => {
   const orderItems = [];
   let totalAmount = 0;
   const itemKeys = new Set();
+  const quantityByProduct = new Map();
 
   for (const item of items) {
     const {
@@ -92,15 +99,17 @@ const createOrder = async (req, res) => {
       }
     }
 
-    if (
-      quantity <
-      productDoc.minimumOrderQuantity
-    ) {
-      return res.status(400).json({
-        message:
-          `Minimum order quantity for ${productDoc.name} is ${productDoc.minimumOrderQuantity}`,
-      });
-    }
+    const productKey = String(productDoc._id);
+    const previous = quantityByProduct.get(productKey);
+    quantityByProduct.set(productKey, {
+      name: productDoc.name,
+      minimumOrderQuantity: productDoc.minimumOrderQuantity,
+      saleType: productDoc.saleType,
+      quantity:
+        productDoc.saleType === "series"
+          ? Math.max(previous?.quantity || 0, quantity)
+          : (previous?.quantity || 0) + quantity,
+    });
 
     const itemTotal =
       productDoc.price * quantity;
@@ -117,6 +126,16 @@ const createOrder = async (req, res) => {
       color: selectedVariant?.color,
       sku: selectedVariant?.sku,
     });
+  }
+
+  for (const summary of quantityByProduct.values()) {
+    if (summary.quantity < summary.minimumOrderQuantity) {
+      const unit = summary.saleType === "series" ? "سری" : "عدد";
+      return res.status(400).json({
+        message:
+          `حداقل تعداد سفارش برای «${summary.name}» ${summary.minimumOrderQuantity} ${unit} است.`,
+      });
+    }
   }
 
   // فعلاً Transaction نداریم.
@@ -165,6 +184,10 @@ const createOrder = async (req, res) => {
     status: "pending",
     paymentStatus: "unpaid",
     note,
+  });
+
+  notifyAdminsNewOrder(order).catch((error) => {
+    console.error("Rubika new-order notify failed", error);
   });
 
   res.status(201).json({
@@ -317,114 +340,28 @@ const getOrderById = async (req, res) => {
 
 // PATCH /api/orders/:id/status
 const updateOrderStatus = async (req, res) => {
-  const { status } = req.body;
-
-  const allowedStatuses = [
-    "pending",
-    "confirmed",
-    "preparing",
-    "shipped",
-    "completed",
-    "cancelled",
-  ];
-
-  if (
-    !status ||
-    !allowedStatuses.includes(status)
-  ) {
-    return res.status(400).json({
-      message: "Invalid order status",
-      allowedStatuses,
-    });
-  }
-
-  const order = await Order.findById(
-    req.params.id
-  );
-
-  if (!order) {
-    return res.status(404).json({
-      message: "Order not found",
-    });
-  }
-
-  if (order.status === status) {
-    return res.status(400).json({
-      message: `Order is already ${status}`,
-    });
-  }
-
-  const validTransitions = {
-    pending: ["confirmed", "cancelled"],
-    confirmed: ["preparing", "cancelled"],
-    preparing: ["shipped", "cancelled"],
-    shipped: ["completed"],
-    completed: [],
-    cancelled: [],
-  };
-
-  if (
-    !validTransitions[order.status].includes(
-      status
-    )
-  ) {
-    return res.status(400).json({
-      message:
-        `Cannot change order status from ${order.status} to ${status}`,
-    });
-  }
-
-  const previousStatus = order.status;
-
-  // فعلاً Transaction نداریم.
-  // در Production باید این بخش با Transaction انجام شود.
-  if (status === "cancelled") {
-    for (const item of order.items) {
-      if (!item.product) continue;
-      if (!item.sku) continue;
-
-      const result = await Product.updateOne(
-        {
-          _id: item.product,
-          variants: {
-            $elemMatch: {
-              sku: item.sku,
-              size: item.size,
-              color: item.color,
-            },
-          },
-        },
-        {
-          $inc: {
-            "variants.$.stock": item.quantity,
-          },
-        }
-      );
-
-      if (result.modifiedCount !== 1) {
-        return res.status(409).json({
-          message:
-            `Failed to restore stock for ${item.name}`,
-        });
-      }
-    }
-  }
-
-  order.status = status;
-
-  order.statusHistory.push({
-    status,
-    previousStatus,
-    changedBy: req.user._id,
-    changedAt: new Date(),
+  const result = await applyOrderStatusChange({
+    orderId: req.params.id,
+    status: req.body.status,
+    changedByUserId: req.user._id,
   });
 
-  await order.save();
+  if (!result.ok) {
+    return res.status(result.code || 400).json({
+      message: result.message,
+    });
+  }
+
+  notifyCustomerStatus(result.order).catch((error) => {
+    console.error("Rubika customer notify failed", error);
+  });
+  notifyAdminsStatus(result.order).catch((error) => {
+    console.error("Rubika admin notify failed", error);
+  });
 
   res.status(200).json({
-    message:
-      "Order status updated successfully",
-    order,
+    message: "Order status updated successfully",
+    order: result.order,
   });
 };
 

@@ -1,2 +1,11 @@
-// تغییر جدید: آدرس پایه تصاویر از متغیر محیطی
-export const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const getApiBase = () => {
+  const publicUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  if (!publicUrl || publicUrl === "same") {
+    return "";
+  }
+
+  return publicUrl.replace(/\/$/, "");
+};
+
+export const API_BASE = getApiBase();

@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import PriceInput from "@/components/PriceInput";
 
 type Category = {
   _id: string;
@@ -124,7 +125,7 @@ export default function ProductFilters({
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="نام محصول را وارد کنید..."
-              className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-muted)] px-4 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)] focus:border-[var(--border-strong)] focus:bg-white focus:ring-2 focus:ring-black/5"
+              className="h-11 w-full rounded-xl border border-[var(--border)] app-bg-muted px-4 text-sm text-[var(--text-primary)] outline-none transition placeholder:text-[var(--text-muted)] focus:border-[var(--border-strong)] focus:bg-white focus:ring-2 focus:ring-black/5"
             />
           </div>
 
@@ -141,7 +142,7 @@ export default function ProductFilters({
               id="category"
               value={category}
               onChange={(event) => setCategory(event.target.value)}
-              className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-muted)] px-4 text-sm text-[var(--text-primary)] outline-none transition focus:border-[var(--border-strong)] focus:bg-white focus:ring-2 focus:ring-black/5"
+              className="h-11 w-full rounded-xl border border-[var(--border)] app-bg-muted px-4 text-sm text-[var(--text-primary)] outline-none transition focus:border-[var(--border-strong)] focus:bg-white focus:ring-2 focus:ring-black/5"
             >
               <option value="">همه دسته‌بندی‌ها</option>
 
@@ -166,7 +167,7 @@ export default function ProductFilters({
               id="sort"
               value={sort}
               onChange={(event) => setSort(event.target.value)}
-              className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-muted)] px-4 text-sm text-[var(--text-primary)] outline-none transition focus:border-[var(--border-strong)] focus:bg-white focus:ring-2 focus:ring-black/5"
+              className="h-11 w-full rounded-xl border border-[var(--border)] app-bg-muted px-4 text-sm text-[var(--text-primary)] outline-none transition focus:border-[var(--border-strong)] focus:bg-white focus:ring-2 focus:ring-black/5"
             >
               <option value="newest">جدیدترین</option>
               <option value="oldest">قدیمی‌ترین</option>
@@ -184,14 +185,11 @@ export default function ProductFilters({
               حداقل
             </label>
 
-            <input
-              id="minPrice"
-              type="number"
-              min="0"
+            <PriceInput
               value={minPrice}
-              onChange={(event) => setMinPrice(event.target.value)}
+              onChange={setMinPrice}
               placeholder="۰"
-              className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-muted)] px-3 text-sm text-[var(--text-primary)] outline-none transition focus:border-[var(--border-strong)] focus:bg-white focus:ring-2 focus:ring-black/5"
+              className="h-11 w-full rounded-xl border border-[var(--border)] app-bg-muted px-3 text-sm text-[var(--text-primary)] outline-none transition focus:border-[var(--border-strong)] focus:bg-white focus:ring-2 focus:ring-black/5"
             />
           </div>
 
@@ -204,14 +202,11 @@ export default function ProductFilters({
               حداکثر
             </label>
 
-            <input
-              id="maxPrice"
-              type="number"
-              min="0"
+            <PriceInput
               value={maxPrice}
-              onChange={(event) => setMaxPrice(event.target.value)}
+              onChange={setMaxPrice}
               placeholder="۰"
-              className="h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-muted)] px-3 text-sm text-[var(--text-primary)] outline-none transition focus:border-[var(--border-strong)] focus:bg-white focus:ring-2 focus:ring-black/5"
+              className="h-11 w-full rounded-xl border border-[var(--border)] app-bg-muted px-3 text-sm text-[var(--text-primary)] outline-none transition focus:border-[var(--border-strong)] focus:bg-white focus:ring-2 focus:ring-black/5"
             />
           </div>
 

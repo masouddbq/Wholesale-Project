@@ -9,6 +9,18 @@ import { getAdminProductById, updateProduct } from "@/services/productService";
 import { getCategories } from "@/services/categoryService";
 import { uploadProductImages } from "@/services/uploadService";
 import { API_BASE } from "@/lib/imageUrl";
+import PriceInput from "@/components/PriceInput";
+import AdminVariantEditor, {
+  emptyColorGroup,
+  flattenColorGroups,
+  groupsFromVariants,
+  type ColorGroupForm,
+} from "@/components/admin/AdminVariantEditor";
+import { parseGroupedNumber } from "@/lib/formatPrice";
+import type { SaleType } from "@/lib/productOptions";
+import AvailabilityPicker from "@/components/admin/AvailabilityPicker";
+import type { AvailabilityStatus } from "@/lib/availability";
+import FormNotice from "@/components/FormNotice";
 
 type Category = {
   _id: string;
@@ -19,7 +31,9 @@ type Category = {
 type Variant = {
   _id?: string;
   size: string;
+  sizeSlot?: number;
   color: string;
+  colorHex?: string;
   stock: number;
   sku: string;
 };
@@ -37,15 +51,10 @@ type ExistingProduct = {
     slug: string;
   };
   variants: Variant[];
+  saleType?: SaleType;
+  availabilityStatus?: AvailabilityStatus;
   minimumOrderQuantity: number;
   isActive: boolean;
-};
-
-type FormVariant = {
-  size: string;
-  color: string;
-  stock: string;
-  sku: string;
 };
 
 export default function EditProductPage() {
@@ -66,12 +75,17 @@ export default function EditProductPage() {
 
   const [category, setCategory] = useState("");
   const [isActive, setIsActive] = useState(true);
+  const [saleType, setSaleType] = useState<SaleType>("selective");
+  const [availabilityStatus, setAvailabilityStatus] =
+    useState<AvailabilityStatus>("in_stock");
 
   const [existingImages, setExistingImages] = useState<string[]>([]);
 
   const [newImages, setNewImages] = useState<File[]>([]);
 
-  const [variants, setVariants] = useState<FormVariant[]>([]);
+  const [variants, setVariants] = useState<ColorGroupForm[]>(() => [
+    emptyColorGroup(),
+  ]);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -107,17 +121,12 @@ export default function EditProductPage() {
         setCategory(loadedProduct.category._id);
 
         setIsActive(loadedProduct.isActive);
-
-        setExistingImages(loadedProduct.images || []);
-
-        setVariants(
-          (loadedProduct.variants || []).map((variant) => ({
-            size: variant.size,
-            color: variant.color,
-            stock: String(variant.stock),
-            sku: variant.sku,
-          })),
+        setSaleType(loadedProduct.saleType === "series" ? "series" : "selective");
+        setAvailabilityStatus(
+          loadedProduct.availabilityStatus || "in_stock",
         );
+        setExistingImages(loadedProduct.images || []);
+        setVariants(groupsFromVariants(loadedProduct.variants || [], loadedProduct.saleType === "series" ? "series" : "selective"));
 
         setCategories(categoriesData.categories || categoriesData);
       } catch (err) {
@@ -163,8 +172,8 @@ export default function EditProductPage() {
 
     const totalImages = existingImages.length + newImages.length + files.length;
 
-    if (totalImages > 5) {
-      setError("تعداد تصاویر محصول نمی‌تواند بیشتر از 5 عدد باشد.");
+    if (totalImages > 10) {
+      setError("تعداد تصاویر محصول نمی‌تواند بیشتر از ۱۰ عدد باشد.");
 
       event.target.value = "";
       return;
@@ -189,41 +198,6 @@ export default function EditProductPage() {
     );
   };
 
-  const addVariant = () => {
-    setVariants((prev) => [
-      ...prev,
-      {
-        size: "",
-        color: "",
-        stock: "0",
-        sku: "",
-      },
-    ]);
-  };
-
-  const removeVariant = (index: number) => {
-    setVariants((prev) =>
-      prev.filter((_, variantIndex) => variantIndex !== index),
-    );
-  };
-
-  const updateVariant = (
-    index: number,
-    field: keyof FormVariant,
-    value: string,
-  ) => {
-    setVariants((prev) =>
-      prev.map((variant, variantIndex) =>
-        variantIndex === index
-          ? {
-              ...variant,
-              [field]: value,
-            }
-          : variant,
-      ),
-    );
-  };
-
   const validateForm = () => {
     if (name.trim().length < 2) {
       return "نام محصول حداقل باید 2 کاراکتر باشد.";
@@ -233,7 +207,7 @@ export default function EditProductPage() {
       return "Slug محصول حداقل باید 2 کاراکتر باشد.";
     }
 
-    const numericPrice = Number(price);
+    const numericPrice = parseGroupedNumber(price);
 
     if (Number.isNaN(numericPrice) || numericPrice < 0) {
       return "قیمت محصول معتبر نیست.";
@@ -249,44 +223,18 @@ export default function EditProductPage() {
       return "دسته‌بندی محصول را انتخاب کنید.";
     }
 
-    if (!variants.length) {
-      return "حداقل یک Variant برای محصول لازم است.";
-    }
+    const prepared = flattenColorGroups(variants, slug.trim() || "PRD", saleType);
 
-    const skuSet = new Set<string>();
-
-    for (let index = 0; index < variants.length; index++) {
-      const variant = variants[index];
-
-      if (!variant.size.trim()) {
-        return `سایز Variant شماره ${index + 1} وارد نشده است.`;
-      }
-
-      if (!variant.color.trim()) {
-        return `رنگ Variant شماره ${index + 1} وارد نشده است.`;
-      }
-
-      const stock = Number(variant.stock);
-
-      if (!Number.isInteger(stock) || stock < 0) {
-        return `موجودی Variant شماره ${index + 1} معتبر نیست.`;
-      }
-
-      if (!variant.sku.trim()) {
-        return `SKU Variant شماره ${index + 1} وارد نشده است.`;
-      }
-
-      if (skuSet.has(variant.sku.trim())) {
-        return `SKU تکراری است: ${variant.sku}`;
-      }
-
-      skuSet.add(variant.sku.trim());
+    if (!prepared.length) {
+      return saleType === "series"
+        ? "حداقل یک رنگ و یک سایز برای سری انتخاب کنید."
+        : "برای هر رنگ حداقل یک سایز را تیک بزنید.";
     }
 
     const totalImages = existingImages.length + newImages.length;
 
-    if (totalImages > 5) {
-      return "تعداد تصاویر نمی‌تواند بیشتر از 5 عدد باشد.";
+    if (totalImages > 10) {
+      return "تعداد تصاویر نمی‌تواند بیشتر از ۱۰ عدد باشد.";
     }
 
     return "";
@@ -322,15 +270,12 @@ export default function EditProductPage() {
         name: name.trim(),
         slug: slug.trim(),
         description: description.trim(),
-        price: Number(price),
+        price: parseGroupedNumber(price),
         images: finalImages,
         category,
-        variants: variants.map((variant) => ({
-          size: variant.size.trim(),
-          color: variant.color.trim(),
-          stock: Number(variant.stock),
-          sku: variant.sku.trim(),
-        })),
+        variants: flattenColorGroups(variants, slug.trim() || "PRD", saleType),
+        saleType,
+        availabilityStatus,
         minimumOrderQuantity: Number(minimumOrderQuantity),
         isActive,
       };
@@ -340,6 +285,17 @@ export default function EditProductPage() {
       setProduct(response.product);
 
       setExistingImages(response.product.images || []);
+
+      setSaleType(
+        response.product.saleType === "series" ? "series" : "selective",
+      );
+
+      setVariants(
+        groupsFromVariants(
+          response.product.variants || [],
+          response.product.saleType === "series" ? "series" : "selective",
+        ),
+      );
 
       setNewImages([]);
 
@@ -398,17 +354,9 @@ export default function EditProductPage() {
         </Link>
       </div>
 
-      {error && (
-        <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4 text-sm text-neutral-700">
-          {error}
-        </div>
-      )}
+      <FormNotice message={error} />
 
-      {success && (
-        <div className="rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-700">
-          {success}
-        </div>
-      )}
+      <FormNotice message={success} tone="success" />
 
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* اطلاعات اصلی */}
@@ -443,11 +391,9 @@ export default function EditProductPage() {
             <div>
               <label className="mb-2 block text-sm font-medium">قیمت</label>
 
-              <input
-                type="number"
-                min="0"
+              <PriceInput
                 value={price}
-                onChange={(event) => setPrice(event.target.value)}
+                onChange={setPrice}
                 className="w-full rounded-lg border border-neutral-200 px-4 py-3 outline-none transition focus:border-black"
               />
             </div>
@@ -466,6 +412,11 @@ export default function EditProductPage() {
                 }
                 className="w-full rounded-lg border border-neutral-200 px-4 py-3 outline-none transition focus:border-black"
               />
+              <p className="mt-2 text-xs text-neutral-500">
+                {saleType === "series"
+                  ? "حداقل تعداد سری کامل در سفارش."
+                  : "حداقل مجموع تعداد لباس در سفارش انتخابی."}
+              </p>
             </div>
 
             <div>
@@ -501,6 +452,11 @@ export default function EditProductPage() {
                 محصول فعال باشد
               </label>
             </div>
+
+            <AvailabilityPicker
+              value={availabilityStatus}
+              onChange={setAvailabilityStatus}
+            />
           </div>
 
           <div className="mt-5">
@@ -523,7 +479,7 @@ export default function EditProductPage() {
               <h2 className="text-lg font-bold">تصاویر محصول</h2>
 
               <p className="mt-1 text-xs text-neutral-500">
-                حداکثر 5 تصویر، هر تصویر حداکثر 5MB
+                حداکثر ۱۰ تصویر، هر تصویر حداکثر 5MB
               </p>
             </div>
 
@@ -595,109 +551,13 @@ export default function EditProductPage() {
         {/* Variant ها */}
 
         <section className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm">
-          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h2 className="text-lg font-bold">Variant ها</h2>
-
-              <p className="mt-1 text-xs text-neutral-500">
-                سایز، رنگ، موجودی و SKU محصول
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={addVariant}
-              className="rounded-xl bg-black px-4 py-2 text-sm text-white transition hover:bg-neutral-800"
-            >
-              + افزودن Variant
-            </button>
-          </div>
-
-          <div className="space-y-4">
-            {variants.map((variant, index) => (
-              <div
-                key={index}
-                className="rounded-xl border border-neutral-200 p-4"
-              >
-                <div className="grid gap-4 md:grid-cols-4">
-                  <div>
-                    <label className="mb-2 block text-xs font-medium">
-                      سایز
-                    </label>
-
-                    <input
-                      value={variant.size}
-                      onChange={(event) =>
-                        updateVariant(index, "size", event.target.value)
-                      }
-                      className="w-full rounded-lg border border-neutral-200 px-3 py-2 outline-none focus:border-black"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="mb-2 block text-xs font-medium">
-                      رنگ
-                    </label>
-
-                    <input
-                      value={variant.color}
-                      onChange={(event) =>
-                        updateVariant(index, "color", event.target.value)
-                      }
-                      className="w-full rounded-lg border border-neutral-200 px-3 py-2 outline-none focus:border-black"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="mb-2 block text-xs font-medium">
-                      موجودی
-                    </label>
-
-                    <input
-                      type="number"
-                      min="0"
-                      value={variant.stock}
-                      onChange={(event) =>
-                        updateVariant(index, "stock", event.target.value)
-                      }
-                      className="w-full rounded-lg border border-neutral-200 px-3 py-2 outline-none focus:border-black"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="mb-2 block text-xs font-medium">
-                      SKU
-                    </label>
-
-                    <input
-                      dir="ltr"
-                      value={variant.sku}
-                      onChange={(event) =>
-                        updateVariant(index, "sku", event.target.value)
-                      }
-                      className="w-full rounded-lg border border-neutral-200 px-3 py-2 text-left outline-none focus:border-black"
-                    />
-                  </div>
-                </div>
-
-                <div className="mt-4 flex justify-end">
-                  <button
-                    type="button"
-                    onClick={() => removeVariant(index)}
-                    className="text-sm text-neutral-500 hover:text-black hover:underline"
-                  >
-                    حذف Variant
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {!variants.length && (
-            <div className="rounded-lg bg-neutral-50 p-5 text-center text-sm text-neutral-500">
-              هنوز Variantای اضافه نشده است.
-            </div>
-          )}
+          <h2 className="mb-6 text-lg font-bold">تنوع رنگ و سایز</h2>
+          <AdminVariantEditor
+            saleType={saleType}
+            onSaleTypeChange={setSaleType}
+            groups={variants}
+            onChange={setVariants}
+          />
         </section>
 
         {/* دکمه ها */}

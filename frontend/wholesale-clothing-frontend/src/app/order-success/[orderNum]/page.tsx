@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ClearCartOnMount from "@/components/ClearCartOnMount";
 
 type OrderSuccessPageProps = {
   params: Promise<{
@@ -13,6 +14,7 @@ export default async function OrderSuccessPage({
 
   return (
     <div className="mx-auto flex min-h-[650px] max-w-7xl items-center justify-center px-4 py-16">
+      <ClearCartOnMount />
       <div className="w-full max-w-xl rounded-3xl border border-neutral-200 bg-white p-8 text-center shadow-sm md:p-12">
         <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-green-100 text-4xl text-green-600">
           ✓

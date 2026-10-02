@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import apiClient from "@/lib/appClient";
 import { getMe } from "@/services/authService";
+import FormNotice from "@/components/FormNotice";
 
 type Address = {
   _id: string;
@@ -351,17 +352,8 @@ export default function AddressesPage() {
 
             {(error || success) && (
               <div className="md:col-span-2">
-                {error && (
-                  <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-600">
-                    {error}
-                  </div>
-                )}
-
-                {success && (
-                  <div className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm leading-6 text-green-600">
-                    {success}
-                  </div>
-                )}
+                <FormNotice message={error} tone="error" />
+                <FormNotice message={success} tone="success" />
               </div>
             )}
 

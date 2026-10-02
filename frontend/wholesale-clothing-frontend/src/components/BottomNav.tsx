@@ -1,17 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Search,
   Package,
   LayoutGrid,
   ShoppingCart,
+  Home,
 } from "lucide-react";
 
 import useCartStore from "@/store/cartStore";
 
 const navItems = [
+  {
+    title: "خانه",
+    href: "/",
+    icon: Home,
+  },
   {
     title: "محصولات",
     href: "/products",
@@ -24,12 +30,14 @@ const navItems = [
   },
 ];
 
+const itemClass =
+  "relative flex h-full min-w-0 flex-1 flex-col items-center justify-center gap-0.5 text-[10px] font-medium";
+
 export default function BottomNav() {
   const pathname = usePathname();
+  const router = useRouter();
 
-  const items = useCartStore(
-    (state) => state.items
-  );
+  const items = useCartStore((state) => state.items);
 
   const cartCount = items.reduce(
     (total, item) => total + item.quantity,
@@ -38,8 +46,7 @@ export default function BottomNav() {
 
   const handleSearchClick = () => {
     if (pathname === "/") {
-      const searchElement =
-        document.getElementById("site-search");
+      const searchElement = document.getElementById("site-search");
 
       if (searchElement) {
         searchElement.scrollIntoView({
@@ -47,8 +54,7 @@ export default function BottomNav() {
           block: "center",
         });
 
-        const input =
-          searchElement.querySelector("input");
+        const input = searchElement.querySelector("input");
 
         if (input) {
           setTimeout(() => {
@@ -56,68 +62,62 @@ export default function BottomNav() {
           }, 400);
         }
       }
+
+      return;
     }
+
+    router.push("/#site-search");
+  };
+
+  const isActive = (href: string) => {
+    if (href === "/") {
+      return pathname === "/";
+    }
+
+    return pathname.startsWith(href);
   };
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-neutral-200 bg-white/95 backdrop-blur md:hidden">
-      <div className="mx-auto flex h-16 max-w-md items-center justify-around px-1">
+      <div className="mx-auto flex h-12 max-w-md items-center justify-around px-1">
         {navItems.map((item) => {
           const Icon = item.icon;
-
-          const isActive =
-            item.href === "/products"
-              ? pathname.startsWith("/products")
-              : pathname.startsWith("/categories");
+          const active = isActive(item.href);
 
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`relative flex h-full min-w-[72px] flex-col items-center justify-center gap-1 text-xs font-medium transition-all duration-200 ${
-                isActive
-                  ? "text-black"
-                  : "text-neutral-500 active:scale-95"
+              className={`${itemClass} ${
+                active ? "text-black" : "text-neutral-500 active:scale-95"
               }`}
             >
               <Icon
-                className="h-5 w-5"
-                strokeWidth={
-                  isActive ? 2.4 : 1.8
-                }
+                className="h-4 w-4"
+                strokeWidth={active ? 2.4 : 1.8}
               />
 
               <span>{item.title}</span>
 
-              {isActive && (
-                <span className="absolute bottom-0 h-0.5 w-7 rounded-full bg-black" />
+              {active && (
+                <span className="absolute bottom-0 h-0.5 w-5 rounded-full bg-black" />
               )}
             </Link>
           );
         })}
 
-        {/* Search - فقط صفحه اصلی */}
-
-        {pathname === "/" && (
-          <button
-            type="button"
-            onClick={handleSearchClick}
-            className="relative flex h-full min-w-[72px] flex-col items-center justify-center gap-1 text-xs font-medium text-neutral-500 transition active:scale-95"
-          >
-            <Search
-              className="h-5 w-5"
-              strokeWidth={1.8}
-            />
-
-            <span className="text-sm ">جستجو</span>
-          </button>
-        )}
-
-        {/* Cart */}
+        <button
+          type="button"
+          onClick={handleSearchClick}
+          className={`${itemClass} text-neutral-500 active:scale-95`}
+        >
+          <Search className="h-4 w-4" strokeWidth={1.8} />
+          <span>جستجو</span>
+        </button>
 
         <Link
           href="/cart"
-          className={`relative flex h-full min-w-[72px] flex-col items-center justify-center gap-1 text-xs font-medium transition ${
+          className={`${itemClass} ${
             pathname.startsWith("/cart")
               ? "text-black"
               : "text-neutral-500"
@@ -125,19 +125,13 @@ export default function BottomNav() {
         >
           <div className="relative">
             <ShoppingCart
-              className="h-5 w-5"
-              strokeWidth={
-                pathname.startsWith("/cart")
-                  ? 2.4
-                  : 1.8
-              }
+              className="h-4 w-4"
+              strokeWidth={pathname.startsWith("/cart") ? 2.4 : 1.8}
             />
 
             {cartCount > 0 && (
-              <span className="absolute -right-3 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-black px-1 text-[10px] font-bold text-white">
-                {cartCount > 99
-                  ? "99+"
-                  : cartCount}
+              <span className="absolute -right-2.5 -top-1.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-black px-1 text-[8px] font-bold text-white">
+                {cartCount > 99 ? "99+" : cartCount}
               </span>
             )}
           </div>
@@ -145,7 +139,7 @@ export default function BottomNav() {
           <span>سبد خرید</span>
 
           {pathname.startsWith("/cart") && (
-            <span className="absolute bottom-0 h-0.5 w-7 rounded-full bg-black" />
+            <span className="absolute bottom-0 h-0.5 w-5 rounded-full bg-black" />
           )}
         </Link>
       </div>

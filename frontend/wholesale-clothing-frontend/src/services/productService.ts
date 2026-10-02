@@ -48,10 +48,16 @@ export type AdminProduct = {
   variants: {
     _id: string;
     size: string;
+    sizeSlot?: number;
     color: string;
+    colorHex?: string;
     stock: number;
     sku: string;
   }[];
+
+  saleType?: "series" | "selective";
+
+  availabilityStatus?: "in_stock" | "out_of_stock" | "limited";
 
   minimumOrderQuantity: number;
 
@@ -126,10 +132,14 @@ export type CreateProductPayload = {
   category: string;
   variants: {
     size: string;
+    sizeSlot?: number;
     color: string;
+    colorHex?: string;
     stock: number;
     sku: string;
   }[];
+  saleType?: "series" | "selective";
+  availabilityStatus?: "in_stock" | "out_of_stock" | "limited";
   minimumOrderQuantity: number;
   isActive: boolean;
 };

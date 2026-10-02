@@ -1,10 +1,12 @@
 import { create } from "zustand";
 
+import { UserRole } from "@/lib/roles";
+
 type User = {
   id: string;
   name: string;
   phone: string;
-  role: "customer" | "admin";
+  role: UserRole;
 };
 
 type AuthState = {
@@ -14,6 +16,7 @@ type AuthState = {
   setUser: (user: User) => void;
   clearUser: () => void;
 };
+
 
 const useAuthStore = create<AuthState>((set) => ({
   user: null,

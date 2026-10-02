@@ -11,6 +11,14 @@ import useCartStore from "@/store/cartStore";
 import { createOrder } from "@/services/orderService";
 import { getMe } from "@/services/authService";
 import { useToast } from "@/components/Toast";
+import { API_BASE } from "@/lib/imageUrl";
+import type { UserRole } from "@/lib/roles";
+import {
+  groupCartItemsByProduct,
+  groupedProductTotal,
+} from "@/lib/cartGroups";
+import CompactVariantSummary from "@/components/CompactVariantSummary";
+import FormNotice from "@/components/FormNotice";
 
 type Address = {
   _id: string;
@@ -25,7 +33,7 @@ type User = {
   id: string;
   name: string;
   phone: string;
-  role: "customer" | "admin";
+  role: UserRole;
   addresses?: Address[];
 };
 
@@ -254,6 +262,8 @@ export default function CheckoutPage() {
     setIsSubmitting(true);
 
     try {
+      const cartItems = useCartStore.getState().items;
+
       const payload = {
         customer: {
           name: name.trim(),
@@ -264,7 +274,7 @@ export default function CheckoutPage() {
           postalCode: postalCode.trim(),
         },
 
-        items: items.map((item) => ({
+        items: cartItems.map((item) => ({
           product: item.productId,
           variantId: item.variantId,
           quantity: item.quantity,
@@ -286,8 +296,7 @@ export default function CheckoutPage() {
       }
 
       setIsOrderCompleted(true);
-
-      clearCart();
+      useCartStore.getState().clearCart();
 
       addToast("سفارش شما با موفقیت ثبت شد", "success");
 
@@ -623,11 +632,7 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          {errorMessage && (
-            <div className="mt-5 rounded-xl border border-neutral-200 bg-neutral-50 p-4 text-sm text-neutral-700">
-              {errorMessage}
-            </div>
-          )}
+          <FormNotice message={errorMessage} className="mt-5" />
 
           <button
             type="submit"
@@ -647,16 +652,16 @@ export default function CheckoutPage() {
           </h2>
 
           <div className="mt-6 space-y-5">
-            {items.map((item) => (
+            {groupCartItemsByProduct(items).map((group) => (
               <div
-                key={`${item.productId}-${item.variantId}`}
+                key={group.productId}
                 className="flex gap-4"
               >
                 <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-neutral-200">
-                  {item.image ? (
+                  {group.image ? (
                     <img
-                      src={`http://localhost:5000${item.image}`}
-                      alt={item.name}
+                      src={`${API_BASE}${group.image}`}
+                      alt={group.name}
                       className="h-full w-full object-cover"
                     />
                   ) : (
@@ -668,26 +673,23 @@ export default function CheckoutPage() {
 
                 <div className="min-w-0 flex-1">
                   <h3 className="font-semibold">
-                    {item.name}
+                    {group.name}
                   </h3>
 
-                  <p className="mt-1 text-xs text-neutral-500">
-                    {item.size} /{" "}
-                    {item.color}
-                  </p>
+                  <CompactVariantSummary
+                    colors={group.colors}
+                    className="mt-1"
+                  />
 
                   <p className="mt-1 text-xs text-neutral-500">
                     تعداد:{" "}
-                    {item.quantity.toLocaleString(
-                      "fa-IR"
-                    )}
+                    {group.items
+                      .reduce((total, item) => total + item.quantity, 0)
+                      .toLocaleString("fa-IR")}
                   </p>
 
                   <p className="mt-2 text-sm font-semibold">
-                    {(
-                      item.price *
-                      item.quantity
-                    ).toLocaleString(
+                    {groupedProductTotal(group).toLocaleString(
                       "fa-IR"
                     )}{" "}
                     تومان

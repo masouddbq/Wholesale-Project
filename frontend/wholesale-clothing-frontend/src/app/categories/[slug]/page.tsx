@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 
 import { getCategoryBySlug } from "@/services/categoryService";
 import { getProducts } from "@/services/productService";
+import { API_BASE } from "@/lib/imageUrl";
+import StockStatusBadge from "@/components/StockStatusBadge";
 
 type Category = {
   _id: string;
@@ -18,6 +20,8 @@ type Product = {
   slug: string;
   price: number;
   images: string[];
+  availabilityStatus?: "in_stock" | "out_of_stock" | "limited";
+  variants?: { stock: number }[];
 };
 
 type CategoryPageProps = {
@@ -52,9 +56,9 @@ export default async function CategoryPage({
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12">
+    <div className="mx-auto max-w-7xl px-4 py-6 sm:py-12">
       {/* Header */}
-      <div className="mb-10">
+      <div className="mb-5 sm:mb-10">
         <Link
           href="/categories"
           className="text-sm text-neutral-500 transition hover:text-black"
@@ -66,7 +70,7 @@ export default async function CategoryPage({
           {category.image ? (
             <div className="aspect-square overflow-hidden rounded-2xl bg-neutral-100">
               <img
-                src={`http://localhost:5000${category.image}`}
+                src={`${API_BASE}${category.image}`}
                 alt={category.name}
                 className="h-full w-full object-cover"
               />
@@ -143,7 +147,7 @@ export default async function CategoryPage({
               <div className="aspect-square overflow-hidden bg-neutral-100">
                 {product.images?.[0] ? (
                   <img
-                    src={`http://localhost:5000${product.images[0]}`}
+                    src={`${API_BASE}${product.images[0]}`}
                     alt={product.name}
                     className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                   />
@@ -158,6 +162,16 @@ export default async function CategoryPage({
                 <h3 className="font-semibold">
                   {product.name}
                 </h3>
+
+                <div className="mt-2">
+                  <StockStatusBadge
+                    status={product.availabilityStatus}
+                    stockCount={(product.variants || []).reduce(
+                      (total, variant) => total + (variant.stock || 0),
+                      0,
+                    )}
+                  />
+                </div>
 
                 <p className="mt-2 text-sm text-neutral-500">
                   {product.price.toLocaleString("fa-IR")} تومان

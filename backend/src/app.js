@@ -23,10 +23,24 @@ const adminRoutes = require("./routes/adminRoutes");
 const adminUserRoutes = require("./routes/adminUserRoutes");
 
 const app = express();
-/* تغییر جدید: CORS از متغیر محیطی خونده بشه */
+
+app.set("trust proxy", 1);
+
+const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:4000")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(null, false);
+    },
     credentials: true,
   })
 );
@@ -35,6 +49,9 @@ app.use(helmet());
 app.use(express.json());
 app.use(cookieParser());
 
+const rubikaRoutes = require("./routes/rubikaRoutes");
+
+app.use("/api/rubika", rubikaRoutes);
 app.use("/api", apiLimiter);
 
 app.use(

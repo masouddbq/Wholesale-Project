@@ -15,18 +15,22 @@ import {
 import {
   getCategories,
 } from "@/services/categoryService";
+import PriceInput from "@/components/PriceInput";
+import AdminVariantEditor, {
+  emptyColorGroup,
+  flattenColorGroups,
+  type ColorGroupForm,
+} from "@/components/admin/AdminVariantEditor";
+import { parseGroupedNumber } from "@/lib/formatPrice";
+import type { SaleType } from "@/lib/productOptions";
+import AvailabilityPicker from "@/components/admin/AvailabilityPicker";
+import type { AvailabilityStatus } from "@/lib/availability";
+import FormNotice from "@/components/FormNotice";
 
 type Category = {
   _id: string;
   name: string;
   slug: string;
-};
-
-type VariantForm = {
-  size: string;
-  color: string;
-  stock: string;
-  sku: string;
 };
 
 export default function NewProductPage() {
@@ -50,6 +54,12 @@ export default function NewProductPage() {
 
   const [isActive, setIsActive] =
     useState(true);
+
+  const [saleType, setSaleType] =
+    useState<SaleType>("selective");
+
+  const [availabilityStatus, setAvailabilityStatus] =
+    useState<AvailabilityStatus>("in_stock");
 
   /* =========================
      Categories
@@ -76,14 +86,7 @@ export default function NewProductPage() {
   ========================= */
 
   const [variants, setVariants] =
-    useState<VariantForm[]>([
-      {
-        size: "",
-        color: "",
-        stock: "",
-        sku: "",
-      },
-    ]);
+    useState<ColorGroupForm[]>(() => [emptyColorGroup()]);
 
   /* =========================
      Submit
@@ -138,9 +141,9 @@ export default function NewProductPage() {
       return;
     }
 
-    if (selectedFiles.length > 5) {
+    if (selectedFiles.length > 10) {
       setError(
-        "حداکثر ۵ تصویر می‌توانید انتخاب کنید."
+        "حداکثر ۱۰ تصویر می‌توانید انتخاب کنید."
       );
 
       return;
@@ -208,48 +211,6 @@ export default function NewProductPage() {
   };
 
   /* =========================
-     Variant
-  ========================= */
-
-  const addVariant = () => {
-    setVariants((current) => [
-      ...current,
-      {
-        size: "",
-        color: "",
-        stock: "",
-        sku: "",
-      },
-    ]);
-  };
-
-  const removeVariant = (index: number) => {
-    setVariants((current) =>
-      current.filter(
-        (_, variantIndex) =>
-          variantIndex !== index
-      )
-    );
-  };
-
-  const updateVariant = (
-    index: number,
-    field: keyof VariantForm,
-    value: string
-  ) => {
-    setVariants((current) =>
-      current.map((variant, variantIndex) =>
-        variantIndex === index
-          ? {
-              ...variant,
-              [field]: value,
-            }
-          : variant
-      )
-    );
-  };
-
-  /* =========================
      Submit
   ========================= */
 
@@ -277,7 +238,7 @@ export default function NewProductPage() {
       return;
     }
 
-    const parsedPrice = Number(price);
+    const parsedPrice = parseGroupedNumber(price);
 
     if (
       Number.isNaN(parsedPrice) ||
@@ -301,55 +262,17 @@ export default function NewProductPage() {
       return;
     }
 
-    if (variants.length === 0) {
-      setError(
-        "حداقل یک تنوع برای محصول ثبت کنید."
-      );
-
-      return;
-    }
-
-    /* ---------- Validate variants ---------- */
-
-    const preparedVariants = variants.map(
-      (variant) => ({
-        size: variant.size.trim(),
-        color: variant.color.trim(),
-        stock: Number(variant.stock),
-        sku: variant.sku.trim(),
-      })
+    const preparedVariants = flattenColorGroups(
+      variants,
+      slug.trim() || "PRD",
+      saleType,
     );
 
-    const invalidVariant =
-      preparedVariants.find(
-        (variant) =>
-          !variant.size ||
-          !variant.color ||
-          !variant.sku ||
-          Number.isNaN(variant.stock) ||
-          variant.stock < 0
-      );
-
-    if (invalidVariant) {
+    if (preparedVariants.length === 0) {
       setError(
-        "اطلاعات تمام تنوع‌ها را کامل و صحیح وارد کنید."
-      );
-
-      return;
-    }
-
-    /* ---------- Duplicate SKU ---------- */
-
-    const skus = preparedVariants.map(
-      (variant) => variant.sku
-    );
-
-    const hasDuplicateSKU =
-      new Set(skus).size !== skus.length;
-
-    if (hasDuplicateSKU) {
-      setError(
-        "SKU تنوع‌ها باید یکتا باشند."
+        saleType === "series"
+          ? "حداقل یک رنگ و یک سایز برای سری انتخاب کنید."
+          : "برای هر رنگ حداقل یک سایز را تیک بزنید.",
       );
 
       return;
@@ -388,6 +311,8 @@ export default function NewProductPage() {
           images: uploadedImages,
           category,
           variants: preparedVariants,
+          saleType,
+          availabilityStatus,
           minimumOrderQuantity: parsedMOQ,
           isActive,
         });
@@ -450,11 +375,7 @@ export default function NewProductPage() {
 
       {/* Error */}
 
-      {error && (
-        <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-700">
-          {error}
-        </div>
-      )}
+      <FormNotice message={error} />
 
       <form
         onSubmit={handleSubmit}
@@ -509,15 +430,9 @@ export default function NewProductPage() {
                 قیمت
               </label>
 
-              <input
-                type="number"
-                min="0"
+              <PriceInput
                 value={price}
-                onChange={(event) =>
-                  setPrice(event.target.value)
-                }
-                placeholder="مثلاً 850000"
-                className="w-full rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none focus:border-black"
+                onChange={setPrice}
               />
             </div>
 
@@ -537,6 +452,11 @@ export default function NewProductPage() {
                 }
                 className="w-full rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none focus:border-black"
               />
+              <p className="mt-2 text-xs text-neutral-500">
+                {saleType === "series"
+                  ? "حداقل تعداد سری کامل در سفارش."
+                  : "حداقل مجموع تعداد لباس در سفارش انتخابی."}
+              </p>
             </div>
 
             <div>
@@ -588,6 +508,11 @@ export default function NewProductPage() {
               </label>
             </div>
 
+            <AvailabilityPicker
+              value={availabilityStatus}
+              onChange={setAvailabilityStatus}
+            />
+
           </div>
 
           <div className="mt-5">
@@ -617,7 +542,7 @@ export default function NewProductPage() {
           </h2>
 
           <p className="mt-1 text-sm text-neutral-500">
-            حداکثر ۵ تصویر، هر تصویر حداکثر ۵ مگابایت
+            حداکثر ۱۰ تصویر، هر تصویر حداکثر ۵ مگابایت
           </p>
 
           <div className="mt-5">
@@ -677,139 +602,21 @@ export default function NewProductPage() {
         ========================= */}
 
         <div className="rounded-2xl border border-neutral-200 bg-white p-5">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h2 className="text-lg font-semibold">
-                تنوع‌های محصول
-              </h2>
+          <h2 className="text-lg font-semibold">
+            تنوع‌های محصول
+          </h2>
 
-              <p className="mt-1 text-sm text-neutral-500">
-                سایز، رنگ، SKU و موجودی
-              </p>
-            </div>
+          <p className="mt-1 text-sm text-neutral-500">
+            ابتدا نوع فروش، بعد رنگ پالت، سپس سایزها
+          </p>
 
-            <button
-              type="button"
-              onClick={addVariant}
-              className="rounded-xl border border-neutral-200 px-4 py-2 text-sm font-medium transition hover:bg-neutral-50"
-            >
-              + افزودن تنوع
-            </button>
-          </div>
-
-          <div className="mt-5 space-y-4">
-            {variants.map(
-              (variant, index) => (
-                <div
-                  key={index}
-                  className="rounded-xl border border-neutral-200 p-4"
-                >
-                  <div className="mb-4 flex items-center justify-between">
-                    <p className="text-sm font-semibold">
-                      تنوع {index + 1}
-                    </p>
-
-                    {variants.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() =>
-                          removeVariant(index)
-                        }
-                        className="text-xs text-neutral-500 transition hover:text-black"
-                      >
-                        حذف تنوع
-                      </button>
-                    )}
-                  </div>
-
-                  <div className="grid gap-4 md:grid-cols-4">
-
-                    <div>
-                      <label className="mb-2 block text-xs font-medium">
-                        سایز
-                      </label>
-
-                      <input
-                        type="text"
-                        value={variant.size}
-                        onChange={(event) =>
-                          updateVariant(
-                            index,
-                            "size",
-                            event.target.value
-                          )
-                        }
-                        placeholder="XL"
-                        className="w-full rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none focus:border-black"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="mb-2 block text-xs font-medium">
-                        رنگ
-                      </label>
-
-                      <input
-                        type="text"
-                        value={variant.color}
-                        onChange={(event) =>
-                          updateVariant(
-                            index,
-                            "color",
-                            event.target.value
-                          )
-                        }
-                        placeholder="مشکی"
-                        className="w-full rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none focus:border-black"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="mb-2 block text-xs font-medium">
-                        موجودی
-                      </label>
-
-                      <input
-                        type="number"
-                        min="0"
-                        value={variant.stock}
-                        onChange={(event) =>
-                          updateVariant(
-                            index,
-                            "stock",
-                            event.target.value
-                          )
-                        }
-                        placeholder="50"
-                        className="w-full rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none focus:border-black"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="mb-2 block text-xs font-medium">
-                        SKU
-                      </label>
-
-                      <input
-                        type="text"
-                        dir="ltr"
-                        value={variant.sku}
-                        onChange={(event) =>
-                          updateVariant(
-                            index,
-                            "sku",
-                            event.target.value
-                          )
-                        }
-                        placeholder="HD-BLK-XL"
-                        className="w-full rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none focus:border-black"
-                      />
-                    </div>
-
-                  </div>
-                </div>
-              )
-            )}
+          <div className="mt-5">
+            <AdminVariantEditor
+              saleType={saleType}
+              onSaleTypeChange={setSaleType}
+              groups={variants}
+              onChange={setVariants}
+            />
           </div>
         </div>
 

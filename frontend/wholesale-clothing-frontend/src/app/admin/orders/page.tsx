@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import { getAdminOrders, type AdminOrder } from "@/services/orderService";
+import FormNotice from "@/components/FormNotice";
 
 const statusOptions = [
   { value: "", label: "همه وضعیت‌ها" },
@@ -35,9 +36,11 @@ export default function AdminOrdersPage() {
     totalPages: 1,
   });
 
-  const loadOrders = async () => {
+  const loadOrders = async (silent = false) => {
     try {
-      setIsLoading(true);
+      if (!silent) {
+        setIsLoading(true);
+      }
       setError("");
 
       const data = await getAdminOrders({
@@ -51,7 +54,9 @@ export default function AdminOrdersPage() {
       setOrders(data.orders);
       setPagination(data.pagination);
     } catch {
-      setError("دریافت سفارش‌ها با مشکل مواجه شد.");
+      if (!silent) {
+        setError("دریافت سفارش‌ها با مشکل مواجه شد.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -59,6 +64,10 @@ export default function AdminOrdersPage() {
 
   useEffect(() => {
     loadOrders();
+    const timer = window.setInterval(() => {
+      loadOrders(true);
+    }, 8000);
+    return () => window.clearInterval(timer);
   }, [page, status, sort]);
 
   const handleSearch = () => {
@@ -138,11 +147,7 @@ export default function AdminOrdersPage() {
 
       {/* Error */}
 
-      {error && (
-        <div className="mt-6 rounded-2xl border border-neutral-200 bg-neutral-50 px-5 py-4 text-sm text-neutral-700">
-          {error}
-        </div>
-      )}
+      <FormNotice message={error} className="mt-6" />
 
       {/* Filters */}
 

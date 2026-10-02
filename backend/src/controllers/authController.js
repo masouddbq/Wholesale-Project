@@ -3,6 +3,28 @@ const jwt = require("jsonwebtoken");
 
 const User = require("../models/User");
 
+const isHttpsRequest = (req) => {
+  const forwarded = req.get("x-forwarded-proto");
+
+  if (forwarded) {
+    return forwarded.split(",")[0].trim() === "https";
+  }
+
+  return Boolean(req.secure);
+};
+
+const cookieOptions = (req) => {
+  const secure = isHttpsRequest(req);
+
+  return {
+    httpOnly: true,
+    path: "/",
+    secure,
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  };
+};
+
 const register = async (req, res) => {
   const { name, phone, password } = req.body;
 
@@ -62,17 +84,11 @@ const login = async (req, res) => {
     },
     process.env.JWT_SECRET,
     {
-      expiresIn:
-        process.env.JWT_EXPIRES_IN || "7d",
+      expiresIn: process.env.JWT_EXPIRES_IN || "7d",
     }
   );
 
-res.cookie("token", token, {
-  httpOnly: true,
-  secure: process.env.COOKIE_SECURE === "true",
-  sameSite: process.env.COOKIE_SAME_SITE || "lax",
-  maxAge: 7 * 24 * 60 * 60 * 1000,
-});
+  res.cookie("token", token, cookieOptions(req));
 
   res.status(200).json({
     message: "Login successful",
@@ -92,23 +108,16 @@ const getMe = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-  res.clearCookie("token", {
-    httpOnly: true,
-    secure: process.env.COOKIE_SECURE === "true",
-    sameSite: process.env.COOKIE_SAME_SITE || "lax",
-    path: "/",
-  });
+  res.clearCookie("token", cookieOptions(req));
 
   res.status(200).json({
     message: "Logout successful",
   });
 };
 
-
-
 module.exports = {
   register,
   login,
   getMe,
-  logout
+  logout,
 };

@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useState } from "react";
+import { scrollToNotice } from "@/components/FormNotice";
 
 type ToastType = "success" | "error" | "info";
 
@@ -29,6 +30,10 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     const id = Date.now().toString();
     setToasts((prev) => [...prev, { id, message, type }]);
 
+    requestAnimationFrame(() => {
+      scrollToNotice(document.getElementById("site-toast"));
+    });
+
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
     }, 3000);
@@ -42,8 +47,10 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     <ToastContext.Provider value={{ addToast }}>
       {children}
 
-      {/* Toast Container */}
-      <div className="fixed bottom-24 left-1/2 z-[100] flex -translate-x-1/2 flex-col gap-2 md:bottom-8">
+      <div
+        id="site-toast"
+        className="fixed top-24 left-1/2 z-[100] flex -translate-x-1/2 flex-col gap-2 px-4"
+      >
         {toasts.map((toast) => (
           <div
             key={toast.id}

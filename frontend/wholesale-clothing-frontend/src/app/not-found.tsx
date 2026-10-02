@@ -34,7 +34,7 @@ export default function NotFound() {
 
           <Link
             href="/products"
-            className="inline-flex items-center justify-center rounded-xl border border-[var(--border-strong)] bg-white px-6 py-3.5 font-medium text-[var(--text-primary)] transition hover:bg-[var(--surface-muted)]"
+            className="inline-flex items-center justify-center rounded-xl border border-[var(--border-strong)] bg-white px-6 py-3.5 font-medium text-[var(--text-primary)] transition app-hover-muted"
           >
             مشاهده محصولات
           </Link>

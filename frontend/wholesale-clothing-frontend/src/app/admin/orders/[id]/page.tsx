@@ -10,9 +10,11 @@ import {
   type AdminOrderDetail,
   type OrderStatus,
 } from "@/services/orderService";
-import { API_BASE } from "@/lib/imageUrl";
+import { useToast } from "@/components/Toast";
+import GroupedOrderItems from "@/components/GroupedOrderItems";
 
 export default function AdminOrderDetailPage() {
+  const { addToast } = useToast();
   const params = useParams();
 
   const orderId = params.id as string;
@@ -33,27 +35,33 @@ const [isUpdatingStatus, setIsUpdatingStatus] =
     useState("");
 
   useEffect(() => {
+    let firstLoad = true;
+
     const loadOrder = async () => {
       try {
-        setIsLoading(true);
+        if (firstLoad) {
+          setIsLoading(true);
+        }
         setError("");
 
-        const data =
-          await getAdminOrderById(orderId);
+        const data = await getAdminOrderById(orderId);
 
         setOrder(data);
         setSelectedStatus(data.status);
       } catch {
-        setError(
-          "دریافت جزئیات سفارش با مشکل مواجه شد."
-        );
+        if (firstLoad) {
+          setError("دریافت جزئیات سفارش با مشکل مواجه شد.");
+        }
       } finally {
         setIsLoading(false);
+        firstLoad = false;
       }
     };
 
     if (orderId) {
       loadOrder();
+      const timer = window.setInterval(loadOrder, 5000);
+      return () => window.clearInterval(timer);
     }
   }, [orderId]);
 
@@ -222,7 +230,7 @@ const [isUpdatingStatus, setIsUpdatingStatus] =
           setSelectedStatus(updatedOrder.status);
         } catch (error) {
           console.error(error);
-          alert("تغییر وضعیت سفارش با مشکل مواجه شد.");
+          addToast("تغییر وضعیت سفارش با مشکل مواجه شد.", "error");
         } finally {
           setIsUpdatingStatus(false);
         }
@@ -318,88 +326,8 @@ const [isUpdatingStatus, setIsUpdatingStatus] =
           </h2>
         </div>
 
-        <div className="divide-y divide-neutral-100">
-          {order.items.map((item, index) => (
-            <div
-              key={`${item.product}-${index}`}
-              className="flex flex-col gap-5 p-6 md:flex-row md:items-center"
-            >
-              {/* Image */}
-
-              <div className="h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-neutral-100">
-                {item.image ? (
-                  <img
-                    src={`${API_BASE}${item.image}`}
-                    alt={item.name}
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center text-xs text-neutral-400">
-                    بدون تصویر
-                  </div>
-                )}
-              </div>
-
-              {/* Product info */}
-
-              <div className="min-w-0 flex-1">
-                <h3 className="font-semibold">
-                  {item.name}
-                </h3>
-
-                <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2 text-sm text-neutral-500">
-                  {item.size && (
-                    <span>
-                      سایز: {item.size}
-                    </span>
-                  )}
-
-                  {item.color && (
-                    <span>
-                      رنگ: {item.color}
-                    </span>
-                  )}
-
-                  {item.sku && (
-                    <span dir="ltr">
-                      SKU: {item.sku}
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              {/* Quantity */}
-
-              <div className="text-sm">
-                <span className="text-neutral-500">
-                  تعداد:
-                </span>{" "}
-                <span className="font-medium">
-                  {item.quantity.toLocaleString(
-                    "fa-IR"
-                  )}
-                </span>
-              </div>
-
-              {/* Price */}
-
-              <div className="text-left">
-                <p className="text-sm font-semibold">
-                  {formatPrice(
-                    item.price * item.quantity
-                  )}{" "}
-                  تومان
-                </p>
-
-                <p className="mt-1 text-xs text-neutral-400">
-                  {formatPrice(item.price)} تومان ×{" "}
-                  {item.quantity.toLocaleString(
-                    "fa-IR"
-                  )}
-                </p>
-              </div>
-            </div>
-          ))}
+        <div className="px-6">
+          <GroupedOrderItems items={order.items} />
         </div>
 
         {/* Total */}

@@ -7,8 +7,10 @@ import {
   getAdminUsers,
   type AdminUser,
 } from "@/services/adminUserService";
+import { USER_ROLE_LABELS, type UserRole } from "@/lib/roles";
+import FormNotice from "@/components/FormNotice";
 
-type RoleFilter = "" | "customer" | "admin";
+type RoleFilter = "" | UserRole;
 
 type SortOption =
   | "newest"
@@ -128,18 +130,20 @@ export default function AdminUsersPage() {
 
   const getRoleLabel = (
     userRole: AdminUser["role"]
-  ) => {
-    return userRole === "admin"
-      ? "مدیر"
-      : "مشتری";
-  };
+  ) => USER_ROLE_LABELS[userRole] || userRole;
 
   const getRoleClass = (
     userRole: AdminUser["role"]
   ) => {
-    return userRole === "admin"
-      ? "bg-purple-100 text-purple-700"
-      : "bg-neutral-100 text-neutral-600";
+    if (userRole === "admin") {
+      return "bg-purple-100 text-purple-700";
+    }
+
+    if (userRole === "customer") {
+      return "bg-emerald-100 text-emerald-700";
+    }
+
+    return "bg-neutral-100 text-neutral-600";
   };
 
   if (loading && users.length === 0) {
@@ -175,11 +179,7 @@ export default function AdminUsersPage() {
 
       {/* Error */}
 
-      {error && (
-        <div className="rounded-2xl border border-neutral-200 bg-neutral-50 px-5 py-4 text-sm text-neutral-700">
-          {error}
-        </div>
-      )}
+      <FormNotice message={error} />
 
       {/* Filters */}
 
@@ -229,14 +229,9 @@ export default function AdminUsersPage() {
               <option value="">
                 همه کاربران
               </option>
-
-              <option value="customer">
-                مشتری
-              </option>
-
-              <option value="admin">
-                مدیر
-              </option>
+              <option value="user">کاربر</option>
+              <option value="customer">مشتری</option>
+              <option value="admin">مدیر</option>
             </select>
           </div>
 

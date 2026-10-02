@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import { login } from "@/services/authService";
 import useAuthStore from "@/store/authStore";
 import { useToast } from "@/components/Toast";
+import FormNotice from "@/components/FormNotice";
+import PasswordInput from "@/components/PasswordInput";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -37,12 +39,17 @@ export default function LoginPage() {
 
       addToast("ورود موفقیت‌آمیز بود", "success");
 
-      router.push("/account/orders");
+      if (data.user?.role === "admin") {
+        router.push("/admin");
+      } else {
+        router.push("/account/orders");
+      }
     } catch (error: any) {
-      setError(
+      const message =
         error?.response?.data?.message ||
-          "شماره موبایل یا رمز عبور اشتباه است."
-      );
+        "شماره موبایل یا رمز عبور اشتباه است.";
+      setError(message);
+      addToast(message, "error");
     } finally {
       setIsLoading(false);
     }
@@ -101,25 +108,17 @@ export default function LoginPage() {
                 رمز عبور
               </label>
 
-              <input
+              <PasswordInput
                 id="password"
-                type="password"
                 value={password}
-                onChange={(event) =>
-                  setPassword(event.target.value)
-                }
+                onChange={setPassword}
                 placeholder="رمز عبور خود را وارد کنید"
                 autoComplete="current-password"
                 required
-                className="h-12 w-full rounded-xl border border-neutral-300 bg-neutral-50 px-4 outline-none transition focus:border-[var(--accent)] focus:bg-white focus:shadow-[0_0_0_3px_rgba(201,169,110,0.15)]"
               />
             </div>
 
-            {error && (
-              <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm leading-6 text-neutral-700">
-                {error}
-              </div>
-            )}
+            <FormNotice message={error} />
 
             <button
               type="submit"

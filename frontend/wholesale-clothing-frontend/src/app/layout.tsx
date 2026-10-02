@@ -5,9 +5,12 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AuthInitializer from "@/components/authInitializer";
 import BottomNav from "@/components/BottomNav";
+import DesktopQuickNav from "@/components/DesktopQuickNav";
 import { ToastProvider } from "@/components/Toast";
 
 import "./globals.css";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: {
@@ -49,12 +52,23 @@ export default function RootLayout({
     <html
       lang="fa"
       dir="rtl"
+      className="scroll-smooth"
+      suppressHydrationWarning
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem("am-theme")==="dark"){var r=document.documentElement;r.classList.add("dark");r.style.setProperty("--background","#121212");r.style.setProperty("--foreground","#f3f3f3");r.style.setProperty("--surface","#1b1b1b");r.style.setProperty("--mutedbg","#242424");r.style.setProperty("--text-primary","#f3f3f3");r.style.setProperty("--text-secondary","#c8c8c8");r.style.setProperty("--text-muted","#9a9a9a");r.style.setProperty("--border","#2f2f2f");r.style.setProperty("--border-strong","#424242")}}catch(e){}`,
+          }}
+        />
+      </head>
       <body>
         <ToastProvider>
           <AuthInitializer />
 
           <Navbar />
+
+          <DesktopQuickNav />
 
           <main>{children}</main>
 

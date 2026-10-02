@@ -15,6 +15,7 @@ import {
 
 import { uploadSiteContentImage } from "@/services/uploadService";
 import { API_BASE } from "@/lib/imageUrl";
+import FormNotice from "@/components/FormNotice";
 
 type HeroFormData = {
   title: string;
@@ -248,11 +249,7 @@ export default function HeroContentEditPage() {
         </div>
 
         {/* Error */}
-        {error && (
-          <div className="mb-6 rounded-lg border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-700">
-            {error}
-          </div>
-        )}
+        <FormNotice message={error} className="mb-6" />
 
         <form
           onSubmit={handleSubmit}

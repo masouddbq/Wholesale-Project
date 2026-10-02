@@ -7,11 +7,24 @@ const variantSchema = z.object({
     .min(1, "Size is required")
     .max(50, "Size must be at most 50 characters"),
 
+  sizeSlot: z
+    .number()
+    .int()
+    .min(1)
+    .max(2)
+    .optional(),
+
   color: z
     .string()
     .trim()
     .min(1, "Color is required")
     .max(50, "Color must be at most 50 characters"),
+
+  colorHex: z
+    .string()
+    .trim()
+    .max(20)
+    .optional(),
 
   stock: z
     .number()
@@ -71,6 +84,7 @@ const createProductSchema = z.object({
 
   images: z
     .array(z.string().trim())
+    .max(10, "A product can have at most 10 images")
     .optional(),
 
   category: z
@@ -78,6 +92,14 @@ const createProductSchema = z.object({
     .min(1, "Category is required"),
 
   variants: variantsSchema,
+
+  saleType: z
+    .enum(["series", "selective"])
+    .optional(),
+
+  availabilityStatus: z
+    .enum(["in_stock", "out_of_stock", "limited"])
+    .optional(),
 
   minimumOrderQuantity: z
     .number()

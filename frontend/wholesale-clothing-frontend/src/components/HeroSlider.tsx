@@ -1,16 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { API_BASE } from "@/lib/imageUrl";
 
 type HeroSliderProps = {
   images?: string[];
   title: string;
+  bleed?: boolean;
 };
 
-export default function HeroSlider({ images = [], title }: HeroSliderProps) {
+export default function HeroSlider({
+  images = [],
+  title,
+  bleed = false,
+}: HeroSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // =========================
@@ -47,9 +51,15 @@ export default function HeroSlider({ images = [], title }: HeroSliderProps) {
   // Empty State
   // =========================
 
+  const frameClass = `relative w-full overflow-hidden bg-transparent ${
+    bleed
+      ? "h-[192px] rounded-none sm:h-[220px] md:h-[300px] md:rounded-2xl lg:h-[400px]"
+      : "h-[192px] rounded-3xl sm:h-[220px] md:h-[300px] lg:h-[400px]"
+  }`;
+
   if (images.length === 0) {
     return (
-      <div className="flex h-full min-h-[320px] items-center justify-center rounded-3xl bg-gray-100">
+      <div className={`${frameClass} flex items-center justify-center`}>
         <span className="text-sm text-gray-400">
           تصویری برای نمایش وجود ندارد
         </span>
@@ -58,8 +68,7 @@ export default function HeroSlider({ images = [], title }: HeroSliderProps) {
   }
 
   return (
-    <div className="relative h-full min-h-[320px] w-full overflow-hidden rounded-3xl">
-      {/* Images */}
+    <div className={frameClass}>
       {images.map((image, index) => (
         <div
           key={`${image}-${index}`}

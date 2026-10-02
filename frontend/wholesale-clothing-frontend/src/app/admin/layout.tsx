@@ -87,7 +87,7 @@ export default function AdminLayout({
   return (
     <div className="min-h-[calc(100vh-80px)] bg-neutral-50">
       <div className="mx-auto flex max-w-[1600px]">
-        <aside className="hidden min-h-[calc(100vh-80px)] w-64 shrink-0 border-l border-neutral-200 bg-white lg:block">
+        <aside className="min-h-[calc(100vh-80px)] w-64 shrink-0 border-l border-neutral-200 bg-white max-lg:hidden">
           <div className="sticky top-[80px] p-5">
             <div className="mb-6 rounded-2xl bg-black p-5 text-white gold-shimmer-border">
               <p className="text-xs text-neutral-100">
@@ -104,6 +104,11 @@ export default function AdminLayout({
                 const isActive =
                   item.href === "/admin"
                     ? pathname === "/admin"
+                    : item.href === "/admin/contents"
+                    ? pathname === "/admin/contents" ||
+                      pathname.startsWith("/admin/contents/new") ||
+                      (pathname.startsWith("/admin/contents/") &&
+                        !pathname.startsWith("/admin/contents/hero"))
                     : pathname.startsWith(item.href);
 
                 return (
@@ -140,6 +145,11 @@ export default function AdminLayout({
                 const isActive =
                   item.href === "/admin"
                     ? pathname === "/admin"
+                    : item.href === "/admin/contents"
+                    ? pathname === "/admin/contents" ||
+                      pathname.startsWith("/admin/contents/new") ||
+                      (pathname.startsWith("/admin/contents/") &&
+                        !pathname.startsWith("/admin/contents/hero"))
                     : pathname.startsWith(item.href);
 
                 return (

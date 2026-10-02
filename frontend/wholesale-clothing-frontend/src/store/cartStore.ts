@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-type CartItem = {
+export type CartItem = {
   productId: string;
   name: string;
   slug: string;
@@ -23,12 +23,14 @@ type CartState = {
 
   addItem: (item: CartItem) => void;
   removeItem: (productId: string, variantId: string) => void;
+  removeProduct: (productId: string) => void;
 
   updateQuantity: (
     productId: string,
     variantId: string,
     quantity: number
   ) => void;
+  updateProductQuantity: (productId: string, quantity: number) => void;
 
   clearCart: () => void;
 
@@ -96,6 +98,11 @@ const useCartStore = create<CartState>()(
           ),
         })),
 
+      removeProduct: (productId) =>
+        set((state) => ({
+          items: state.items.filter((item) => item.productId !== productId),
+        })),
+
       updateQuantity: (
         productId,
         variantId,
@@ -127,10 +134,41 @@ const useCartStore = create<CartState>()(
           }),
         })),
 
-      clearCart: () =>
+      updateProductQuantity: (productId, quantity) =>
+        set((state) => ({
+          items: state.items.map((item) => {
+            if (item.productId !== productId) {
+              return item;
+            }
+
+            const safeQuantity = Math.max(
+              item.minimumOrderQuantity,
+              Math.min(quantity, item.stock),
+            );
+
+            return {
+              ...item,
+              quantity: safeQuantity,
+            };
+          }),
+        })),
+
+      clearCart: () => {
         set({
           items: [],
-        }),
+        });
+
+        queueMicrotask(() => {
+          try {
+            useCartStore.persist.clearStorage();
+            if (typeof window !== "undefined") {
+              window.localStorage.removeItem("wholesale-cart");
+            }
+          } catch {
+            /* ignore storage errors */
+          }
+        });
+      },
     }),
 
     {

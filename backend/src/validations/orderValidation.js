@@ -1,57 +1,60 @@
 const { z } = require("zod");
 
+const emptyToUndefined = (value) =>
+  value === "" || value === null || value === undefined ? undefined : value;
+
 const orderItemSchema = z.object({
   product: z
     .string()
     .trim()
-    .min(1, "Product is required"),
+    .min(1, "شناسه محصول نامعتبر است"),
 
-  variantId: z
-    .string()
-    .trim()
-    .optional(),
+  variantId: z.preprocess(
+    emptyToUndefined,
+    z.string().trim().optional()
+  ),
 
-  quantity: z
+  quantity: z.coerce
     .number()
-    .int("Quantity must be an integer")
-    .min(1, "Quantity must be at least 1"),
+    .int("تعداد باید عدد صحیح باشد")
+    .min(1, "تعداد باید حداقل ۱ باشد"),
 });
 
 const customerSchema = z.object({
   name: z
     .string()
     .trim()
-    .min(2, "Name must be at least 2 characters")
-    .max(100, "Name must be at most 100 characters"),
+    .min(2, "نام باید حداقل ۲ حرف باشد")
+    .max(100, "نام خیلی طولانی است"),
 
   phone: z
     .string()
     .trim()
-    .min(10, "Invalid phone number")
-    .max(20, "Invalid phone number"),
+    .min(10, "شماره موبایل نامعتبر است")
+    .max(20, "شماره موبایل نامعتبر است"),
 
   province: z
     .string()
     .trim()
-    .min(1, "Province is required")
-    .max(100, "Province must be at most 100 characters"),
+    .min(1, "استان را وارد کنید")
+    .max(100, "استان نامعتبر است"),
 
   city: z
     .string()
     .trim()
-    .min(1, "City is required")
-    .max(100, "City must be at most 100 characters"),
+    .min(1, "شهر را وارد کنید")
+    .max(100, "شهر نامعتبر است"),
 
   address: z
     .string()
     .trim()
-    .min(1, "Address is required")
-    .max(500, "Address must be at most 500 characters"),
+    .min(1, "آدرس را وارد کنید")
+    .max(500, "آدرس خیلی طولانی است"),
 
-  postalCode: z
-    .string()
-    .trim()
-    .optional(),
+  postalCode: z.preprocess(
+    emptyToUndefined,
+    z.string().trim().max(20, "کد پستی نامعتبر است").optional()
+  ),
 });
 
 const createOrderSchema = z.object({
@@ -59,14 +62,13 @@ const createOrderSchema = z.object({
 
   items: z
     .array(orderItemSchema)
-    .min(1, "Order must contain at least one item")
-    .max(50, "Order cannot contain more than 50 items"),
+    .min(1, "سبد خرید خالی است")
+    .max(500, "تعداد اقلام سفارش بیش از حد مجاز است"),
 
-  note: z
-    .string()
-    .trim()
-    .max(1000, "Note must be at most 1000 characters")
-    .optional(),
+  note: z.preprocess(
+    emptyToUndefined,
+    z.string().trim().max(1000, "یادداشت خیلی طولانی است").optional()
+  ),
 });
 
 module.exports = {

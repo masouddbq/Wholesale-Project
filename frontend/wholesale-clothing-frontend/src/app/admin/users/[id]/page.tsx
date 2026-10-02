@@ -9,6 +9,8 @@ import {
   updateAdminUserRole,
   type GetAdminUserResponse,
 } from "@/services/adminUserService";
+import { USER_ROLE_LABELS, type UserRole } from "@/lib/roles";
+import FormNotice from "@/components/FormNotice";
 
 const statusLabels: Record<string, string> = {
   pending: "در انتظار بررسی",
@@ -81,7 +83,7 @@ export default function AdminUserDetailsPage() {
   }, [userId]);
 
   const handleRoleChange = async (
-    role: "customer" | "admin"
+    role: UserRole
   ) => {
     if (!data) {
       return;
@@ -94,7 +96,9 @@ export default function AdminUserDetailsPage() {
     const confirmed = window.confirm(
       role === "admin"
         ? "آیا مطمئن هستید که می‌خواهید این کاربر را مدیر کنید؟"
-        : "آیا مطمئن هستید که می‌خواهید نقش این کاربر را به مشتری تغییر دهید؟"
+        : role === "customer"
+          ? "با نقش مشتری، این کاربر تعداد واقعی موجودی را می‌بیند. ادامه می‌دهید؟"
+          : "نقش این کاربر به کاربر عادی تغییر کند؟"
     );
 
     if (!confirmed) {
@@ -206,11 +210,7 @@ export default function AdminUserDetailsPage() {
 
       {/* Error */}
 
-      {error && (
-        <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-700">
-          {error}
-        </div>
-      )}
+      <FormNotice message={error} />
 
       {/* User Info */}
 
@@ -267,15 +267,9 @@ export default function AdminUserDetailsPage() {
             </p>
 
             <div className="mt-2">
-              {user.role === "admin" ? (
-                <span className="inline-flex rounded-full border border-purple-200 bg-purple-50 px-3 py-1 text-xs font-medium text-purple-700">
-                  مدیر
-                </span>
-              ) : (
-                <span className="inline-flex rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-xs font-medium text-neutral-700">
-                  مشتری
-                </span>
-              )}
+              <span className="inline-flex rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-xs font-medium text-neutral-700">
+                {USER_ROLE_LABELS[user.role] || user.role}
+              </span>
             </div>
           </div>
         </div>
@@ -294,42 +288,22 @@ export default function AdminUserDetailsPage() {
               </p>
             </div>
 
-            <div className="flex gap-2">
-              <button
-                type="button"
-                disabled={
-                  changingRole ||
-                  user.role === "customer"
-                }
-                onClick={() =>
-                  handleRoleChange("customer")
-                }
-                className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
-                  user.role === "customer"
-                    ? "cursor-default bg-neutral-900 text-white"
-                    : "border border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50"
-                } disabled:cursor-not-allowed disabled:opacity-50`}
-              >
-                مشتری
-              </button>
-
-              <button
-                type="button"
-                disabled={
-                  changingRole ||
-                  user.role === "admin"
-                }
-                onClick={() =>
-                  handleRoleChange("admin")
-                }
-                className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
-                  user.role === "admin"
-                    ? "bg-neutral-900 text-white"
-                    : "border border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50"
-                } disabled:cursor-not-allowed disabled:opacity-50`}
-              >
-                مدیر
-              </button>
+            <div className="flex flex-wrap gap-2">
+              {(["user", "customer", "admin"] as UserRole[]).map((roleOption) => (
+                <button
+                  key={roleOption}
+                  type="button"
+                  disabled={changingRole || user.role === roleOption}
+                  onClick={() => handleRoleChange(roleOption)}
+                  className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
+                    user.role === roleOption
+                      ? "bg-neutral-900 text-white"
+                      : "border border-neutral-200 bg-white text-neutral-700 hover:bg-neutral-50"
+                  } disabled:cursor-not-allowed disabled:opacity-50`}
+                >
+                  {USER_ROLE_LABELS[roleOption]}
+                </button>
+              ))}
             </div>
           </div>
         </div>

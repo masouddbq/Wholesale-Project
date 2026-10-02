@@ -1,10 +1,12 @@
 import apiClient from "@/lib/appClient";
 
+import { UserRole } from "@/lib/roles";
+
 export type AdminUser = {
   _id: string;
   name: string;
   phone: string;
-  role: "customer" | "admin";
+  role: UserRole;
   createdAt: string;
   updatedAt: string;
 };
@@ -84,7 +86,7 @@ export const getAdminUser = async (
 
 export const updateAdminUserRole = async (
   id: string,
-  role: "customer" | "admin"
+  role: UserRole
 ) => {
   const response =
     await apiClient.patch<{
@@ -93,7 +95,7 @@ export const updateAdminUserRole = async (
         id: string;
         name: string;
         phone: string;
-        role: "customer" | "admin";
+        role: UserRole;
       };
     }>(
       `/admin/users/${id}/role`,

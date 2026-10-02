@@ -7,6 +7,8 @@ import { usePathname, useRouter } from "next/navigation";
 import useAuthStore from "@/store/authStore";
 import useCartStore from "@/store/cartStore";
 import { logout } from "@/services/authService";
+import ThemeToggle from "@/components/ThemeToggle";
+import useMobileNavCompact from "@/hooks/useMobileNavCompact";
 
 export default function Navbar() {
   const router = useRouter();
@@ -17,6 +19,8 @@ export default function Navbar() {
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const isScrolled = useMobileNavCompact();
+  const compact = isScrolled && !isMenuOpen;
 
   const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
@@ -30,7 +34,8 @@ export default function Navbar() {
 
   const infoItems = [
     { title: "درباره ما", href: "/about" },
-    { title: "راهنمای خرید عمده", href: "/wholesale-guide" },
+    { title: "ارتباط با ما", href: "/contact" },
+    { title: "راهنمای خرید عمده", href: "/guide" },
     { title: "قوانین و شرایط سفارش", href: "/terms" },
   ];
 
@@ -63,45 +68,70 @@ export default function Navbar() {
 
   // تغییر جدید: افکت shimmer طلایی در navbar
   return (
-    <header className="gold-shimmer-border sticky top-0 z-50 border-b border-[var(--border)] bg-white/95 backdrop-blur">
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+    <>
+      <header className="gold-shimmer-border relative z-50 border-b border-[var(--border)] bg-white/95 backdrop-blur">
+      <div
+        className={`mx-auto flex max-w-7xl items-center justify-between px-4 transition-[height] duration-300 sm:px-6 lg:px-8 md:h-20 ${
+          compact ? "max-md:h-10" : "max-md:h-16"
+        }`}
+      >
         {/* Logo */}
-        <Link href="/" className="group flex shrink-0 items-center gap-2">
-          <span className="flex object-cover shadow-amber-400 shadow-2xl  h-12 w-12 items-center justify-center rounded-xl bg-[var(--primary)] text-lg font-bold text-yellow-300 transition group-hover:bg-[var(--primary-hover)]">
-            <img
-              className="w-12 h-12 rounded-full object-fill"
-              src="/photo_2026-09-19_08-01-39.jpg"
-              alt=""
-            />
-          </span>
+        <div className="flex shrink-0 items-center gap-3">
+          <Link href="/" className="group flex items-center gap-2">
+            <span
+              className={`flex items-center justify-center overflow-hidden rounded-full bg-[var(--primary)] shadow-amber-400 shadow-2xl transition-all duration-300 md:h-12 md:w-12 ${
+                compact ? "max-md:h-8 max-md:w-8" : "max-md:h-10 max-md:w-10"
+              }`}
+            >
+              <img
+                className="h-full w-full rounded-full object-cover"
+                src="/photo_2026-09-25_20-15-54.jpg"
+                alt=""
+              />
+            </span>
 
-          <div className="hidden sm:block">
-            <p className="text-base font-bold leading-none text-[var(--text-primary)]">
-              AM-Clothing
-            </p>
+            <div className="max-sm:hidden">
+              <p className="text-base font-bold leading-none text-[var(--text-primary)]">
+                AM-Clothing
+              </p>
 
-            <p className="mt-1 text-xs text-[var(--text-muted)]">
-              فروشگاه عمده پوشاک
-            </p>
-          </div>
-        </Link>
-        
-        {/* Mobile Brand */}
-        <div className="absolute shadow-2xl shadow-gray-200 left-1/2 -translate-x-1/2 md:hidden">
-          <Link
-            href="/"
-            className="text-base bg-transparent font-bold tracking-wide text-[var(--text-primary)]"
-          >
-            AM-Clothing
+              <p className="mt-1 text-xs text-[var(--text-muted)]">
+                تولید و پخش پوشاک
+              </p>
+            </div>
           </Link>
-          <hr />
-          <div className="text-xs text-gray-700 mt-1">
-            <p>فروشگاه عمده پوشاک</p>
+
+          <div className="hidden md:block">
+            <ThemeToggle />
           </div>
         </div>
         
+        {/* Mobile Brand */}
+        <div
+          className={`absolute left-1/2 -translate-x-1/2 text-center md:hidden ${
+            compact ? "leading-none" : ""
+          }`}
+        >
+          <Link
+            href="/"
+            className={`bg-transparent font-bold tracking-wide text-[var(--text-primary)] transition-all duration-300 ${
+              compact ? "text-xs" : "text-sm"
+            }`}
+          >
+            AM-Clothing
+          </Link>
+          {!compact && (
+            <>
+              <hr />
+              <div className="mt-1 text-[10px] text-gray-700">
+                <p>تولید و پخش پوشاک</p>
+              </div>
+            </>
+          )}
+        </div>
+        
         {/* Desktop / Tablet Navigation */}
-        <nav className="hidden items-center gap-4 md:flex lg:gap-8">
+        <nav className="flex items-center gap-4 max-md:hidden lg:gap-8">
           {navItems.map((item) => {
             const active = isActive(item.href);
 
@@ -125,11 +155,11 @@ export default function Navbar() {
           })}
         </nav>
         {/* Desktop / Tablet Actions */}
-        <div className="hidden items-center gap-1.5 md:flex lg:gap-2">
+        <div className="flex items-center gap-1.5 max-md:hidden lg:gap-2">
           {/* Cart */}
           <Link
             href="/cart"
-            className="btn-outline-glow relative flex items-center gap-1.5 rounded-xl border border-[var(--border)] px-2.5 py-2 text-xs font-medium text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface-muted)] lg:gap-2 lg:px-4 lg:py-2.5 lg:text-sm"
+            className="btn-outline-glow relative flex items-center gap-1.5 rounded-xl border border-[var(--border)] px-2.5 py-2 text-xs font-medium text-[var(--text-primary)] transition hover:border-[var(--border-strong)] app-hover-muted lg:gap-2 lg:px-4 lg:py-2.5 lg:text-sm"
           >
             <span>سبد خرید</span>
 
@@ -150,7 +180,7 @@ export default function Navbar() {
                   className={`rounded-xl border px-2.5 py-2 text-xs font-medium transition lg:px-4 lg:py-2.5 lg:text-sm ${
                     pathname.startsWith("/admin")
                       ? "border-[var(--primary)] bg-[var(--primary)] text-white"
-                      : "border-[var(--border)] text-[var(--text-primary)] hover:border-[var(--border-strong)] hover:bg-[var(--surface-muted)]"
+                      : "border-[var(--border)] text-[var(--text-primary)] hover:border-[var(--border-strong)] app-hover-muted"
                   }`}
                 >
                   پنل ادمین
@@ -161,9 +191,9 @@ export default function Navbar() {
               <Link
                 href="/account/profile"
                 title="مشاهده پروفایل کاربری"
-                className="group flex min-w-0 items-center gap-1.5 rounded-xl px-2 py-2 text-xs font-medium text-[var(--text-primary)] transition hover:bg-[var(--surface-muted)] lg:gap-2 lg:px-3 lg:py-2.5 lg:text-sm"
+                className="group flex min-w-0 items-center gap-1.5 rounded-xl px-2 py-2 text-xs font-medium text-[var(--text-primary)] transition app-hover-muted lg:gap-2 lg:px-3 lg:py-2.5 lg:text-sm"
               >
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--surface-muted)] text-sm transition group-hover:bg-[var(--primary)] group-hover:text-white lg:h-9 lg:w-9 lg:text-base">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full app-bg-muted text-sm transition group-hover:bg-[var(--primary)] group-hover:text-white lg:h-9 lg:w-9 lg:text-base">
                   👤
                 </span>
 
@@ -191,158 +221,180 @@ export default function Navbar() {
             </Link>
           )}
         </div>
-        {/* Mobile Menu Button */}
-        <button
-          type="button"
-          onClick={() => setIsMenuOpen((prev) => !prev)}
-          aria-label={isMenuOpen ? "بستن منو" : "باز کردن منو"}
-          aria-expanded={isMenuOpen}
-          className="flex h-11 w-11 items-center justify-center rounded-xl border border-[var(--border)] text-[var(--text-primary)] transition hover:bg-[var(--surface-muted)] md:hidden"
-        >
-          <span className="text-xl">{isMenuOpen ? "×" : "☰"}</span>
-        </button>
+        <div className="flex items-center gap-2 md:hidden">
+          <ThemeToggle
+            className={compact ? "h-7 w-7" : "h-9 w-9"}
+            iconSize={compact ? 14 : 15}
+          />
+
+          <button
+            type="button"
+            onClick={() => setIsMenuOpen((prev) => !prev)}
+            aria-label={isMenuOpen ? "بستن منو" : "باز کردن منو"}
+            aria-expanded={isMenuOpen}
+            className={`flex items-center justify-center rounded-xl border border-[var(--border)] text-[var(--text-primary)] transition app-hover-muted ${
+              compact ? "h-7 w-7 text-base" : "h-9 w-9 text-lg"
+            }`}
+          >
+            <span className="text-xl">{isMenuOpen ? "×" : "☰"}</span>
+          </button>
+        </div>
       </div>
 
       {/* Mobile / Tablet Menu */}
-      {isMenuOpen && (
-        <div className="border-t border-[var(--border)] bg-white md:hidden">
-          <div className="mx-auto max-w-7xl px-4 pb-5 sm:px-6">
-            {/* Main Navigation */}
-            <nav className="border-b border-[var(--border)] py-2">
-              {navItems.map((item) => {
-                const active = isActive(item.href);
+      <div
+        className={`mobile-nav-curtain absolute inset-x-0 top-full z-[60] border-t border-[var(--border)] bg-[var(--mutedbg)] md:hidden ${
+          isMenuOpen ? "is-open" : ""
+        }`}
+        aria-hidden={!isMenuOpen}
+        inert={!isMenuOpen ? true : undefined}
+      >
+          <div className="mx-auto max-w-7xl space-y-3 px-4 py-4 pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))] sm:px-6">
+            <section className="mobile-nav-group rounded-2xl p-2 shadow-sm backdrop-blur-sm">
+              <p className="px-3 pb-2 pt-1 text-[11px] font-semibold tracking-wide text-[var(--text-muted)]">
+                صفحات اصلی
+              </p>
+              <nav className="flex flex-col gap-2">
+                {navItems.map((item) => {
+                  const active = isActive(item.href);
 
-                return (
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={closeMenu}
+                      className={`block rounded-xl px-4 py-3.5 text-sm font-medium transition ${
+                        active
+                          ? "bg-[var(--primary)] text-white"
+                          : "mobile-nav-item text-[var(--text-secondary)] app-hover-muted hover:text-[var(--text-primary)]"
+                      }`}
+                    >
+                      {item.title}
+                    </Link>
+                  );
+                })}
+              </nav>
+            </section>
+
+            <section className="mobile-nav-group rounded-2xl p-2 shadow-sm backdrop-blur-sm">
+              <Link
+                href="/cart"
+                onClick={closeMenu}
+                className="mobile-nav-item flex items-center justify-between rounded-xl px-4 py-3.5 text-sm font-medium"
+              >
+                <span>سبد خرید</span>
+
+                {cartCount > 0 && (
+                  <span className="flex min-w-6 items-center justify-center rounded-full bg-[var(--primary)] px-2 py-1 text-xs font-bold text-white">
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
+            </section>
+
+            <section className="mobile-nav-group rounded-2xl p-2 shadow-sm backdrop-blur-sm">
+              <p className="px-3 pb-2 pt-1 text-[11px] font-semibold tracking-wide text-[var(--text-muted)]">
+                حساب کاربری
+              </p>
+              {isAuthenticated ? (
+                <div className="flex flex-col gap-2">
+                  <Link
+                    href="/account/profile"
+                    onClick={closeMenu}
+                    className="mobile-nav-item group flex items-center gap-3 rounded-xl px-3 py-3 transition app-hover-muted"
+                  >
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full app-bg-muted text-lg transition group-hover:bg-[var(--primary)] group-hover:text-white">
+                      👤
+                    </span>
+
+                    <div className="flex flex-1 flex-col">
+                      <span className="text-xs text-[var(--text-muted)]">
+                        حساب کاربری
+                      </span>
+
+                      <span className="mt-1 text-sm font-bold text-[var(--text-primary)]">
+                        {user?.name || "کاربر"}
+                      </span>
+                    </div>
+
+                    <span className="text-lg text-[var(--text-muted)]">←</span>
+                  </Link>
+
+                  {isAdmin && (
+                    <Link
+                      href="/admin"
+                      onClick={closeMenu}
+                      className={`mobile-nav-item rounded-xl px-4 py-3.5 text-sm font-bold transition ${
+                        pathname.startsWith("/admin")
+                          ? "text-[var(--primary)]"
+                          : "text-[var(--text-secondary)] hover:text-[var(--primary)]"
+                      }`}
+                    >
+                      پنل ادمین
+                    </Link>
+                  )}
+
+                  <Link
+                    href="/account/orders"
+                    onClick={closeMenu}
+                    className="mobile-nav-item rounded-xl px-4 py-3.5 text-sm font-medium text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
+                  >
+                    سفارش‌های من
+                  </Link>
+
+                  <Link
+                    href="/account/addresses"
+                    onClick={closeMenu}
+                    className="mobile-nav-item rounded-xl px-4 py-3.5 text-sm font-medium text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
+                  >
+                    آدرس‌های من
+                  </Link>
+
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    disabled={isLoggingOut}
+                    className="rounded-xl border border-red-200/70 bg-red-50/80 px-4 py-3.5 text-right text-sm font-medium text-red-700 transition hover:bg-red-100 disabled:opacity-50 dark:border-red-500/30 dark:bg-black/60 dark:text-red-300"
+                  >
+                    {isLoggingOut ? "در حال خروج..." : "خروج از حساب"}
+                  </button>
+                </div>
+              ) : (
+                <Link
+                  href="/login"
+                  onClick={closeMenu}
+                  className="mobile-nav-item block rounded-xl px-4 py-3.5 text-sm font-medium text-[var(--text-primary)]"
+                >
+                  ورود به حساب
+                </Link>
+              )}
+            </section>
+
+            <section className="mobile-nav-group rounded-2xl p-2 shadow-sm backdrop-blur-sm">
+              <p className="px-3 pb-2 pt-1 text-[11px] font-semibold tracking-wide text-[var(--text-muted)]">
+                اطلاعات
+              </p>
+
+              <div className="flex flex-col gap-2">
+                {infoItems.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
                     onClick={closeMenu}
-                    className={`block rounded-xl px-4 py-3.5 text-sm font-medium transition ${
-                      active
-                        ? "bg-[var(--primary)] text-white"
-                        : "text-[var(--text-secondary)] hover:bg-[var(--surface-muted)] hover:text-[var(--text-primary)]"
-                    }`}
+                    className="mobile-nav-item block rounded-xl px-4 py-3 text-sm text-[var(--text-secondary)] transition app-hover-muted hover:text-[var(--text-primary)]"
                   >
                     {item.title}
                   </Link>
-                );
-              })}
-            </nav>
-
-            {/* Cart */}
-            <Link
-              href="/cart"
-              onClick={closeMenu}
-              className="flex items-center justify-between border-b border-[var(--border)] py-4 text-sm font-medium"
-            >
-              <span>سبد خرید</span>
-
-              {cartCount > 0 && (
-                <span className="flex min-w-6 items-center justify-center rounded-full bg-[var(--primary)] px-2 py-1 text-xs font-bold text-white">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
-
-            {/* Account */}
-            {isAuthenticated ? (
-              <div>
-                {/* Profile */}
-                <Link
-                  href="/account/profile"
-                  onClick={closeMenu}
-                  className="group flex items-center gap-3 border-b border-[var(--border)] py-4 transition hover:bg-[var(--surface-muted)]"
-                >
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--surface-muted)] text-lg transition group-hover:bg-[var(--primary)] group-hover:text-white">
-                    👤
-                  </span>
-
-                  <div className="flex flex-1 flex-col">
-                    <span className="text-xs text-[var(--text-muted)]">
-                      حساب کاربری
-                    </span>
-
-                    <span className="mt-1 text-sm font-bold text-[var(--text-primary)]">
-                      {user?.name || "کاربر"}
-                    </span>
-                  </div>
-
-                  <span className="text-lg text-[var(--text-muted)]">←</span>
-                </Link>
-
-                {/* Admin Panel */}
-                {isAdmin && (
-                  <Link
-                    href="/admin"
-                    onClick={closeMenu}
-                    className={`block border-b border-[var(--border)] py-4 text-sm font-bold transition ${
-                      pathname.startsWith("/admin")
-                        ? "text-[var(--primary)]"
-                        : "text-[var(--text-secondary)] hover:text-[var(--primary)]"
-                    }`}
-                  >
-                    پنل ادمین
-                  </Link>
-                )}
-
-                {/* Orders */}
-                <Link
-                  href="/account/orders"
-                  onClick={closeMenu}
-                  className="block border-b border-[var(--border)] py-4 text-sm font-medium text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
-                >
-                  سفارش‌های من
-                </Link>
-
-                {/* Addresses */}
-                <Link
-                  href="/account/addresses"
-                  onClick={closeMenu}
-                  className="block border-b border-[var(--border)] py-4 text-sm font-medium text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
-                >
-                  آدرس‌های من
-                </Link>
-
-                {/* Logout */}
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  disabled={isLoggingOut}
-                  className="block w-full py-4 text-right text-sm font-medium text-neutral-600 transition hover:bg-neutral-50 disabled:opacity-50"
-                >
-                  {isLoggingOut ? "در حال خروج..." : "خروج از حساب"}
-                </button>
+                ))}
               </div>
-            ) : (
-              <Link
-                href="/login"
-                onClick={closeMenu}
-                className="block border-b border-[var(--border)] py-4 text-sm font-medium text-[var(--text-primary)]"
-              >
-                ورود به حساب
-              </Link>
-            )}
-
-            {/* Information */}
-            <div className="pt-3">
-              <p className="px-4 py-2 text-xs font-semibold text-[var(--text-muted)]">
-                اطلاعات
-              </p>
-
-              {infoItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={closeMenu}
-                  className="block rounded-xl px-4 py-3 text-sm text-[var(--text-secondary)] transition hover:bg-[var(--surface-muted)] hover:text-[var(--text-primary)]"
-                >
-                  {item.title}
-                </Link>
-              ))}
-            </div>
+            </section>
           </div>
-        </div>
-      )}
+      </div>
     </header>
+      <div
+        className={`md:hidden ${compact ? "h-10" : "h-16"}`}
+        aria-hidden="true"
+      />
+    </>
   );
 }

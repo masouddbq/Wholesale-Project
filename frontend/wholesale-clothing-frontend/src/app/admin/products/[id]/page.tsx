@@ -224,6 +224,16 @@ export default function AdminProductDetailPage() {
 
             <div>
               <p className="text-sm text-neutral-500">
+                نوع فروش
+              </p>
+
+              <p className="mt-1 font-medium">
+                {product.saleType === "series" ? "محصول سری" : "محصول انتخابی"}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-sm text-neutral-500">
                 حداقل تعداد سفارش
               </p>
 

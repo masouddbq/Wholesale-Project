@@ -4,11 +4,14 @@ import { useEffect, useState } from "react";
 import { getMe } from "@/services/authService";
 import apiClient from "@/lib/appClient";
 
+import { USER_ROLE_LABELS, type UserRole } from "@/lib/roles";
+import FormNotice from "@/components/FormNotice";
+
 type User = {
   _id: string;
   name: string;
   phone: string;
-  role: "customer" | "admin";
+  role: UserRole;
 };
 
 export default function ProfilePage() {
@@ -196,28 +199,16 @@ export default function ProfilePage() {
             <input
               id="role"
               type="text"
-              value={
-                user.role === "admin"
-                  ? "مدیر"
-                  : "مشتری"
-              }
+              value={USER_ROLE_LABELS[user.role] || user.role}
               disabled
               className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-neutral-500 outline-none"
             />
           </div>
 
           {/* Messages */}
-          {error && (
-            <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-600">
-              {error}
-            </div>
-          )}
+          <FormNotice message={error} tone="error" />
 
-          {success && (
-            <div className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm leading-6 text-green-600">
-              {success}
-            </div>
-          )}
+          <FormNotice message={success} tone="success" />
 
           {/* Submit */}
           <button

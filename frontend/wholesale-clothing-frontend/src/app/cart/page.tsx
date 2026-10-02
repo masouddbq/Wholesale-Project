@@ -4,13 +4,19 @@ import Link from "next/link";
 import useCartStore from "@/store/cartStore";
 import { API_BASE } from "@/lib/imageUrl";
 import { useToast } from "@/components/Toast";
+import {
+  groupCartItemsByProduct,
+  groupedProductTotal,
+} from "@/lib/cartGroups";
+import CompactVariantSummary from "@/components/CompactVariantSummary";
 
 export default function CartPage() {
   const items = useCartStore((state) => state.items);
-  const removeItem = useCartStore((state) => state.removeItem);
-  const updateQuantity = useCartStore((state) => state.updateQuantity);
+  const removeProduct = useCartStore((state) => state.removeProduct);
   const clearCart = useCartStore((state) => state.clearCart);
   const { addToast } = useToast();
+
+  const groupedItems = groupCartItemsByProduct(items);
 
   const totalAmount = items.reduce(
     (total, item) => total + item.price * item.quantity,
@@ -44,7 +50,6 @@ export default function CartPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
-      {/* Header */}
       <div className="mb-10">
         <p className="text-sm text-neutral-500">خرید عمده پوشاک</p>
 
@@ -68,26 +73,24 @@ export default function CartPage() {
       </div>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
-        {/* Cart Items */}
         <div className="space-y-4">
-          {items.map((item) => {
-            const itemTotal = item.price * item.quantity;
+          {groupedItems.map((group) => {
+            const itemTotal = groupedProductTotal(group);
 
             return (
               <div
-                key={`${item.productId}-${item.variantId}`}
+                key={group.productId}
                 className="rounded-2xl border border-neutral-200 bg-white p-4 md:p-5"
               >
                 <div className="flex gap-4">
-                  {/* Image */}
                   <Link
-                    href={`/products/${item.slug}`}
+                    href={`/products/${group.slug}`}
                     className="h-28 w-28 shrink-0 overflow-hidden rounded-xl bg-neutral-100 md:h-36 md:w-36"
                   >
-                    {item.image ? (
+                    {group.image ? (
                       <img
-                        src={`${API_BASE}${item.image}`}
-                        alt={item.name}
+                        src={`${API_BASE}${group.image}`}
+                        alt={group.name}
                         className="h-full w-full object-cover"
                       />
                     ) : (
@@ -97,34 +100,26 @@ export default function CartPage() {
                     )}
                   </Link>
 
-                  {/* Information */}
                   <div className="min-w-0 flex-1">
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <Link
-                          href={`/products/${item.slug}`}
+                          href={`/products/${group.slug}`}
                           className="font-semibold transition hover:underline"
                         >
-                          {item.name}
+                          {group.name}
                         </Link>
 
-                        <p className="mt-2 text-sm text-neutral-500">
-                          سایز: {item.size}
-                        </p>
-
-                        <p className="mt-1 text-sm text-neutral-500">
-                          رنگ: {item.color}
-                        </p>
-
-                        <p className="mt-1 text-sm text-neutral-500">
-                          SKU: {item.sku}
-                        </p>
+                        <CompactVariantSummary
+                          colors={group.colors}
+                          className="mt-3"
+                        />
                       </div>
 
                       <button
                         type="button"
                         onClick={() => {
-                          removeItem(item.productId, item.variantId);
+                          removeProduct(group.productId);
                           addToast("محصول از سبد خرید حذف شد", "success");
                         }}
                         className="text-sm text-neutral-600 transition hover:text-black"
@@ -134,50 +129,15 @@ export default function CartPage() {
                     </div>
 
                     <div className="mt-5 flex flex-wrap items-end justify-between gap-4">
-                      {/* Quantity */}
                       <div>
                         <p className="mb-2 text-xs text-neutral-500">تعداد</p>
-
-                        <div className="flex w-fit items-center overflow-hidden rounded-lg border border-neutral-300">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              updateQuantity(
-                                item.productId,
-                                item.variantId,
-                                item.quantity - 1,
-                              )
-                            }
-                            disabled={
-                              item.quantity <= item.minimumOrderQuantity
-                            }
-                            className="flex h-10 w-10 items-center justify-center text-lg transition hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-40"
-                          >
-                            −
-                          </button>
-
-                          <span className="flex h-10 min-w-12 items-center justify-center border-x border-neutral-300 px-2 text-sm font-semibold">
-                            {item.quantity.toLocaleString("fa-IR")}
-                          </span>
-
-                          <button
-                            type="button"
-                            onClick={() =>
-                              updateQuantity(
-                                item.productId,
-                                item.variantId,
-                                item.quantity + 1,
-                              )
-                            }
-                            disabled={item.quantity >= item.stock}
-                            className="flex h-10 w-10 items-center justify-center text-lg transition hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-40"
-                          >
-                            +
-                          </button>
-                        </div>
+                        <p className="text-sm font-semibold">
+                          {group.items
+                            .reduce((total, item) => total + item.quantity, 0)
+                            .toLocaleString("fa-IR")}
+                        </p>
                       </div>
 
-                      {/* Price */}
                       <div className="text-left">
                         <p className="text-xs text-neutral-500">قیمت کل</p>
 
@@ -193,7 +153,6 @@ export default function CartPage() {
           })}
         </div>
 
-        {/* Summary */}
         <aside className="h-fit rounded-2xl border border-neutral-200 bg-neutral-50 p-6 lg:sticky lg:top-28">
           <h2 className="text-xl font-bold">خلاصه سفارش</h2>
 

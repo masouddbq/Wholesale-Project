@@ -13,6 +13,7 @@ export type CategoryUploadResponse = {
 export type ProductUploadResponse = {
   message: string;
   images: string[];
+  urls?: string[];
 };
 
 export const uploadSiteContentImage = async (

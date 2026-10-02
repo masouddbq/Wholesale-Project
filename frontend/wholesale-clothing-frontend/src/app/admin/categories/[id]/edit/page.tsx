@@ -16,6 +16,7 @@ import {
 
 import { uploadCategoryImage } from "@/services/uploadService";
 import { API_BASE } from "@/lib/imageUrl";
+import FormNotice from "@/components/FormNotice";
 
 export default function EditCategoryPage() {
   const params = useParams();
@@ -248,11 +249,7 @@ export default function EditCategoryPage() {
 
       {/* Error */}
 
-      {error && (
-        <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4 text-sm text-neutral-700">
-          {error}
-        </div>
-      )}
+      <FormNotice message={error} />
 
       {/* Form */}
 

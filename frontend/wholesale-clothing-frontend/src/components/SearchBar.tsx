@@ -34,6 +34,25 @@ export default function SearchBar() {
 
   const searchRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    if (window.location.hash !== "#site-search") {
+      return;
+    }
+
+    const searchElement = document.getElementById("site-search");
+
+    searchElement?.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+
+    const input = searchElement?.querySelector("input");
+
+    setTimeout(() => {
+      input?.focus();
+    }, 300);
+  }, []);
+
   // =========================
   // Autocomplete Search
   // =========================
@@ -148,7 +167,7 @@ export default function SearchBar() {
   return (
     <section
       id="site-search"
-      className="scroll-mt-24 px-4 py-8 sm:py-10"
+      className="scroll-mt-24 px-4 py-1 sm:py-8 lg:py-10"
     >
       <div
         ref={searchRef}
@@ -156,7 +175,7 @@ export default function SearchBar() {
       >
         {/* Title */}
 
-        <div className="mb-4 text-center">
+        <div className="mb-2 hidden text-center sm:mb-4 lg:block">
           <h2 className="text-xl font-bold text-neutral-900 sm:text-2xl">
             دنبال چه محصولی هستید؟
           </h2>
@@ -195,7 +214,7 @@ export default function SearchBar() {
           <button
             type="submit"
             disabled={!search.trim()}
-            className="btn-primary-glow h-11 rounded-xl bg-black px-5 text-sm font-medium text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50 sm:px-7"
+            className="btn-hero-gold btn-primary-glow h-11 rounded-xl bg-black px-5 text-sm font-medium text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50 sm:px-7"
           >
             جستجو
           </button>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getCategories } from "@/services/categoryService";
 import { API_BASE } from "@/lib/imageUrl";
+import HorizontalScroller from "@/components/HorizontalScroller";
 
 type Category = {
   _id: string;
@@ -26,20 +27,20 @@ export default async function CategorySection() {
 
   return (
     <section className="border-b border-[var(--border)] bg-transparent">
-      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+      <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-12 lg:px-8 lg:py-20">
 
         {/* Header */}
-        <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+        <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end sm:gap-5">
           <div>
-            <p className="text-sm font-medium text-[var(--text-muted)]">
+            <p className="text-sm font-medium text-[var(--text-muted)] max-lg:hidden">
               انتخاب بر اساس دسته‌بندی
             </p>
 
-            <h2 className="mt-2 text-2xl font-bold text-[var(--text-primary)] sm:text-3xl">
+            <h2 className="mt-2 text-xl font-bold text-[var(--text-primary)] sm:text-3xl max-lg:mt-0">
               دسته‌بندی محصولات
             </h2>
 
-            <p className="mt-3 max-w-xl text-sm leading-7 text-[var(--text-secondary)] sm:text-base">
+            <p className="mt-3 max-w-xl text-sm leading-7 text-[var(--text-secondary)] sm:text-base max-lg:hidden">
               دسته‌بندی موردنظر خود را انتخاب کنید و محصولات مرتبط را مشاهده
               کنید.
             </p>
@@ -47,7 +48,7 @@ export default async function CategorySection() {
 
           <Link
             href="/categories"
-            className="inline-flex w-fit items-center gap-2 rounded-xl border border-[var(--border-strong)] bg-white px-5 py-3 text-sm font-medium text-[var(--text-primary)] transition hover:bg-[var(--surface-muted)]"
+            className="btn-view-all inline-flex w-fit items-center gap-2 rounded-xl px-5 py-3 text-sm font-medium"
           >
             مشاهده همه
             <span>←</span>
@@ -55,12 +56,16 @@ export default async function CategorySection() {
         </div>
 
         {/* Categories */}
-        <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="home-rail-shadow mt-5 rounded-lg sm:mt-8 sm:shadow-none lg:mt-10">
+        <HorizontalScroller
+          desktopMinWidth={640}
+          className="flex gap-3 overflow-x-auto overflow-y-hidden pb-1 sm:mt-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:touch-auto lg:grid-cols-4"
+        >
           {categories.slice(0, 8).map((category) => (
             <Link
               key={category._id}
               href={`/categories/${category.slug}`}
-              className="group relative overflow-hidden rounded-2xl border border-[var(--border)] bg-white transition duration-300 hover:-translate-y-1 hover:border-[var(--border-strong)] hover:shadow-lg"
+              className="group relative flex w-[48%] shrink-0 flex-col overflow-hidden rounded-md border border-[var(--border)] bg-white shadow-[0_2px_10px_rgba(163,163,163,0.18)] transition duration-300 hover:shadow-[0_8px_24px_rgba(163,163,163,0.35)] active:shadow-[0_8px_24px_rgba(163,163,163,0.35)] sm:w-auto"
             >
               {/* Image / Placeholder */}
               <div className="relative aspect-[4/3] overflow-hidden bg-[var(--surface-muted)]">
@@ -88,19 +93,17 @@ export default async function CategorySection() {
               </div>
 
               {/* Content */}
-              <div className="p-4 sm:p-5">
-                <h3 className="text-base font-bold text-[var(--text-primary)] sm:text-lg">
+              <div className="flex flex-1 flex-col p-4 sm:p-5">
+                <h3 className="line-clamp-1 min-h-6 text-base font-bold leading-6 text-[var(--text-primary)] sm:text-lg">
                   {category.name}
                 </h3>
 
-                {category.description && (
-                  <p className="mt-2 line-clamp-2 text-xs leading-6 text-[var(--text-muted)] sm:text-sm">
-                    {category.description}
-                  </p>
-                )}
+                <p className="mt-2 line-clamp-1 min-h-5 text-xs leading-5 text-[var(--text-muted)] sm:text-sm">
+                  {category.description || "\u00a0"}
+                </p>
 
-                <div className="mt-4 flex items-center justify-between">
-                  <span className="text-xs font-medium text-[var(--text-muted)]">
+                <div className="mt-auto flex items-center justify-between pt-4">
+                  <span className="text-xs font-medium leading-5 text-[var(--text-muted)]">
                     مشاهده محصولات
                   </span>
 
@@ -111,6 +114,7 @@ export default async function CategorySection() {
               </div>
             </Link>
           ))}
+        </HorizontalScroller>
         </div>
       </div>
     </section>

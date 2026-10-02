@@ -9,6 +9,7 @@ import {
   deleteCategory,
 } from "@/services/categoryService";
 import { API_BASE } from "@/lib/imageUrl";
+import FormNotice from "@/components/FormNotice";
 
 const formatDate = (date: string) => {
   return new Date(date).toLocaleDateString("fa-IR");
@@ -91,11 +92,7 @@ export default function AdminCategoriesPage() {
       </div>
 
       {/* Error */}
-      {error && (
-        <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4 text-sm text-neutral-700">
-          {error}
-        </div>
-      )}
+      <FormNotice message={error} />
 
       {/* Loading */}
       {isLoading ? (

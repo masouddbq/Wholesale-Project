@@ -7,6 +7,9 @@ import { AdminProduct, getAdminProducts } from "@/services/productService";
 
 import { getCategories } from "@/services/categoryService";
 import { API_BASE } from "@/lib/imageUrl";
+import PriceInput from "@/components/PriceInput";
+import { parseGroupedNumber } from "@/lib/formatPrice";
+import { useToast } from "@/components/Toast";
 
 type Category = {
   _id: string;
@@ -23,6 +26,7 @@ type SortOption =
   | "name_desc";
 
 export default function AdminProductsPage() {
+  const { addToast } = useToast();
   const [products, setProducts] = useState<AdminProduct[]>([]);
 
   const [categories, setCategories] = useState<Category[]>([]);
@@ -121,16 +125,20 @@ export default function AdminProductsPage() {
 
   const handleApplyFilters = () => {
     const parsedMinPrice =
-      minPriceInput.trim() !== "" ? Number(minPriceInput) : undefined;
+      minPriceInput.trim() !== ""
+        ? parseGroupedNumber(minPriceInput)
+        : undefined;
 
     const parsedMaxPrice =
-      maxPriceInput.trim() !== "" ? Number(maxPriceInput) : undefined;
+      maxPriceInput.trim() !== ""
+        ? parseGroupedNumber(maxPriceInput)
+        : undefined;
 
     if (
       parsedMinPrice !== undefined &&
       (Number.isNaN(parsedMinPrice) || parsedMinPrice < 0)
     ) {
-      alert("حداقل قیمت معتبر نیست.");
+      addToast("حداقل قیمت معتبر نیست.", "error");
       return;
     }
 
@@ -138,7 +146,7 @@ export default function AdminProductsPage() {
       parsedMaxPrice !== undefined &&
       (Number.isNaN(parsedMaxPrice) || parsedMaxPrice < 0)
     ) {
-      alert("حداکثر قیمت معتبر نیست.");
+      addToast("حداکثر قیمت معتبر نیست.", "error");
       return;
     }
 
@@ -147,7 +155,7 @@ export default function AdminProductsPage() {
       parsedMaxPrice !== undefined &&
       parsedMinPrice > parsedMaxPrice
     ) {
-      alert("حداقل قیمت نمی‌تواند بیشتر از حداکثر قیمت باشد.");
+      addToast("حداقل قیمت نمی‌تواند بیشتر از حداکثر قیمت باشد.", "error");
       return;
     }
 
@@ -287,13 +295,10 @@ export default function AdminProductsPage() {
           <div>
             <label className="mb-2 block text-sm font-medium">حداقل قیمت</label>
 
-            <input
-              type="number"
-              min="0"
+            <PriceInput
               value={minPriceInput}
-              onChange={(event) => setMinPriceInput(event.target.value)}
-              placeholder="مثلاً 500000"
-              className="w-full rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none transition focus:border-black"
+              onChange={setMinPriceInput}
+              placeholder="مثلاً 500,000"
             />
           </div>
 
@@ -304,13 +309,10 @@ export default function AdminProductsPage() {
               حداکثر قیمت
             </label>
 
-            <input
-              type="number"
-              min="0"
+            <PriceInput
               value={maxPriceInput}
-              onChange={(event) => setMaxPriceInput(event.target.value)}
-              placeholder="مثلاً 5000000"
-              className="w-full rounded-xl border border-neutral-200 px-4 py-3 text-sm outline-none transition focus:border-black"
+              onChange={setMaxPriceInput}
+              placeholder="مثلاً 5,000,000"
             />
           </div>
         </div>

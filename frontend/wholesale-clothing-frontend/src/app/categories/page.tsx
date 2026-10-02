@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getCategories } from "@/services/categoryService";
+import { API_BASE } from "@/lib/imageUrl";
 
 type Category = {
   _id: string;
@@ -16,8 +17,8 @@ export default async function CategoriesPage() {
     data.categories || [];
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12">
-      <div className="mb-10">
+    <div className="mx-auto max-w-7xl px-4 py-6 sm:py-12">
+      <div className="mb-5 sm:mb-10">
         <p className="text-sm text-neutral-500">
           فروش عمده پوشاک
         </p>
@@ -48,7 +49,7 @@ export default async function CategoriesPage() {
               <div className="aspect-[4/3] overflow-hidden bg-neutral-100">
                 {category.image ? (
                   <img
-                    src={`http://localhost:5000${category.image}`}
+                    src={`${API_BASE}${category.image}`}
                     alt={category.name}
                     className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                   />

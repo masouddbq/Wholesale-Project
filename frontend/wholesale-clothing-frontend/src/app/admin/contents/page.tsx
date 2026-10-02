@@ -4,8 +4,11 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import { getSiteContents, SiteContent } from "@/services/siteContentService";
+import FormNotice from "@/components/FormNotice";
+import { useToast } from "@/components/Toast";
 
 export default function AdminContentsPage() {
+  const { addToast } = useToast();
   const [contents, setContents] = useState<SiteContent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -34,7 +37,7 @@ export default function AdminContentsPage() {
     loadContents();
   }, []);
 
-  const handleDelete = async (contentId: string, contentKey: string) => {
+  const handleDelete = async (contentKey: string) => {
     const confirmed = window.confirm(
       `آیا از حذف محتوای «${contentKey}» مطمئن هستید؟`,
     );
@@ -43,20 +46,7 @@ export default function AdminContentsPage() {
       return;
     }
 
-    try {
-      setError("");
-
-      // فعلاً حذف از API را مستقیم با apiClient انجام نمی‌دهیم.
-      // سرویس delete را در مرحله بعد اضافه می‌کنیم.
-      console.log("Delete content:", contentId);
-    } catch (error: any) {
-      console.error(error);
-
-      const message =
-        error?.response?.data?.message || "حذف محتوا با خطا مواجه شد.";
-
-      setError(message);
-    }
+    addToast("حذف محتوا هنوز به سرور وصل نشده است.", "error");
   };
 
   if (isLoading) {
@@ -88,11 +78,79 @@ export default function AdminContentsPage() {
       </div>
 
       {/* Error */}
-      {error && (
-        <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-700">
-          {error}
-        </div>
-      )}
+      <FormNotice message={error} />
+
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <Link
+          href="/admin/contents/footer/edit"
+          className="rounded-2xl border border-neutral-200 bg-white p-5 transition hover:border-black"
+        >
+          <p className="text-sm font-semibold">فوتر</p>
+          <p className="mt-2 text-xs leading-6 text-neutral-500">
+            شبکه‌های اجتماعی، نقشه فروشگاه و جایگاه اینماد
+          </p>
+        </Link>
+
+        <Link
+          href="/admin/contents/stories/edit"
+          className="rounded-2xl border border-neutral-200 bg-white p-5 transition hover:border-black"
+        >
+          <p className="text-sm font-semibold">استوری‌های صفحه اصلی</p>
+          <p className="mt-2 text-xs leading-6 text-neutral-500">
+            دایره‌های بالای هیرو با لینک به محصول یا دسته‌بندی
+          </p>
+        </Link>
+
+        <Link
+          href="/admin/contents/hero/edit"
+          className="rounded-2xl border border-neutral-200 bg-white p-5 transition hover:border-black"
+        >
+          <p className="text-sm font-semibold">هیرو صفحه اصلی</p>
+          <p className="mt-2 text-xs leading-6 text-neutral-500">
+            عنوان، متن و عکس‌های بالای سایت
+          </p>
+        </Link>
+
+        <Link
+          href="/admin/contents/about/edit"
+          className="rounded-2xl border border-neutral-200 bg-white p-5 transition hover:border-black"
+        >
+          <p className="text-sm font-semibold">درباره ما</p>
+          <p className="mt-2 text-xs leading-6 text-neutral-500">
+            متن صفحه درباره فروشگاه
+          </p>
+        </Link>
+
+        <Link
+          href="/admin/contents/contact/edit"
+          className="rounded-2xl border border-neutral-200 bg-white p-5 transition hover:border-black"
+        >
+          <p className="text-sm font-semibold">ارتباط با ما</p>
+          <p className="mt-2 text-xs leading-6 text-neutral-500">
+            متن صفحه تماس؛ نقشه از تنظیمات فوتر می‌آید
+          </p>
+        </Link>
+
+        <Link
+          href="/admin/contents/wholesale-guide/edit"
+          className="rounded-2xl border border-neutral-200 bg-white p-5 transition hover:border-black"
+        >
+          <p className="text-sm font-semibold">راهنمای خرید عمده</p>
+          <p className="mt-2 text-xs leading-6 text-neutral-500">
+            متن صفحه راهنما
+          </p>
+        </Link>
+
+        <Link
+          href="/admin/contents/terms/edit"
+          className="rounded-2xl border border-neutral-200 bg-white p-5 transition hover:border-black"
+        >
+          <p className="text-sm font-semibold">قوانین و شرایط</p>
+          <p className="mt-2 text-xs leading-6 text-neutral-500">
+            متن صفحه قوانین سفارش
+          </p>
+        </Link>
+      </div>
 
       {/* Empty */}
       {contents.length === 0 ? (
@@ -189,7 +247,7 @@ export default function AdminContentsPage() {
 
                         <button
                           type="button"
-                          onClick={() => handleDelete(content._id, content.key)}
+                          onClick={() => handleDelete(content.key)}
                           className="rounded-lg border border-neutral-200 px-3 py-2 text-xs font-semibold text-neutral-600 transition hover:bg-neutral-50"
                         >
                           حذف

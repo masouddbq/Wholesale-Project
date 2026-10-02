@@ -7,10 +7,22 @@ const variantSchema = new mongoose.Schema({
     trim: true,
   },
 
+  sizeSlot: {
+    type: Number,
+    enum: [1, 2],
+    default: 1,
+  },
+
   color: {
     type: String,
     required: true,
     trim: true,
+  },
+
+  colorHex: {
+    type: String,
+    trim: true,
+    default: "",
   },
 
   stock: {
@@ -72,6 +84,18 @@ const productSchema = new mongoose.Schema(
     variants: {
       type: [variantSchema],
       default: [],
+    },
+
+    saleType: {
+      type: String,
+      enum: ["series", "selective"],
+      default: "selective",
+    },
+
+    availabilityStatus: {
+      type: String,
+      enum: ["in_stock", "out_of_stock", "limited"],
+      default: "in_stock",
     },
 
     minimumOrderQuantity: {

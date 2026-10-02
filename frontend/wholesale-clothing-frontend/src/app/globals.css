@@ -32,7 +32,7 @@
 
   /* Surfaces */
   --surface: #f5f5f5;
-  --surface-muted: #f5f5f5;
+  --mutedbg: #f5f5f5;
 
   /* Text */
   --text-primary: #1a1a1a;
@@ -57,6 +57,14 @@
   --danger: #B94A48;
 }
 
+.app-bg-muted {
+  background-color: var(--mutedbg);
+}
+
+.app-hover-muted:hover {
+  background-color: var(--mutedbg);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -64,6 +72,101 @@
 html {
   direction: rtl;
   scroll-behavior: smooth;
+}
+
+body {
+  -webkit-overflow-scrolling: touch;
+}
+
+.home-h-scroll {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scroll-behavior: auto;
+  scrollbar-width: none;
+}
+
+.btn-view-all {
+  background: #ffc800;
+  color: #000;
+  border: 1px solid #ffffff;
+}
+
+.btn-hero-gold {
+  border: 2px solid #ffc800;
+}
+
+html.dark .btn-view-all,
+html.dark .btn-hero-gold {
+  border-color: #9ca3af;
+}
+
+.home-rail-shadow {
+  box-shadow: 0 6px 20px rgba(140, 140, 140, 0.12);
+}
+
+.home-h-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark body {
+  background: linear-gradient(180deg, #111111 0%, #191919 78%, #2a2318 100%);
+  color: var(--foreground);
+}
+
+html.dark header,
+html.dark nav.fixed {
+  background-color: #121212 !important;
+}
+
+html.dark .bg-white {
+  background-color: #1c1c1c;
+}
+
+html.dark .bg-neutral-50,
+html.dark .bg-neutral-100 {
+  background-color: #161616;
+}
+
+html.dark .border-neutral-100,
+html.dark .border-neutral-200 {
+  border-color: #2f2f2f;
+}
+
+html.dark .text-neutral-400,
+html.dark .text-neutral-500,
+html.dark .text-gray-700 {
+  color: #a3a3a3;
+}
+
+html.dark .text-neutral-600,
+html.dark .text-neutral-700 {
+  color: #d4d4d4;
+}
+
+html.dark .text-black {
+  color: #f3f3f3;
+}
+
+html.dark .skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    #1c1c1c 25%,
+    #2a2a2a 50%,
+    #1c1c1c 75%
+  );
+  background-size: 200% 100%;
+}
+
+.theme-toggle:hover {
+  background-color: #efefef;
+}
+
+html.dark .theme-toggle:hover {
+  background-color: #242424;
 }
 
 body {
@@ -86,7 +189,7 @@ select {
 }
 
 h1 {
-  font-size: 2rem;
+  font-size: 1.5rem;
 }
 
 .nad {
@@ -120,6 +223,22 @@ h1 {
   position: relative;
 }
 
+@media (max-width: 767px) {
+  header.gold-shimmer-border {
+    position: fixed !important;
+    top: 0;
+    right: 0;
+    left: 0;
+  }
+}
+
+@media (min-width: 768px) {
+  header.gold-shimmer-border {
+    position: sticky !important;
+    top: 0;
+  }
+}
+
 .gold-shimmer-border::before {
   content: "";
   position: absolute;
@@ -138,7 +257,8 @@ h1 {
   );
   background-size: 200% 100%;
   animation: shimmer 3s ease-in-out infinite;
-  z-index: 100;
+  pointer-events: none;
+  z-index: -1;
 }
 
 .gold-shimmer-border-bottom::after {
@@ -158,7 +278,8 @@ h1 {
   );
   background-size: 200% 100%;
   animation: shimmer 3s ease-in-out infinite;
-  z-index: 100;
+  pointer-events: none;
+  z-index: -1;
 }
 
 
@@ -230,10 +351,100 @@ select:focus {
   transform: scale(1.05);
 }
 
-/* تغییر جدید: کارت محصول با سایه طلایی هاور */
-.product-card-gold:hover {
-  box-shadow: 0 8px 30px rgba(201, 169, 110, 0.15),
-              0 4px 12px rgba(0, 0, 0, 0.08);
+.product-card-gold:hover,
+.product-card-gold:active {
+  box-shadow: 0 10px 28px rgba(163, 163, 163, 0.6);
+}
+
+.product-card-glass {
+  background: rgba(255, 255, 255, 0.38);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    0 8px 32px rgba(15, 23, 42, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.product-card-glass:hover,
+.product-card-glass:active {
+  background: rgba(255, 255, 255, 0.5);
+  border-color: rgba(255, 255, 255, 0.75);
+  box-shadow:
+    0 12px 36px rgba(15, 23, 42, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+html.dark .product-card-glass {
+  background: rgba(28, 28, 28, 0.42);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+html.dark .product-card-glass:hover,
+html.dark .product-card-glass:active {
+  background: rgba(40, 40, 40, 0.55);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow:
+    0 12px 36px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.mobile-nav-group {
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(var(--surface-rgb, 245, 245, 245), 0.8);
+}
+
+.mobile-nav-item {
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+html.dark .mobile-nav-group {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+html.dark .mobile-nav-item {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.62);
+  color: #f3f3f3;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+html.dark .mobile-nav-item:hover {
+  color: #ffffff;
+}
+
+.mobile-nav-curtain {
+  max-height: calc(100dvh - 4rem - 3.5rem);
+  clip-path: inset(0 100% 100% 0);
+  opacity: 0;
+  pointer-events: none;
+  transform-origin: top left;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  transition:
+    clip-path 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.28s ease;
+}
+
+.mobile-nav-curtain.is-open {
+  clip-path: inset(0 0 0 0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-nav-curtain {
+    transition: opacity 0.2s ease;
+  }
 }
 
 /* تغییر جدید: دکمه‌ها با transition نرم‌تر */
@@ -249,4 +460,53 @@ a {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+@keyframes hero-title-wave {
+  0%,
+  6.67%,
+  33.33%,
+  40%,
+  66.67%,
+  73.33%,
+  100% {
+    transform: scale(1);
+    background-color: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    backdrop-filter: blur(0);
+    -webkit-backdrop-filter: blur(0);
+  }
+
+  3.33%,
+  36.67%,
+  70% {
+    transform: scale(1.1);
+    background-color: rgba(255, 255, 255, 0.28);
+    border-color: rgba(255, 255, 255, 0.45);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.55),
+      0 8px 22px rgba(201, 169, 110, 0.18);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+}
+
+.hero-title-wave-letter,
+.hero-title-wave-space {
+  display: inline-block;
+}
+
+.hero-title-wave-letter {
+  padding: 0.06em 0.08em;
+  border: 1px solid transparent;
+  border-radius: 0.35em;
+  transform-origin: center bottom;
+  animation: hero-title-wave 6s ease-in-out 1 both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-title-wave-letter {
+    animation: none;
+  }
 }

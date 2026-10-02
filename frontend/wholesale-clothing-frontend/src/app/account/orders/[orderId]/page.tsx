@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { getMyOrderById } from "@/services/orderService";
+import GroupedOrderItems from "@/components/GroupedOrderItems";
 
 type OrderItem = {
   product: string;
@@ -180,74 +181,7 @@ export default function OrderDetailPage() {
               </div>
             </div>
 
-            <div className="divide-y divide-neutral-100">
-              {order.items.map((item, index) => (
-                <div
-                  key={`${item.product}-${item.sku}-${index}`}
-                  className="flex gap-4 py-5"
-                >
-                  <div className="h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-neutral-100">
-                    {item.image ? (
-                      <img
-                        src={`http://localhost:5000${item.image}`}
-                        alt={item.name}
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      <div className="flex h-full items-center justify-center text-xs text-neutral-400">
-                        بدون تصویر
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="min-w-0 flex-1">
-                    <h2 className="font-semibold">
-                      {item.name}
-                    </h2>
-
-                    <div className="mt-2 space-y-1 text-sm text-neutral-500">
-                      {item.size && (
-                        <p>سایز: {item.size}</p>
-                      )}
-
-                      {item.color && (
-                        <p>رنگ: {item.color}</p>
-                      )}
-
-                      {item.sku && (
-                        <p dir="ltr">
-                          SKU: {item.sku}
-                        </p>
-                      )}
-
-                      <p>
-                        تعداد: {item.quantity} عدد
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="shrink-0 text-left">
-                    <p className="text-sm text-neutral-500">
-                      قیمت واحد
-                    </p>
-
-                    <p className="mt-1 text-sm font-medium">
-                      {item.price.toLocaleString(
-                        "fa-IR"
-                      )}{" "}
-                      تومان
-                    </p>
-
-                    <p className="mt-3 font-bold">
-                      {(
-                        item.price * item.quantity
-                      ).toLocaleString("fa-IR")}{" "}
-                      تومان
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <GroupedOrderItems items={order.items} />
           </section>
 
           {order.note && (

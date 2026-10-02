@@ -9,6 +9,7 @@ import {
 } from "@/services/categoryService";
 
 import { uploadCategoryImage } from "@/services/uploadService";
+import FormNotice from "@/components/FormNotice";
 
 export default function NewCategoryPage() {
   const router = useRouter();
@@ -181,11 +182,7 @@ export default function NewCategoryPage() {
       </div>
 
       {/* Error */}
-      {error && (
-        <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4 text-sm text-neutral-700">
-          {error}
-        </div>
-      )}
+      <FormNotice message={error} />
 
       {/* Form */}
       <form

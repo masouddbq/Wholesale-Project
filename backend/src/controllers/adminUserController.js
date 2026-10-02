@@ -39,7 +39,7 @@ const getAdminUsers = async (req, res) => {
 
   if (
     role &&
-    ["customer", "admin"].includes(role)
+    ["user", "customer", "admin"].includes(role)
   ) {
     filter.role = role;
   }
@@ -139,7 +139,7 @@ const updateUserRole = async (req, res) => {
     });
   }
 
-  if (!["customer", "admin"].includes(role)) {
+  if (!["user", "customer", "admin"].includes(role)) {
     return res.status(400).json({
       message: "Invalid role",
     });

@@ -5,6 +5,7 @@ import { getCategories } from "@/services/categoryService";
 import ProductFilters from "@/components/ProductFilters";
 import Pagination from "@/components/Pagination";
 import { API_BASE } from "@/lib/imageUrl";
+import StockStatusBadge from "@/components/StockStatusBadge";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -28,6 +29,8 @@ type Product = {
   slug: string;
   price: number;
   images: string[];
+  availabilityStatus?: "in_stock" | "out_of_stock" | "limited";
+  variants?: { stock: number }[];
   category?: {
     name: string;
     slug: string;
@@ -94,7 +97,7 @@ export default async function ProductsPage({
     <main className="min-h-screen bg-[var(--background)]">
       {/* Page Header */}
       <section className="border-b border-[var(--border)] bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-16">
           <div className="max-w-3xl">
             <p className="text-sm font-medium text-[var(--text-muted)]">
               فروشگاه عمده
@@ -114,14 +117,14 @@ export default async function ProductsPage({
 
       {/* Products */}
       <section>
-        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+        <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8 lg:py-12">
           {/* Filters */}
           <ProductFilters
             categories={categories}
           />
 
           {/* Result Header */}
-          <div className="mt-8 flex flex-col gap-3 border-b border-[var(--border)] pb-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-5 flex flex-col gap-3 border-b border-[var(--border)] pb-4 sm:mt-8 sm:flex-row sm:items-center sm:justify-between sm:pb-5">
             <div>
               <h2 className="text-lg font-bold text-[var(--text-primary)]">
                 محصولات
@@ -133,7 +136,7 @@ export default async function ProductsPage({
             </div>
 
             {params.search && (
-              <p className="rounded-full bg-[var(--surface-muted)] px-4 py-2 text-xs text-[var(--text-secondary)]">
+              <p className="rounded-full app-bg-muted px-4 py-2 text-xs text-[var(--text-secondary)]">
                 جستجو برای:{" "}
                 <span className="font-semibold text-[var(--text-primary)]">
                   {params.search}
@@ -153,10 +156,10 @@ export default async function ProductsPage({
                     <Link
                       key={product._id}
                       href={`/products/${product.slug}`}
-                      className="group product-card-gold overflow-hidden rounded-2xl border border-[var(--border)] bg-white transition duration-300 hover:-translate-y-1 hover:border-[var(--border-strong)] hover:shadow-xl"
+                      className="group product-card-glass overflow-hidden rounded-2xl transition duration-300"
                     >
                       {/* Image */}
-                      <div className="relative aspect-[4/5] overflow-hidden bg-[var(--surface-muted)]">
+                      <div className="relative aspect-[4/5] overflow-hidden app-bg-muted">
                         {image ? (
                           <img
                             src={`${API_BASE}${image}`}
@@ -173,7 +176,7 @@ export default async function ProductsPage({
 
                         {/* Category */}
                         {product.category?.name && (
-                          <span className="absolute right-3 top-3 rounded-full bg-white/90 px-3 py-1.5 text-[10px] font-medium text-[var(--text-secondary)] shadow-sm backdrop-blur sm:text-xs">
+                          <span className="absolute right-3 top-3 rounded-full bg-white/90 px-3 py-1.5 text-[10px] font-medium text-[var(--text-secondary)] shadow-sm backdrop-blur dark:text-[#111111] sm:text-xs">
                             {product.category.name}
                           </span>
                         )}
@@ -190,13 +193,23 @@ export default async function ProductsPage({
                           {product.name}
                         </h3>
 
+                        <div className="mt-2">
+                          <StockStatusBadge
+                            status={product.availabilityStatus}
+                            stockCount={(product.variants || []).reduce(
+                              (total, variant) => total + (variant.stock || 0),
+                              0,
+                            )}
+                          />
+                        </div>
+
                         <div className="mt-4 flex items-end justify-between gap-2">
                           <div>
                             <p className="text-[10px] text-[var(--text-muted)] sm:text-[11px]">
                               قیمت پایه
                             </p>
 
-                            <p className="mt-1 text-sm font-bold text-[var(--text-primary)] sm:text-base">
+                            <p className="mt-1 text-[1.05rem] font-bold text-[var(--text-primary)] sm:text-[1.4rem]">
                               {formatPrice(product.price)}
 
                               <span className="mr-1 text-[9px] font-normal text-[var(--text-muted)] sm:text-[10px]">
@@ -228,7 +241,7 @@ export default async function ProductsPage({
           ) : (
             /* Empty State */
             <div className="mt-10 rounded-2xl border border-dashed border-[var(--border-strong)] bg-white px-6 py-16 text-center">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--surface-muted)]">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl app-bg-muted">
                 <span className="text-2xl text-[var(--text-muted)]">
                   ⌕
                 </span>

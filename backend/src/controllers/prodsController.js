@@ -12,6 +12,8 @@ const createProduct = async (req, res) => {
     images,
     category,
     variants,
+    saleType,
+    availabilityStatus,
     minimumOrderQuantity,
     isActive,
   } = req.body;
@@ -35,6 +37,8 @@ const createProduct = async (req, res) => {
     images,
     category,
     variants,
+    saleType: saleType === "series" ? "series" : "selective",
+    availabilityStatus: availabilityStatus || "in_stock",
     minimumOrderQuantity,
     isActive,
   });
@@ -213,6 +217,8 @@ const updateProduct = async (req, res) => {
     images,
     category,
     variants,
+    saleType,
+    availabilityStatus,
     minimumOrderQuantity,
     isActive,
   } = req.body;
@@ -240,6 +246,12 @@ const updateProduct = async (req, res) => {
   if (images !== undefined) product.images = images;
   if (variants !== undefined)
     product.variants = variants;
+  if (saleType !== undefined) {
+    product.saleType = saleType === "series" ? "series" : "selective";
+  }
+  if (availabilityStatus !== undefined) {
+    product.availabilityStatus = availabilityStatus;
+  }
   if (minimumOrderQuantity !== undefined)
     product.minimumOrderQuantity =
       minimumOrderQuantity;
